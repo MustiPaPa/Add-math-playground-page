@@ -125,7 +125,7 @@
 
     .menu-bar {
         margin: 15px auto 5px;
-        max-width: 420px;
+        max-width: 450px;
     }
     .hamburger-btn {
         width: 100%;
@@ -240,7 +240,7 @@
         background: #e68900;
     }
 
-    /* Sprachen (Englisch / Französisch) */
+    /* Sprachen (Englisch / Französisch) – options text like Flaggen */
     .answers-lang button {
         background: #007bff;
         border-radius: 999px;
@@ -258,7 +258,7 @@
         background: #7b1fa2;
     }
 
-    /* Schweiz / Geografie */
+    /* Geografie (Schweiz / Somalia) */
     .answers-geo button {
         background: #009688;
     }
@@ -300,7 +300,7 @@
     }
 
     .side-info {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto 30px;
         background: var(--side-bg);
         border-radius: 12px;
@@ -332,7 +332,7 @@
         margin-bottom: 3px;
     }
     .bar-row-label {
-        width: 70px;
+        width: 80px;
         font-size: 12px;
     }
     .bar-row-bar {
@@ -355,7 +355,7 @@
     .bar-row-bar-fill-sprache {
         background: #007bff;
     }
-    .bar-row-bar-fill-schweiz {
+    .bar-row-bar-fill-wissen {
         background: #009688;
     }
     .bar-row-pct {
@@ -368,6 +368,22 @@
         font-size: 12px;
         font-style: italic;
         margin-top: 2px;
+    }
+
+    .hall-testbutton {
+        margin-top: 4px;
+    }
+    .hall-testbutton button {
+        padding: 3px 10px;
+        border-radius: 999px;
+        border: none;
+        font-size: 11px;
+        cursor: pointer;
+        background: var(--accent);
+        color: #fff;
+    }
+    .hall-testbutton button:hover {
+        opacity: 0.9;
     }
 </style>
 </head>
@@ -433,16 +449,16 @@
             <span>🧩</span> Brüche <small>Teile vom Ganzen</small>
         </button>
         <button class="menu-item" onclick="chooseMode('de')">
-            <span>🇩🇪</span> Deutschaufgaben <small>„Wie viel ist…“ Sätze</small>
+            <span>🇩🇪</span> Deutschaufgaben <small>„Wie viele…“ Sätze</small>
         </button>
         <button class="menu-item" onclick="chooseMode('read')">
             <span>📖</span> Lesen / Leseverstehen <small>Text + Frage</small>
         </button>
         <button class="menu-item" onclick="chooseMode('en')">
-            <span>🇬🇧</span> Englisch <small>Wörter & Farben</small>
+            <span>🇬🇧</span> Englisch <small>Wörter & Farben (Optionen)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('fr')">
-            <span>🇫🇷</span> Französisch <small>Wörter & Farben</small>
+            <span>🇫🇷</span> Französisch <small>Wörter & Farben (Optionen)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('itbasics')">
             <span>💻</span> Informatik Basics <small>PC, Maus, Tastatur, Outlook</small>
@@ -452,6 +468,9 @@
         </button>
         <button class="menu-item" onclick="chooseMode('chgeo')">
             <span>🏔️</span> Schweiz & Kantone <small>Berge, Städte & Sport</small>
+        </button>
+        <button class="menu-item" onclick="chooseMode('soinfo')">
+            <span>🇸🇴</span> Somalia & Geografie <small>Taariikh, Gobollo, Xeebaha</small>
         </button>
     </div>
 </div>
@@ -469,15 +488,16 @@
 <div class="side-info">
     <h3>Profile, Klassen & Fortschritt</h3>
     <ul>
-        <li>Bis zu 10 Kinder können registriert werden (Profile).</li>
-        <li>Jedes Kind:
+        <li>Bis zu 10 Kinder (Profile) – jedes mit:
             <ul>
-                <li>hat einen Namen,</li>
-                <li>eine Klasse (1–6 oder Spezial 6/7),</li>
-                <li>eigene Punkte (Score) und Modul-Fortschritt (Mathe / Lesen / Sprachen / Schweiz-Wissen).</li>
+                <li>Name & Klasse (1–6 oder Spezial 6/7)</li>
+                <li>Punkte (Score)</li>
+                <li>Modul-Fortschritt:
+                    <b>Mathe</b>, <b>Lesen</b>, <b>Sprachen</b>, <b>Wissen (IT + Länder)</b>.
+                </li>
             </ul>
         </li>
-        <li>Diagramme zeigen pro Kind, wie stark es ist in <b>Mathe</b>, <b>Lesen</b>, <b>Sprachen</b> und <b>Schweiz & Wissen</b>.</li>
+        <li>Unter „Hall of Fame“ kannst du direkt für jedes Kind auf „Test mit [Name]“ klicken.</li>
     </ul>
 
     <h3>Hall of Fame – Übersicht pro Kind</h3>
@@ -487,43 +507,103 @@
 <script>
 /* ---------- GLOBAL STATE ---------- */
 var currentMode = null;
-var currentQuestion = null; // { correctValue, choices, hint, mode }
+var currentQuestion = null; // { correctValue, mode, hint? }
 var score = 0;
 var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v4";
+var STORAGE_KEY = "musti_playground_profiles_v5";
 
 /* ---------- QUESTION POOLS ---------- */
 
-// Englisch
+/* Englisch – jetzt mit Optionen (wie Flaggen) */
 var enQuestions = [
-    { text: "🇬🇧 Englisch\nWähle das richtige Wort.\n\n„Hund“ auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
-    { text: "🇬🇧 Englisch\nWähle das richtige Wort.\n\n„Katze“ auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
-    { text: "🇬🇧 Englisch\nFarben.\n\n„rot“ auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
-    { text: "🇬🇧 Englisch\nFarben.\n\n„blau“ auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 },
-    { text: "🇬🇧 Englisch\nGegenstände.\n\n„Haus“ auf Englisch?\n1) house   2) car   3) tree", ans: 1 }
+    {
+        question: "„Hund“ auf Englisch?",
+        options: ["dog", "cat", "bird"],
+        correctIndex: 0
+    },
+    {
+        question: "„Katze“ auf Englisch?",
+        options: ["dog", "cat", "mouse"],
+        correctIndex: 1
+    },
+    {
+        question: "Welche Farbe ist „rot“ auf Englisch?",
+        options: ["red", "blue", "green"],
+        correctIndex: 0
+    },
+    {
+        question: "Welche Farbe ist „blau“ auf Englisch?",
+        options: ["yellow", "blue", "black"],
+        correctIndex: 1
+    },
+    {
+        question: "„Haus“ auf Englisch?",
+        options: ["house", "car", "tree"],
+        correctIndex: 0
+    }
 ];
 
-// Französisch
+/* Französisch – Optionen */
 var frQuestions = [
-    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Hund“ auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
-    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Katze“ auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
-    { text: "🇫🇷 Französisch\nFarben.\n\n„rot“ auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
-    { text: "🇫🇷 Französisch\nFarben.\n\n„blau“ auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
-    { text: "🇫🇷 Französisch\nGegenstände.\n\n„Haus“ auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
+    {
+        question: "„Hund“ auf Französisch?",
+        options: ["chien", "chat", "oiseau"],
+        correctIndex: 0
+    },
+    {
+        question: "„Katze“ auf Französisch?",
+        options: ["chien", "chat", "souris"],
+        correctIndex: 1
+    },
+    {
+        question: "Welche Farbe ist „rot“ auf Französisch?",
+        options: ["rouge", "bleu", "vert"],
+        correctIndex: 0
+    },
+    {
+        question: "Welche Farbe ist „blau“ auf Französisch?",
+        options: ["rouge", "bleu", "noir"],
+        correctIndex: 1
+    },
+    {
+        question: "„Haus“ auf Französisch?",
+        options: ["maison", "voiture", "arbre"],
+        correctIndex: 0
+    }
 ];
 
-// Informatik Basics
+/* Informatik Basics – Optionen */
 var itBasicsQuestions = [
-    { text: "💻 Informatik Basics\n\nWelches Gerät ist hier gemeint?\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
-    { text: "🖱️ Informatik Basics\n\nDas kleine Gerät in der Hand zum Klicken.\nWas ist das?\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
-    { text: "⌨️ Informatik Basics\n\nDamit tippst du Buchstaben und Zahlen.\nWas ist das?\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
-    { text: "📧 Outlook\n\nWofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
-    { text: "🔐 Passwort-Sicherheit\n\nWas ist ein gutes Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
+    {
+        question: "Welches Gerät ist ein Computer?",
+        options: ["Laptop", "Maus", "Tastatur"],
+        correctIndex: 0
+    },
+    {
+        question: "Das kleine Gerät in der Hand zum Klicken. Was ist das?",
+        options: ["Bildschirm", "Maus", "Drucker"],
+        correctIndex: 1
+    },
+    {
+        question: "Damit tippst du Buchstaben und Zahlen. Was ist das?",
+        options: ["Lautsprecher", "Tastatur", "Kabel"],
+        correctIndex: 1
+    },
+    {
+        question: "Wofür benutzt man Outlook meistens?",
+        options: ["E-Mails", "Spiele", "Musik"],
+        correctIndex: 0
+    },
+    {
+        question: "Was ist ein gutes Passwort?",
+        options: ["nur Name", "lang & gemischt", "nur 1234"],
+        correctIndex: 1
+    }
 ];
 
-// Flaggen Afrika – jawaabtu waa calan, ma aha 1/2/3
+/* Flaggen Afrika – jawaabtu waa calan (code) */
 var flagQuestions = [
     {
         country: "Soomaaliya",
@@ -535,7 +615,7 @@ var flagQuestions = [
         country: "Kenia",
         correct: "ke",
         others: ["so","ng"],
-        hint: "Eselsbrücke: Kenia 🇰🇪 – calanka leh gaashaan madow oo dhexe yaal, sida geesi ilaalinaya duurka."
+        hint: "Eselsbrücke: Kenia 🇰🇪 – gaashaan madow oo dhexe yaal, sida geesi ilaalinaya duurka."
     },
     {
         country: "Äthiopien",
@@ -557,7 +637,6 @@ var flagQuestions = [
     }
 ];
 
-// map flag-code -> {url, name}
 var flagMap = {
     so: { url: "https://flagcdn.com/w80/so.png", label: "Soomaaliya" },
     ke: { url: "https://flagcdn.com/w80/ke.png", label: "Kenia" },
@@ -567,7 +646,7 @@ var flagMap = {
     gh: { url: "https://flagcdn.com/w80/gh.png", label: "Ghana" }
 };
 
-// Lesen / Leseverstehen
+/* Lesen / Leseverstehen */
 var readQuestions = [
     {
         min: 1, max: 2,
@@ -601,38 +680,68 @@ var readQuestions = [
     }
 ];
 
-// Schweiz / Kantone / Berge / Sport
+/* Schweiz / Kantone – graded: Klasse 3 Berge/Seen, Klasse 6 population/resources */
 var chQuestions = [
     {
+        min: 1, max: 4,
         text: "🏔️ Schweiz – Kantone\n\nIn welchem Kanton liegt die Stadt Zürich?\n1) Kanton Zürich   2) Kanton Bern   3) Kanton Tessin",
         ans: 1
     },
     {
-        text: "🏔️ Schweiz – Hauptstadt\n\nWie heisst die Hauptstadt der Schweiz?\n1) Zürich   2) Bern   3) Genf",
-        ans: 2
-    },
-    {
+        min: 3, max: 5,
         text: "🏔️ Schweiz – Berge\n\nDas Matterhorn ist ein bekannter Berg. In welchem Kanton liegt er?\n1) Wallis   2) Graubünden   3) Aargau",
         ans: 1
     },
     {
-        text: "🏔️ Schweiz – Seen\n\nDer Genfersee liegt an der Grenze zu Frankreich.\nWelche Stadt liegt am Genfersee?\n1) Genf   2) Basel   3) Lugano",
+        min: 3, max: 5,
+        text: "🏞️ Schweiz – Seen\n\nDer Vierwaldstättersee liegt in der Zentralschweiz.\nWelche Stadt liegt an diesem See?\n1) Luzern   2) Basel   3) Genf",
         ans: 1
     },
     {
+        min: 5, max: 7,
+        text: "👨‍👩‍👧‍👦 Schweiz – Bevölkerung\n\nWie viele Menschen leben ungefähr in der Schweiz?\n1) 2 Millionen   2) 9 Millionen   3) 50 Millionen",
+        ans: 2
+    },
+    {
+        min: 5, max: 7,
+        text: "⌚ Schweiz – Ressourcen & Bekanntes\n\nWofür ist die Schweiz besonders bekannt?\n1) Uhren, Schokolade und Berge   2) Wüsten und Kamele   3) Strände am Meer",
+        ans: 1
+    },
+    {
+        min: 5, max: 7,
         text: "🎿 Schweiz – Wintersport\n\nWelche Region ist als Wintersportort sehr bekannt?\n1) St. Moritz   2) Zürich   3) Lausanne",
         ans: 1
+    }
+];
+
+/* Somalia & Geografie – taariikh, gobollo, xeeb, magaalooyin, webiyo */
+var soQuestions = [
+    {
+        text: "🇸🇴 Somalia – Taariikh\n\nGoorma ayay Soomaaliya xorowday (midowga labada gobol Waqooyi & Koonfur)?\n1) 1960   2) 1970   3) 1985",
+        ans: 1
     },
     {
-        text: "🚂 Schweiz – Besonderheiten\n\nDie Schweiz ist berühmt für…\n1) Wüsten und Kamele   2) Uhren, Schokolade und Berge   3) Strände am Meer",
+        text: "🇸🇴 Somalia – Madaxweyne\n\nKee ayaa muddo dheer madaxweyne ka ahaa Soomaaliya ilaa 1991?\n1) Aden Cadde   2) Siyaad Barre   3) Sharmarke",
         ans: 2
     },
     {
-        text: "🏙️ Schweiz – Städte\n\nWelche dieser Städte liegt im Kanton Genf?\n1) Luzern   2) Genf   3) Chur",
+        text: "🇸🇴 Somalia – Gobollada\n\nSomalia waxaa caadi ahaan lagu sheegaa in ay ka kooban tahay…\n1) 5 gobol   2) 10 gobol   3) qiyaastii 18 gobol",
+        ans: 3
+    },
+    {
+        text: "🌊 Somalia – Xeebaha\n\nSomalia waxay leedahay xeeb aad u dheer oo ku taal badda…\n1) Caspian Sea   2) Indian Ocean   3) Baltic Sea",
         ans: 2
     },
     {
-        text: "🏞️ Schweiz – Natur\n\nWelcher Kanton ist bekannt für viele Seen und Berge und liegt in der Zentralschweiz?\n1) Luzern   2) Basel-Stadt   3) Neuenburg",
+        text: "🏙️ Somalia – Magaalooyin\n\nWaa kuwee caasimadda Soomaaliya?\n1) Hargeysa   2) Muqdisho   3) Kismaayo",
+        ans: 2
+    },
+    {
+        text: "🏞️ Somalia – Webiyaal\n\nMid ka mid ah webiyada waaweyn ee Soomaaliya waa…\n1) Rhein   2) Shabeelle   3) Amazonas",
+        ans: 2
+    },
+    {
+        text: "🌍 Somalia – Deris\n\nSomalia waxay deris la tahay Itoobiya iyo…\n1) Kenya   2) Spain   3) Brazil",
         ans: 1
     }
 ];
@@ -641,7 +750,7 @@ var chQuestions = [
 
 function ensureModules(profile) {
     if (!profile.modules) profile.modules = {};
-    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo"];
+    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo","soinfo"];
     keys.forEach(function(k){
         if (!profile.modules[k]) {
             profile.modules[k] = { correct: 0, total: 0 };
@@ -732,7 +841,10 @@ function selectProfile() {
         renderHallOfFame();
         return;
     }
-    var id = Number(val);
+    selectProfileById(Number(val), false);
+}
+
+function selectProfileById(id, scrollToTop) {
     var profile = profiles.find(function(p){ return p.id === id; });
     if (!profile) {
         activeProfileId = null;
@@ -747,7 +859,17 @@ function selectProfile() {
     document.getElementById('gradeSelect').value = currentGrade;
     score = profile.score || 0;
     updateScoreUI();
+
+    var sel = document.getElementById('profileSelect');
+    if (sel) sel.value = String(id);
+
     renderHallOfFame();
+    if (scrollToTop) {
+        window.scrollTo({top:0, behavior:"smooth"});
+    }
+    if (currentMode !== null) {
+        newQuestion();
+    }
 }
 
 function getActiveProfile() {
@@ -784,15 +906,14 @@ function renderHallOfFame() {
         var lesenTot  = m.read.total   + m.de.total;
         var sprCorr   = m.en.correct + m.fr.correct;
         var sprTot    = m.en.total   + m.fr.total;
-
-        // Schweiz / Wissen: Informatik + Flaggen + Schweiz-Geografie
-        var chCorr = m.itbasics.correct + m.flags.correct + m.chgeo.correct;
-        var chTot  = m.itbasics.total   + m.flags.total   + m.chgeo.total;
+        // Wissen: IT + Flaggen + Schweiz + Somalia
+        var wCorr = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
+        var wTot  = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
 
         var mathePct = matheTot > 0 ? Math.round(matheCorr / matheTot * 100) : 0;
         var lesenPct = lesenTot > 0 ? Math.round(lesenCorr / lesenTot * 100) : 0;
         var sprPct   = sprTot   > 0 ? Math.round(sprCorr   / sprTot   * 100) : 0;
-        var chPct    = chTot    > 0 ? Math.round(chCorr    / chTot    * 100) : 0;
+        var wPct     = wTot    > 0 ? Math.round(wCorr      / wTot     * 100) : 0;
 
         html += '<div class="hall-item">';
         html += (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
@@ -803,10 +924,15 @@ function renderHallOfFame() {
         html += renderBarRow("Mathe", mathePct, "mathe");
         html += renderBarRow("Lesen", lesenPct, "lesen");
         html += renderBarRow("Sprachen", sprPct, "sprache");
-        html += renderBarRow("Schweiz", chPct, "schweiz");
+        html += renderBarRow("Wissen", wPct, "wissen");
         html += '</div>';
 
-        html += '<div class="hall-feedback">' + escapeHtml(buildFeedback(mathePct, lesenPct, sprPct, chPct)) + '</div>';
+        html += '<div class="hall-feedback">' +
+                escapeHtml(buildFeedback(mathePct, lesenPct, sprPct, wPct)) +
+                '</div>';
+
+        html += '<div class="hall-testbutton"><button type="button" onclick="selectProfileById(' +
+                p.id + ', true)">Test mit ' + escapeHtml(p.name) + '</button></div>';
 
         html += '</div>';
     });
@@ -818,7 +944,7 @@ function renderBarRow(label, pct, type) {
     if (type === "mathe") cl += "mathe";
     else if (type === "lesen") cl += "lesen";
     else if (type === "sprache") cl += "sprache";
-    else cl += "schweiz";
+    else cl += "wissen";
 
     return '' +
         '<div class="bar-row">' +
@@ -829,16 +955,16 @@ function renderBarRow(label, pct, type) {
         '</div>';
 }
 
-function buildFeedback(mathePct, lesenPct, sprPct, chPct) {
+function buildFeedback(mathePct, lesenPct, sprPct, wPct) {
     var cats = [
         { key: "Mathe", pct: mathePct },
         { key: "Lesen", pct: lesenPct },
         { key: "Sprachen", pct: sprPct },
-        { key: "Schweiz & Wissen", pct: chPct }
+        { key: "Wissen (IT & Länder)", pct: wPct }
     ];
-    var sum = mathePct + lesenPct + sprPct + chPct;
+    var sum = mathePct + lesenPct + sprPct + wPct;
     if (sum === 0) {
-        return "Noch keine Daten – einfach ein paar Aufgaben lösen, dann gibt es Feedback.";
+        return "Noch keine Daten – ein paar Aufgaben lösen, dann gibt es persönliches Feedback.";
     }
 
     cats.sort(function(a,b){ return b.pct - a.pct; });
@@ -861,7 +987,6 @@ function buildFeedback(mathePct, lesenPct, sprPct, chPct) {
         text += worst.key + " ist ok, aber da geht noch mehr. ";
     }
 
-    // optional: mid-range commentary
     var mid = cats[1];
     if (mid && mid !== best && mid !== worst) {
         text += "In " + mid.key + " bist du auf einem guten Weg.";
@@ -955,6 +1080,14 @@ function getReadingPoolForGrade() {
     return pool.length ? pool : readQuestions;
 }
 
+function getChPoolForGrade() {
+    var g = gradeNumber();
+    var pool = chQuestions.filter(function(q){
+        return g >= q.min && g <= q.max;
+    });
+    return pool.length ? pool : chQuestions;
+}
+
 /* ---------- ANSWER RENDERING ---------- */
 
 function setChoices(choices, answersClass) {
@@ -975,7 +1108,6 @@ function setFlagChoices(correctCode, otherCodes) {
     container.innerHTML = "";
 
     var codes = [correctCode].concat(otherCodes);
-    // shuffle
     for (var i = codes.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var tmp = codes[i]; codes[i] = codes[j]; codes[j] = tmp;
@@ -1008,7 +1140,6 @@ function makeNumericChoices(correct) {
         if (cand <= 0) continue;
         if (vals.indexOf(cand) === -1) vals.push(cand);
     }
-    // shuffle
     for (var i = vals.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
         var tmp = vals[i]; vals[i] = vals[j]; vals[j] = tmp;
@@ -1045,11 +1176,7 @@ function newQuestion() {
         b = randomInt(1, settings.addMax);
         corr = a + b;
         qBox.innerText = a + " + " + b + " = ?";
-        currentQuestion = {
-            correctValue: corr,
-            hint: null,
-            mode: "add"
-        };
+        currentQuestion = { correctValue: corr, mode: "add" };
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'sub') {
         title.innerText = "Subtraktion – Minus & Unterschiede";
@@ -1058,11 +1185,7 @@ function newQuestion() {
         b = randomInt(1, a);
         corr = a - b;
         qBox.innerText = a + " − " + b + " = ?";
-        currentQuestion = {
-            correctValue: corr,
-            hint: null,
-            mode: "sub"
-        };
+        currentQuestion = { correctValue: corr, mode: "sub" };
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'mul') {
         title.innerText = "Multiplikation – Mal-Spiel";
@@ -1071,11 +1194,7 @@ function newQuestion() {
         b = randomInt(1, settings.mulMax);
         corr = a * b;
         qBox.innerText = a + " × " + b + " = ?";
-        currentQuestion = {
-            correctValue: corr,
-            hint: null,
-            mode: "mul"
-        };
+        currentQuestion = { correctValue: corr, mode: "mul" };
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'frac') {
         title.innerText = "Brüche – Teil vom Ganzen";
@@ -1088,11 +1207,7 @@ function newQuestion() {
         q = fracQuestions[randomInt(0, fracQuestions.length - 1)];
         qBox.innerText = q.text;
         corr = q.ans;
-        currentQuestion = {
-            correctValue: corr,
-            hint: null,
-            mode: "frac"
-        };
+        currentQuestion = { correctValue: corr, mode: "frac" };
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'de') {
         title.innerText = "Deutschaufgabe – Rechnen im Satz";
@@ -1103,11 +1218,7 @@ function newQuestion() {
         qBox.innerText =
             "Anna hat " + a + " Äpfel und bekommt noch " + b +
             " dazu.\nWie viele Äpfel hat Anna jetzt insgesamt?";
-        currentQuestion = {
-            correctValue: corr,
-            hint: null,
-            mode: "de"
-        };
+        currentQuestion = { correctValue: corr, mode: "de" };
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'read') {
         title.innerText = "Lesen / Leseverstehen";
@@ -1115,11 +1226,7 @@ function newQuestion() {
         var pool = getReadingPoolForGrade();
         q = pool[randomInt(0, pool.length - 1)];
         qBox.innerText = q.text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: null,
-            mode: "read"
-        };
+        currentQuestion = { correctValue: q.ans, mode: "read" };
         setChoices(
             [
                 { value: 1, text: "1" },
@@ -1130,79 +1237,62 @@ function newQuestion() {
         );
     } else if (currentMode === 'en') {
         title.innerText = "Englisch – Wörter & Farben";
-        inst.innerText = "Lies die Optionen im Text und klicke 1, 2 oder 3.";
+        inst.innerText = "Lies die Frage und klicke das richtige Wort.";
         q = enQuestions[randomInt(0, enQuestions.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: null,
-            mode: "en"
-        };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-lang"
-        );
+        qBox.innerText = "🇬🇧 Englisch\n" + q.question;
+        currentQuestion = { correctValue: q.correctIndex, mode: "en" };
+        var choices = q.options.map(function(opt, idx){
+            return { value: idx, text: opt };
+        });
+        setChoices(choices, "answers-lang");
     } else if (currentMode === 'fr') {
         title.innerText = "Französisch – Wörter & Farben";
-        inst.innerText = "Lies die Optionen im Text und klicke 1, 2 oder 3.";
+        inst.innerText = "Lies die Frage und klicke das richtige Wort.";
         q = frQuestions[randomInt(0, frQuestions.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: null,
-            mode: "fr"
-        };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-lang"
-        );
+        qBox.innerText = "🇫🇷 Französisch\n" + q.question;
+        currentQuestion = { correctValue: q.correctIndex, mode: "fr" };
+        var choicesFr = q.options.map(function(opt, idx){
+            return { value: idx, text: opt };
+        });
+        setChoices(choicesFr, "answers-lang");
     } else if (currentMode === 'itbasics') {
         title.innerText = "Informatik Basics – PC-Wissen";
-        inst.innerText = "Lies die Frage und klicke 1, 2 oder 3.";
+        inst.innerText = "Lies die Frage und klicke die richtige Option.";
         q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: null,
-            mode: "itbasics"
-        };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-it"
-        );
+        qBox.innerText = "💻 Informatik\n" + q.question;
+        currentQuestion = { correctValue: q.correctIndex, mode: "itbasics" };
+        var choicesIt = q.options.map(function(opt, idx){
+            return { value: idx, text: opt };
+        });
+        setChoices(choicesIt, "answers-it");
     } else if (currentMode === 'flags') {
         title.innerText = "Flaggen Afrika – Calan & Waddan";
         inst.innerText = "Dooro calanka saxda ah ee waddanka hoose.";
         q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
         qBox.innerText = "🌍 Waddan: " + q.country + "\n\nDooro calanka saxda ah:";
-        currentQuestion = {
-            correctValue: q.correct,
-            hint: q.hint,
-            mode: "flags"
-        };
+        currentQuestion = { correctValue: q.correct, hint: q.hint, mode: "flags" };
         setFlagChoices(q.correct, q.others);
     } else if (currentMode === 'chgeo') {
         title.innerText = "Schweiz & Kantone – Geografie";
         inst.innerText = "Frage lesen und 1, 2 oder 3 klicken.";
-        q = chQuestions[randomInt(0, chQuestions.length - 1)];
+        var chPool = getChPoolForGrade();
+        q = chPool[randomInt(0, chPool.length - 1)];
         qBox.innerText = q.text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: null,
-            mode: "chgeo"
-        };
+        currentQuestion = { correctValue: q.ans, mode: "chgeo" };
+        setChoices(
+            [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            "answers-geo"
+        );
+    } else if (currentMode === 'soinfo') {
+        title.innerText = "Somalia & Geografie – Taariikh & Aqoon";
+        inst.innerText = "Akhri su’aasha, kadib klicke 1, 2 oder 3.";
+        q = soQuestions[randomInt(0, soQuestions.length - 1)];
+        qBox.innerText = q.text;
+        currentQuestion = { correctValue: q.ans, mode: "soinfo" };
         setChoices(
             [
                 { value: 1, text: "1" },
@@ -1244,7 +1334,7 @@ function handleChoice(selectedValue) {
     }
 
     var correct = currentQuestion.correctValue;
-    var mode = currentQuestion.mode;
+    var mode = currentMode;
     var isCorrect = (selectedValue === correct);
 
     if (mode === "flags" && currentQuestion.hint && isCorrect) {
