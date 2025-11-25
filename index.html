@@ -9,14 +9,14 @@
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #84c0f0; /* helles Blau, freundlich */
+        background: #84c0f0;
         text-align: center;
     }
     header {
-        background: #1b75d0; /* dunkles Blau */
-        padding: 10px 15px;
+        background: #1b75d0;
+        padding: 8px 12px;
         color: white;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -29,18 +29,27 @@
     }
     header small {
         display: block;
-        font-size: 14px;
+        font-size: 13px;
         margin-top: 4px;
         font-weight: normal;
     }
     .flag {
-        font-size: 28px;
-        width: 40px;
+        width: 50px;
         text-align: center;
+    }
+    .flag img {
+        height: 28px;
+        border-radius: 4px;
+        box-shadow: 0 0 4px rgba(0,0,0,0.4);
     }
 
     .top-bar {
-        margin-top: 10px;
+        margin: 10px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
     }
     .top-bar input {
         padding: 6px 10px;
@@ -48,8 +57,12 @@
         border: 1px solid #ccc;
         width: 160px;
     }
+    .top-bar select {
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+    }
     .top-bar .score {
-        margin-left: 10px;
         font-weight: bold;
         color: #fff;
         background: #1b75d0;
@@ -57,42 +70,61 @@
         border-radius: 10px;
     }
 
-    .game-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-        gap: 20px;
-        padding: 20px;
-        max-width: 900px;
-        margin: 0 auto;
+    /* Hamburger / Spiel-Menü */
+    .menu-bar {
+        margin: 15px auto 5px;
+        max-width: 400px;
     }
-    .card {
-        background: white;
-        border-radius: 15px;
-        padding: 18px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        cursor: pointer;
-        transition: 0.2s;
-    }
-    .card:hover {
-        transform: scale(1.05);
-        background: #e3f2ff;
-    }
-    .card .emoji {
-        font-size: 40px;
-    }
-    .card .title {
-        font-size: 18px;
+    .hamburger-btn {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: none;
+        background: #0056a6;
+        color: white;
+        font-size: 16px;
         font-weight: bold;
-        margin-top: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
     }
-    .card .sub {
-        font-size: 13px;
-        color: #555;
+    .hamburger-icon {
+        font-size: 20px;
+    }
+    .menu-list {
+        margin-top: 6px;
+        display: none;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        overflow: hidden;
+    }
+    .menu-item {
+        width: 100%;
+        padding: 10px 14px;
+        border: none;
+        background: white;
+        cursor: pointer;
+        text-align: left;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .menu-item span {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+    .menu-item:hover {
+        background: #e3f2ff;
     }
 
     .game-area {
         max-width: 500px;
-        margin: 20px auto;
+        margin: 15px auto 20px;
         background: #ffffff;
         border-radius: 15px;
         padding: 20px;
@@ -121,7 +153,7 @@
     .game-area button {
         margin-top: 10px;
         padding: 10px 18px;
-        background: #28a745; /* Grün */
+        background: #28a745;
         border: none;
         border-radius: 10px;
         color: white;
@@ -137,16 +169,16 @@
     }
 
     .side-info {
-        max-width: 600px;
-        margin: 10px auto 30px;
-        background: #fffbcc; /* helles Gelb */
+        max-width: 650px;
+        margin: 0 auto 30px;
+        background: #fffbcc;
         border-radius: 12px;
-        padding: 10px 15px;
+        padding: 10px 15px 15px;
         font-size: 14px;
         text-align: left;
     }
     .side-info h3 {
-        margin-top: 0;
+        margin-top: 5px;
     }
     .side-info ul {
         padding-left: 20px;
@@ -157,44 +189,65 @@
 <body>
 
 <header>
-  <div class="flag">🇸🇴</div>
+  <div class="flag">
+    <img src="https://flagcdn.com/w40/so.png" alt="Somalia">
+  </div>
   <div class="header-center">
     Mathe & Deutsch – Spielplatz (Musti Edition)
-    <small>Rechnen & Deutsch lernen – für kleine Profis</small>
+    <small>Grundschule · Rechnen & Sprachen lernen</small>
   </div>
-  <div class="flag">🇨🇭</div>
+  <div class="flag">
+    <img src="https://flagcdn.com/w40/ch.png" alt="Schweiz">
+  </div>
 </header>
 
 <div class="top-bar">
     <input type="text" id="username" placeholder="Name eingeben" oninput="updateName()" />
+    <select id="gradeSelect" onchange="updateGrade()">
+        <option value="1">1. Klasse</option>
+        <option value="2">2. Klasse</option>
+        <option value="3">3. Klasse</option>
+        <option value="4">4. Klasse</option>
+        <option value="5">5. Klasse</option>
+        <option value="6">6. Klasse</option>
+        <option value="special">Spezial 6/7</option>
+    </select>
     <span class="score" id="scoreBox">Punkte: 0</span>
 </div>
 
-<div class="game-grid">
-    <div class="card" onclick="chooseMode('add')">
-        <div class="emoji">➕</div>
-        <div class="title">Addition</div>
-        <div class="sub">3 + 4, 10 + 5 ...</div>
-    </div>
-    <div class="card" onclick="chooseMode('sub')">
-        <div class="emoji">➖</div>
-        <div class="title">Subtraktion</div>
-        <div class="sub">10 − 6, 15 − 7 ...</div>
-    </div>
-    <div class="card" onclick="chooseMode('mul')">
-        <div class="emoji">✖️</div>
-        <div class="title">Multiplikation</div>
-        <div class="sub">2 × 3, 5 × 4 ...</div>
-    </div>
-    <div class="card" onclick="chooseMode('frac')">
-        <div class="emoji">🧩</div>
-        <div class="title">Brüche</div>
-        <div class="sub">1/2 von 8? ...</div>
-    </div>
-    <div class="card" onclick="chooseMode('de')">
-        <div class="emoji">🇩🇪</div>
-        <div class="title">Deutschaufgaben</div>
-        <div class="sub">„Wie viel ist 3 + 5?“</div>
+<div class="menu-bar">
+    <button class="hamburger-btn" onclick="toggleMenu()">
+        <span class="hamburger-icon">☰</span>
+        Spiele wählen (Mathe / Deutsch)
+    </button>
+    <div class="menu-list" id="menuList">
+        <button class="menu-item" onclick="chooseMode('add')">
+            <span>➕</span> Addition
+        </button>
+        <button class="menu-item" onclick="chooseMode('sub')">
+            <span>➖</span> Subtraktion
+        </button>
+        <button class="menu-item" onclick="chooseMode('mul')">
+            <span>✖️</span> Multiplikation
+        </button>
+        <button class="menu-item" onclick="chooseMode('frac')">
+            <span>🧩</span> Brüche
+        </button>
+        <button class="menu-item" onclick="chooseMode('de')">
+            <span>🇩🇪</span> Deutschaufgaben (Text)
+        </button>
+        <!-- Platzhalter für Zukunft: Englisch, Französisch, Informatik -->
+        <!--
+        <button class="menu-item" onclick="chooseMode('en')">
+            <span>🇬🇧</span> Englisch (coming soon)
+        </button>
+        <button class="menu-item" onclick="chooseMode('fr')">
+            <span>🇫🇷</span> Französisch (coming soon)
+        </button>
+        <button class="menu-item" onclick="chooseMode('itbasics')">
+            <span>💻</span> Informatik Basics (coming soon)
+        </button>
+        -->
     </div>
 </div>
 
@@ -211,7 +264,7 @@
 </div>
 
 <div class="side-info">
-    <h3>Deutsch – Mathewörter</h3>
+    <h3>Grundwortschatz Mathe (Deutsch)</h3>
     <ul>
         <li><b>plus</b> = + (z.&nbsp;B. 3 plus 4)</li>
         <li><b>minus</b> = − (z.&nbsp;B. 7 minus 2)</li>
@@ -220,11 +273,11 @@
         <li><b>Ergebnis</b> = Resultat / Lösung</li>
     </ul>
     <p>
-      Kurze Anleitung auf Deutsch:<br>
-      – Oben ein Spiel auswählen.<br>
-      – Frage lesen.<br>
-      – Antwort ins Feld schreiben.<br>
-      – Auf OK klicken.<br>
+      Anleitung auf Deutsch:<br>
+      – Oben Klasse auswählen (1.–6. Klasse oder Spezial 6/7).<br>
+      – Auf „Spiele wählen“ klicken und ein Spiel aussuchen.<br>
+      – Frage lesen, Antwort eintippen.<br>
+      – Auf OK klicken und Punkte sammeln.<br>
     </p>
 </div>
 
@@ -232,6 +285,7 @@
 let currentMode = null;
 let currentAnswer = null;
 let score = 0;
+let currentGrade = "1";
 
 function updateName(){
     const name = document.getElementById('username').value.trim();
@@ -242,6 +296,24 @@ function updateName(){
     }
 }
 
+function updateGrade(){
+    const sel = document.getElementById('gradeSelect');
+    currentGrade = sel.value;
+    // Optional: neue Frage passend zur Klasse
+    if(currentMode !== null){
+        newQuestion();
+    }
+}
+
+function toggleMenu(){
+    const menu = document.getElementById('menuList');
+    if(menu.style.display === "block"){
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}
+
 function chooseMode(mode){
     currentMode = mode;
     document.getElementById('gameArea').style.display = 'block';
@@ -249,11 +321,37 @@ function chooseMode(mode){
     newQuestion();
 }
 
+function getSettingsForGrade(){
+    // Adkaanta dadkan:
+    // 1. Klasse: tirooyin yar
+    // 6. Klasse / Spezial: tirooyin waaweyn
+    switch(currentGrade){
+        case "1":
+            return { addMax: 10, subMax: 10, mulMax: 5 };
+        case "2":
+            return { addMax: 20, subMax: 20, mulMax: 8 };
+        case "3":
+            return { addMax: 30, subMax: 30, mulMax: 10 };
+        case "4":
+            return { addMax: 50, subMax: 50, mulMax: 10 };
+        case "5":
+            return { addMax: 80, subMax: 80, mulMax: 12 };
+        case "6":
+            return { addMax: 100, subMax: 100, mulMax: 12 };
+        case "special":
+            return { addMax: 150, subMax: 150, mulMax: 15 };
+        default:
+            return { addMax: 20, subMax: 20, mulMax: 10 };
+    }
+}
+
 function newQuestion(){
     const qBox = document.getElementById('questionBox');
     const title = document.getElementById('gameTitle');
     const inst = document.getElementById('instructions');
     const input = document.getElementById('answerInput');
+    const settings = getSettingsForGrade();
+
     input.value = '';
     input.focus();
 
@@ -262,22 +360,22 @@ function newQuestion(){
     if(currentMode === 'add'){
         title.innerText = "Addition";
         inst.innerText = "Berechne die Summe.";
-        a = randomInt(1, 20);
-        b = randomInt(1, 20);
+        a = randomInt(1, settings.addMax);
+        b = randomInt(1, settings.addMax);
         qBox.innerText = a + " + " + b + " = ?";
         currentAnswer = a + b;
     } else if(currentMode === 'sub'){
         title.innerText = "Subtraktion";
         inst.innerText = "Berechne die Differenz.";
-        a = randomInt(5, 30);
+        a = randomInt(1, settings.subMax);
         b = randomInt(1, a);
         qBox.innerText = a + " − " + b + " = ?";
         currentAnswer = a - b;
     } else if(currentMode === 'mul'){
         title.innerText = "Multiplikation";
         inst.innerText = "Berechne das Produkt.";
-        a = randomInt(1, 10);
-        b = randomInt(1, 10);
+        a = randomInt(1, settings.mulMax);
+        b = randomInt(1, settings.mulMax);
         qBox.innerText = a + " × " + b + " = ?";
         currentAnswer = a * b;
     } else if(currentMode === 'frac'){
@@ -294,8 +392,8 @@ function newQuestion(){
     } else if(currentMode === 'de'){
         title.innerText = "Deutschaufgaben";
         inst.innerText = "Lies die Aufgabe auf Deutsch und antworte mit einer Zahl.";
-        a = randomInt(1, 20);
-        b = randomInt(1, 20);
+        a = randomInt(1, settings.addMax);
+        b = randomInt(1, settings.addMax);
         qBox.innerText = "Wie viel ist " + a + " plus " + b + " ?";
         currentAnswer = a + b;
     } else {
