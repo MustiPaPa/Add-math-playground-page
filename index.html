@@ -177,6 +177,31 @@
         cursor: pointer;
     }
 
+    .profile-buttons-bar {
+        max-width: 900px;
+        margin: 6px auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+    }
+    .profile-buttons-bar button {
+        border-radius: 999px;
+        border: none;
+        padding: 4px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        background: rgba(0,0,0,0.08);
+        color: var(--text);
+    }
+    .profile-buttons-bar button.active {
+        background: var(--accent);
+        color: #fff;
+    }
+    .profile-buttons-bar button:hover {
+        opacity: 0.9;
+    }
+
     .menu-bar {
         margin: 15px auto 5px;
         max-width: 450px;
@@ -356,6 +381,7 @@
     .feedback {
         margin-top: 10px;
         font-weight: bold;
+        white-space: pre-line;
     }
 
     .side-info {
@@ -488,6 +514,7 @@
         <option value="">– Kind wählen –</option>
     </select>
     <button type="button" onclick="addProfile()">Neues Kind</button>
+    <button type="button" onclick="resetActiveProfile()">Reset Profil</button>
 
     <span class="top-label">Klasse:</span>
     <select id="gradeSelect" onchange="updateGrade()">
@@ -509,6 +536,8 @@
         </label>
     </div>
 </div>
+
+<div id="profileButtonsBar" class="profile-buttons-bar"></div>
 
 <div class="menu-bar">
     <button class="hamburger-btn" onclick="toggleMenu()">
@@ -572,12 +601,14 @@
             <ul>
                 <li>Name & Klasse (1–6 oder Spezial 6/7)</li>
                 <li>Punkte (Score)</li>
+                <li>Level pro Modul (5 Fragen, ab 4 Richtigen → nächstes Level)</li>
                 <li>Modul-Fortschritt:
                     <b>Mathe</b>, <b>Lesen</b>, <b>Sprachen</b>, <b>Wissen (IT + Länder)</b>.
                 </li>
             </ul>
         </li>
-        <li>Unter „Hall of Fame“ kannst du direkt für jedes Kind auf „Test mit [Name]“ klicken.</li>
+        <li>Oben siehst du Namens-Buttons, um schnell ein Kind zu wählen.</li>
+        <li>„Reset Profil“ setzt Punkte und Level vom aktiven Kind zurück.</li>
     </ul>
 
     <h3>Hall of Fame – Übersicht pro Kind</h3>
@@ -593,6 +624,9 @@ var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
 var STORAGE_KEY = "musti_playground_profiles_v6";
+
+/* Level-run: 5 Fragen → 4+ richtig = Level up */
+var currentRun = { mode: null, count: 0, correct: 0 };
 
 /* ---------- QUESTION POOLS ---------- */
 
@@ -804,7 +838,7 @@ var chQuestions = [
     }
 ];
 
-/* Somalia & Geografie – options style */
+/* Somalia & Geografie – options style (NO „Kenya Spain Brazil“ combo) */
 var soQuestions = [
     {
         question: "🇸🇴 Somalia – Taariikh\n\nGoorma ayay Soomaaliya xorowday (midowga Waqooyi & Koonfur)?",
@@ -838,7 +872,7 @@ var soQuestions = [
     },
     {
         question: "🌍 Somalia – Deris\n\nSomalia waxay deris la tahay Itoobiya iyo…",
-        options: ["Kenya", "Spain", "Brazil"],
+        options: ["Kenya", "Japan", "Canada"],
         correctIndex: 0
     }
 ];
@@ -847,10 +881,14 @@ var soQuestions = [
 
 function ensureModules(profile) {
     if (!profile.modules) profile.modules = {};
+    if (!profile.levels) profile.levels = {};
     var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo","soinfo"];
     keys.forEach(function(k){
         if (!profile.modules[k]) {
             profile.modules[k] = { correct: 0, total: 0 };
+        }
+        if (!profile.levels[k]) {
+            profile.levels[k] = 1;
         }
     });
 }
@@ -864,6 +902,7 @@ function loadProfiles() {
     }
     profiles.forEach(ensureModules);
     renderProfileOptions();
+    renderProfileButtons();
     renderHallOfFame();
 }
 
@@ -897,6 +936,21 @@ function renderProfileOptions() {
     }
 }
 
+function renderProfileButtons() {
+    var bar = document.getElementById('profileButtonsBar');
+    if (!bar) return;
+    bar.innerHTML = "";
+    profiles.forEach(function(p){
+        var btn = document.createElement('button');
+        btn.textContent = p.name;
+        if (p.id === activeProfileId) {
+            btn.classList.add('active');
+        }
+        btn.onclick = function(){ selectProfileById(p.id, true); };
+        bar.appendChild(btn);
+    });
+}
+
 function addProfile() {
     if (profiles.length >= 10) {
         alert("Maximal 10 Kinder können registriert werden.");
@@ -913,7 +967,8 @@ function addProfile() {
         name: name,
         grade: grade,
         score: 0,
-        modules: {}
+        modules: {},
+        levels: {}
     };
     ensureModules(newProfile);
     profiles.push(newProfile);
@@ -921,11 +976,39 @@ function addProfile() {
     score = 0;
     saveProfiles();
     renderProfileOptions();
+    renderProfileButtons();
     document.getElementById('profileSelect').value = String(newProfile.id);
     currentGrade = grade;
     document.getElementById('gradeSelect').value = grade;
     updateScoreUI();
     renderHallOfFame();
+}
+
+function resetActiveProfile() {
+    var p = getActiveProfile();
+    if (!p) {
+        alert("Kein aktives Kind ausgewählt.");
+        return;
+    }
+    if (!confirm("Profil von " + p.name + " komplett zurücksetzen (Punkte + Level)?")) {
+        return;
+    }
+    p.score = 0;
+    if (!p.modules) p.modules = {};
+    if (!p.levels) p.levels = {};
+    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo","soinfo"];
+    keys.forEach(function(k){
+        p.modules[k] = { correct: 0, total: 0 };
+        p.levels[k] = 1;
+    });
+    score = 0;
+    currentRun = { mode: currentMode, count: 0, correct: 0 };
+    saveProfiles();
+    updateScoreUI();
+    renderHallOfFame();
+    renderProfileButtons();
+    var fb = document.getElementById('feedbackBox');
+    if (fb) fb.innerText = "Profil wurde zurückgesetzt.";
 }
 
 function selectProfile() {
@@ -936,6 +1019,7 @@ function selectProfile() {
         score = 0;
         updateScoreUI();
         renderHallOfFame();
+        renderProfileButtons();
         return;
     }
     selectProfileById(Number(val), false);
@@ -948,6 +1032,7 @@ function selectProfileById(id, scrollToTop) {
         score = 0;
         updateScoreUI();
         renderHallOfFame();
+        renderProfileButtons();
         return;
     }
     ensureModules(profile);
@@ -961,10 +1046,12 @@ function selectProfileById(id, scrollToTop) {
     if (sel) sel.value = String(id);
 
     renderHallOfFame();
+    renderProfileButtons();
     if (scrollToTop) {
         window.scrollTo({top:0, behavior:"smooth"});
     }
     if (currentMode !== null) {
+        resetRunForMode(currentMode);
         newQuestion();
     }
 }
@@ -1091,6 +1178,40 @@ function buildFeedback(mathePct, lesenPct, sprPct, wPct) {
     return text.trim();
 }
 
+/* ---------- LEVEL HELPERS ---------- */
+
+function getModeLabel(mode) {
+    switch (mode) {
+        case "add": return "Addition";
+        case "sub": return "Subtraktion";
+        case "mul": return "Multiplikation";
+        case "frac": return "Brüche";
+        case "de": return "Deutschaufgaben";
+        case "read": return "Lesen";
+        case "en": return "Englisch";
+        case "fr": return "Französisch";
+        case "itbasics": return "Informatik";
+        case "flags": return "Flaggen Afrika";
+        case "chgeo": return "Schweiz";
+        case "soinfo": return "Somalia";
+        default: return "Modul";
+    }
+}
+
+function getProfileLevel(profile, mode) {
+    if (!profile || !profile.levels) return 1;
+    return profile.levels[mode] || 1;
+}
+
+function setProfileLevel(profile, mode, level) {
+    if (!profile.levels) profile.levels = {};
+    profile.levels[mode] = level;
+}
+
+function resetRunForMode(mode) {
+    currentRun = { mode: mode, count: 0, correct: 0 };
+}
+
 /* ---------- GENERAL UI ---------- */
 
 function updateGrade() {
@@ -1102,10 +1223,12 @@ function updateGrade() {
         p.grade = currentGrade;
         saveProfiles();
         renderProfileOptions();
+        renderProfileButtons();
         renderHallOfFame();
     }
 
     if (currentMode !== null) {
+        resetRunForMode(currentMode);
         newQuestion();
     }
 }
@@ -1129,6 +1252,7 @@ function toggleDarkMode() {
 
 function chooseMode(mode) {
     currentMode = mode;
+    resetRunForMode(mode);
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('feedbackBox').innerText = '';
 
@@ -1137,10 +1261,12 @@ function chooseMode(mode) {
         document.getElementById('instructions').innerText =
           "Bitte zuerst ein Kind auswählen und dann das Spiel starten.";
     } else {
+        var lvl = getProfileLevel(p, mode);
         document.getElementById('instructions').innerText =
           "Kind: " + p.name + " · Klasse: " +
           (p.grade === "special" ? "6/7" : p.grade) +
-          ". Wähle die richtige Antwort.";
+          " · Level " + lvl + " in " + getModeLabel(mode) +
+          " (5 Fragen pro Level).";
     }
 
     newQuestion();
@@ -1267,7 +1393,6 @@ function newQuestion() {
 
     if (currentMode === 'add') {
         title.innerText = "Addition – Zahlen-Training";
-        inst.innerText = "Rechne die Plus-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
         corr = a + b;
@@ -1276,7 +1401,6 @@ function newQuestion() {
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'sub') {
         title.innerText = "Subtraktion – Minus & Unterschiede";
-        inst.innerText = "Rechne die Minus-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.subMax);
         b = randomInt(1, a);
         corr = a - b;
@@ -1285,7 +1409,6 @@ function newQuestion() {
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'mul') {
         title.innerText = "Multiplikation – Mal-Spiel";
-        inst.innerText = "Löse die Mal-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.mulMax);
         b = randomInt(1, settings.mulMax);
         corr = a * b;
@@ -1294,7 +1417,6 @@ function newQuestion() {
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'frac') {
         title.innerText = "Brüche – Teil vom Ganzen";
-        inst.innerText = "Berechne den Anteil und klicke die richtige Zahl.";
         var fracQuestions = [
             { text: "1/2 von 8 = ?", ans: 4 },
             { text: "1/3 von 9 = ?", ans: 3 },
@@ -1307,7 +1429,6 @@ function newQuestion() {
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'de') {
         title.innerText = "Deutschaufgabe – Rechnen im Satz";
-        inst.innerText = "Lies den Satz und klicke die richtige Zahl.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
         corr = a + b;
@@ -1318,7 +1439,6 @@ function newQuestion() {
         setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'read') {
         title.innerText = "Lesen / Leseverstehen";
-        inst.innerText = "Lies den Text und klicke 1, 2 oder 3.";
         var pool = getReadingPoolForGrade();
         q = pool[randomInt(0, pool.length - 1)];
         qBox.innerText = q.text;
@@ -1333,7 +1453,6 @@ function newQuestion() {
         );
     } else if (currentMode === 'en') {
         title.innerText = "Englisch – Wörter & Farben";
-        inst.innerText = "Lies die Frage und klicke das richtige Wort.";
         q = enQuestions[randomInt(0, enQuestions.length - 1)];
         qBox.innerText = "🇬🇧 Englisch\n" + q.question;
         currentQuestion = { correctValue: q.correctIndex, mode: "en" };
@@ -1343,7 +1462,6 @@ function newQuestion() {
         setChoices(choices, "answers-lang");
     } else if (currentMode === 'fr') {
         title.innerText = "Französisch – Wörter & Farben";
-        inst.innerText = "Lies die Frage und klicke das richtige Wort.";
         q = frQuestions[randomInt(0, frQuestions.length - 1)];
         qBox.innerText = "🇫🇷 Französisch\n" + q.question;
         currentQuestion = { correctValue: q.correctIndex, mode: "fr" };
@@ -1353,7 +1471,6 @@ function newQuestion() {
         setChoices(choicesFr, "answers-lang");
     } else if (currentMode === 'itbasics') {
         title.innerText = "Informatik Basics – PC-Wissen";
-        inst.innerText = "Lies die Frage und klicke die richtige Option.";
         q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length - 1)];
         qBox.innerText = "💻 Informatik\n" + q.question;
         currentQuestion = { correctValue: q.correctIndex, mode: "itbasics" };
@@ -1363,14 +1480,12 @@ function newQuestion() {
         setChoices(choicesIt, "answers-it");
     } else if (currentMode === 'flags') {
         title.innerText = "Flaggen Afrika – Calan & Waddan";
-        inst.innerText = "Dooro calanka saxda ah ee waddanka hoose.";
         q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
         qBox.innerText = "🌍 Waddan: " + q.country + "\n\nDooro calanka saxda ah:";
         currentQuestion = { correctValue: q.correct, hint: q.hint, mode: "flags" };
         setFlagChoices(q.correct, q.others);
     } else if (currentMode === 'chgeo') {
         title.innerText = "Schweiz & Kantone – Geografie";
-        inst.innerText = "Frage lesen und richtige Region anklicken.";
         var chPool = getChPoolForGrade();
         q = chPool[randomInt(0, chPool.length - 1)];
         qBox.innerText = q.question;
@@ -1381,7 +1496,6 @@ function newQuestion() {
         setChoices(chChoices, "answers-geo");
     } else if (currentMode === 'soinfo') {
         title.innerText = "Somalia & Geografie – Taariikh & Aqoon";
-        inst.innerText = "Akhri su’aasha, kadib ku dhufo jawaabta saxda ah.";
         q = soQuestions[randomInt(0, soQuestions.length - 1)];
         qBox.innerText = q.question;
         currentQuestion = { correctValue: q.correctIndex, mode: "soinfo" };
@@ -1397,7 +1511,7 @@ function newQuestion() {
     }
 }
 
-/* ---------- ANSWER HANDLING ---------- */
+/* ---------- ANSWER HANDLING + LEVEL LOGIC ---------- */
 
 function updateModuleStats(mode, isCorrect) {
     var p = getActiveProfile();
@@ -1425,6 +1539,10 @@ function handleChoice(selectedValue) {
     var mode = currentMode;
     var isCorrect = (selectedValue === correct);
 
+    if (!currentRun.mode || currentRun.mode !== mode) {
+        resetRunForMode(mode);
+    }
+
     if (mode === "flags" && currentQuestion.hint && isCorrect) {
         fb.innerText = "Richtig! 👏\n" + currentQuestion.hint;
     } else if (isCorrect) {
@@ -1436,16 +1554,38 @@ function handleChoice(selectedValue) {
 
     updateModuleStats(mode, isCorrect);
 
+    /* Level-run update */
+    currentRun.count++;
+    if (isCorrect) currentRun.correct++;
+
+    var extraMsg = "";
+
+    if (currentRun.count >= 5) {
+        ensureModules(p);
+        var lvl = getProfileLevel(p, mode);
+        if (currentRun.correct >= 4) {
+            lvl++;
+            setProfileLevel(p, mode, lvl);
+            extraMsg = "\nLevel geschafft! Du bist jetzt Level " + lvl +
+                       " in " + getModeLabel(mode) + ".";
+        } else {
+            extraMsg = "\nLevel nicht bestanden – du bleibst auf Level " + lvl +
+                       " in " + getModeLabel(mode) + ".";
+        }
+        fb.innerText += extraMsg;
+        currentRun.count = 0;
+        currentRun.correct = 0;
+    }
+
+    saveProfiles();
+    renderHallOfFame();
+    renderProfileButtons();
+
     if (isCorrect) {
         score++;
         p.score = score;
-        saveProfiles();
         updateScoreUI();
-        renderHallOfFame();
         setTimeout(newQuestion, mode === "flags" ? 1400 : 900);
-    } else {
-        saveProfiles();
-        renderHallOfFame();
     }
 }
 
