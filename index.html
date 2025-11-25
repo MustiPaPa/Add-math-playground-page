@@ -5,16 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Musti – Lern-Spielplatz</title>
 <style>
-    * {
-        box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
     body {
         margin: 0;
         font-family: Arial, sans-serif;
         background: linear-gradient(135deg, #84c0f0, #f7f9ff);
         text-align: center;
         color: #123;
+        transition: background 0.3s, color 0.3s;
     }
+
+    body.dark {
+        background: radial-gradient(circle at top, #1f2937, #020617);
+        color: #e5e7eb;
+    }
+
     header {
         position: relative;
         padding: 18px 10px 12px;
@@ -24,6 +30,10 @@
         background: linear-gradient(90deg, #004f9f, #0099ff);
         box-shadow: 0 3px 8px rgba(0,0,0,0.25);
     }
+    body.dark header {
+        background: linear-gradient(90deg, #0f172a, #1d4ed8);
+    }
+
     header small {
         display: block;
         font-size: 13px;
@@ -37,8 +47,9 @@
         display: flex;
         gap: 8px;
         font-size: 26px;
+        align-items: center;
     }
-    .header-flags span {
+    .header-flags span.flag-circle {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -47,6 +58,24 @@
         border-radius: 50%;
         box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
         background: rgba(0,0,0,0.15);
+    }
+    .dark-toggle-btn {
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-size: 11px;
+        margin-right: 6px;
+        background: rgba(255,255,255,0.9);
+        color: #111827;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    body.dark .dark-toggle-btn {
+        background: rgba(15,23,42,0.9);
+        color: #e5e7eb;
+        border: 1px solid #4b5563;
     }
 
     .top-wrap {
@@ -57,14 +86,23 @@
         grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr);
         gap: 10px;
     }
+    @media (max-width: 900px) {
+        .top-wrap { grid-template-columns: minmax(0,1fr); }
+    }
 
     .top-bar, .profile-panel {
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.94);
         border-radius: 12px;
         padding: 8px 10px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.12);
         text-align: left;
     }
+    body.dark .top-bar,
+    body.dark .profile-panel {
+        background: rgba(15,23,42,0.95);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
     .top-bar-row {
         display: flex;
         flex-wrap: wrap;
@@ -74,9 +112,16 @@
     .top-bar input[type="text"] {
         padding: 5px 8px;
         border-radius: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid #cbd5e1;
         min-width: 130px;
+        font-size: 13px;
     }
+    body.dark .top-bar input[type="text"] {
+        background: #020617;
+        color: #e5e7eb;
+        border-color: #475569;
+    }
+
     .top-bar .score {
         font-weight: bold;
         padding: 2px 8px;
@@ -89,10 +134,8 @@
         opacity: 0.8;
     }
 
-    .profile-panel h3 {
-        margin: 0 0 6px;
-        font-size: 15px;
-    }
+    .profile-panel h3 { margin: 0 0 6px; font-size: 15px; }
+
     .profile-form {
         display: flex;
         flex-wrap: wrap;
@@ -104,22 +147,27 @@
     .profile-form select {
         padding: 5px 8px;
         border-radius: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid #cbd5e1;
         font-size: 13px;
+    }
+    body.dark .profile-form input,
+    body.dark .profile-form select {
+        background: #020617;
+        border-color: #475569;
+        color: #e5e7eb;
     }
     .profile-form button {
         padding: 5px 10px;
         border-radius: 10px;
         border: none;
-        background: #28a745;
+        background: #22c55e;
         color: white;
         font-weight: bold;
         cursor: pointer;
         font-size: 12px;
     }
-    .profile-form button:hover {
-        background: #218838;
-    }
+    .profile-form button:hover { background: #16a34a; }
+
     .profile-buttons {
         display: flex;
         flex-wrap: wrap;
@@ -132,13 +180,21 @@
         border: none;
         font-size: 12px;
         cursor: pointer;
-        background: #eee;
+        background: #e5e7eb;
     }
     .profile-btn.active {
-        background: #1b75d0;
+        background: #1d4ed8;
         color: white;
         font-weight: bold;
     }
+    body.dark .profile-btn {
+        background: #111827;
+        color: #e5e7eb;
+    }
+    body.dark .profile-btn.active {
+        background: #1d4ed8;
+    }
+
     .hall-of-fame {
         margin-top: 6px;
         font-size: 11px;
@@ -151,16 +207,22 @@
     }
     .hall-of-fame th,
     .hall-of-fame td {
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #e5e7eb;
         padding: 2px 3px;
         text-align: left;
         white-space: nowrap;
     }
     .hall-of-fame th {
-        background: #f1f5ff;
+        background: #e5edff;
         position: sticky;
         top: 0;
         z-index: 1;
+    }
+    body.dark .hall-of-fame th {
+        background: #111827;
+    }
+    body.dark .hall-of-fame td {
+        border-bottom-color: #1f2937;
     }
 
     .layout-main {
@@ -171,12 +233,8 @@
         grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
         gap: 12px;
     }
-
     @media (max-width: 900px) {
-        .top-wrap,
-        .layout-main {
-            grid-template-columns: minmax(0,1fr);
-        }
+        .layout-main { grid-template-columns: minmax(0,1fr); }
     }
 
     .game-grid {
@@ -185,6 +243,7 @@
         gap: 12px;
         padding: 10px 0;
     }
+
     .card {
         background: white;
         border-radius: 14px;
@@ -194,22 +253,22 @@
         transition: 0.18s;
         text-align: center;
     }
+    body.dark .card {
+        background: #020617;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    }
     .card:hover {
         transform: translateY(-2px);
-        background: #e6f2ff;
+        background: #e0efff;
     }
-    .card .emoji {
-        font-size: 32px;
+    body.dark .card:hover {
+        background: #111827;
     }
-    .card .title {
-        font-size: 15px;
-        font-weight: bold;
-        margin-top: 6px;
-    }
-    .card .sub {
-        font-size: 11px;
-        color: #555;
-    }
+
+    .card .emoji { font-size: 32px; }
+    .card .title { font-size: 15px; font-weight: bold; margin-top: 6px; }
+    .card .sub { font-size: 11px; color: #555; }
+    body.dark .card .sub { color: #9ca3af; }
 
     .game-area {
         background: #ffffff;
@@ -217,12 +276,43 @@
         padding: 15px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         text-align: left;
-        min-height: 240px;
+        min-height: 260px;
+    }
+    body.dark .game-area {
+        background: #020617;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.8);
+    }
+
+    .game-area-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
     }
     .game-area h2 {
         margin-top: 0;
         margin-bottom: 6px;
     }
+    .back-btn {
+        padding: 4px 10px;
+        font-size: 11px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: #e5e7eb;
+    }
+    body.dark .back-btn {
+        background: #111827;
+        color: #e5e7eb;
+        border: 1px solid #374151;
+    }
+    .back-btn:hover {
+        background: #d1d5db;
+    }
+    body.dark .back-btn:hover {
+        background: #1f2937;
+    }
+
     .question {
         font-size: 18px;
         margin: 8px 0;
@@ -234,6 +324,8 @@
         margin-bottom: 4px;
         white-space: pre-line;
     }
+    body.dark .hint { color: #9ca3af; }
+
     .options {
         margin-top: 6px;
         display: flex;
@@ -241,17 +333,31 @@
         gap: 6px;
     }
     .option-btn {
-        padding: 6px 10px;
+        padding: 8px 12px;
         border-radius: 10px;
-        border: 1px solid #ccc;
-        background: #f8f9ff;
+        border: none;
         cursor: pointer;
         text-align: left;
         font-size: 14px;
+        font-weight: 500;
+        background: #e0f2fe;
+        color: #0f172a;
+        box-shadow: 0 1px 4px rgba(15,23,42,0.25);
+        transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
     }
+    .option-btn:nth-child(2) { background: #fef3c7; }
+    .option-btn:nth-child(3) { background: #e5e7eb; }
     .option-btn:hover {
-        background: #dfefff;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(15,23,42,0.35);
     }
+    body.dark .option-btn {
+        background: #1f2937;
+        color: #e5e7eb;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.8);
+    }
+    body.dark .option-btn:nth-child(2) { background: #312e81; }
+    body.dark .option-btn:nth-child(3) { background: #064e3b; }
 
     .feedback {
         margin-top: 8px;
@@ -266,9 +372,12 @@
         text-align: left;
         box-shadow: 0 3px 8px rgba(0,0,0,0.18);
     }
-    .side-info h3 {
-        margin-top: 0;
+    body.dark .side-info {
+        background: #111827;
+        color: #e5e7eb;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.8);
     }
+    .side-info h3 { margin-top: 0; }
     .side-info ul {
         padding-left: 18px;
         margin: 5px 0 8px;
@@ -281,8 +390,11 @@
   Musti – Lern-Spielplatz für Kinder
   <small>Mathe · Deutsch · Englisch · Französisch · Informatik · Somalia · Schweiz · CCNA</small>
   <div class="header-flags">
-      <span title="Schweiz">🇨🇭</span>
-      <span title="Somalia">🇸🇴</span>
+      <button class="dark-toggle-btn" onclick="toggleDarkMode()">
+          <span id="darkIcon">🌙</span> <span id="darkText">Dark</span>
+      </button>
+      <span class="flag-circle" title="Schweiz">🇨🇭</span>
+      <span class="flag-circle" title="Somalia">🇸🇴</span>
   </div>
 </header>
 
@@ -321,7 +433,7 @@
 
 <div class="layout-main">
     <div>
-        <div class="game-grid">
+        <div class="game-grid" id="gameGrid">
             <div class="card" onclick="chooseMode('add')">
                 <div class="emoji">➕</div>
                 <div class="title">Addition</div>
@@ -390,7 +502,10 @@
         </div>
 
         <div class="game-area" id="gameArea" style="margin-top:10px;">
-            <h2 id="gameTitle">Spiel wählen / Doorow Spiel</h2>
+            <div class="game-area-header">
+                <h2 id="gameTitle">Spiel wählen / Doorow Spiel</h2>
+                <button class="back-btn" id="backBtn" style="display:none;" onclick="backToMenu()">⬅ Übersicht</button>
+            </div>
             <p class="hint" id="instructions">
                 Dooro ilmuhu kor, kadibna dooro modul (Mathe, Sprachen, Somalia, Schweiz, CCNA...).
             </p>
@@ -428,12 +543,46 @@
 /* ========= GLOBAL STATE ========= */
 
 var STORAGE_KEY = "musti-lernspielplatz-profiles-v1";
+var DARK_KEY = "musti-lernspielplatz-dark";
 
 var profiles = [];
 var activeProfileId = null;
 var currentMode = null;
 var currentQuestion = null;
 var score = 0;
+
+/* ========= DARK MODE ========= */
+
+function applyDarkFromStorage() {
+    try {
+        var val = localStorage.getItem(DARK_KEY);
+        if (val === "1") {
+            document.body.classList.add("dark");
+        }
+    } catch(e){}
+    updateDarkToggleText();
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    try {
+        localStorage.setItem(DARK_KEY, document.body.classList.contains("dark") ? "1" : "0");
+    } catch(e){}
+    updateDarkToggleText();
+}
+
+function updateDarkToggleText() {
+    var icon = document.getElementById("darkIcon");
+    var txt = document.getElementById("darkText");
+    if (!icon || !txt) return;
+    if (document.body.classList.contains("dark")) {
+        icon.textContent = "☀️";
+        txt.textContent = "Light";
+    } else {
+        icon.textContent = "🌙";
+        txt.textContent = "Dark";
+    }
+}
 
 /* ========= DAILY HELPERS ========= */
 
@@ -1277,29 +1426,17 @@ var deLanguageQuestions = [
 var flagQuestions = [
     {
         question: "Waa calanka Kenya?",
-        options: [
-            "🇰🇪",
-            "🇧🇷",
-            "🇪🇸"
-        ],
+        options: [ "🇰🇪", "🇧🇷", "🇪🇸" ],
         correctIndex: 0
     },
     {
         question: "Waa calanka Somalia?",
-        options: [
-            "🇸🇴",
-            "🇨🇭",
-            "🇸🇪"
-        ],
+        options: [ "🇸🇴", "🇨🇭", "🇸🇪" ],
         correctIndex: 0
     },
     {
         question: "Waa calanka Ethiopia?",
-        options: [
-            "🇪🇹",
-            "🇩🇪",
-            "🇫🇷"
-        ],
+        options: [ "🇪🇹", "🇩🇪", "🇫🇷" ],
         correctIndex: 0
     }
 ];
@@ -1469,6 +1606,11 @@ var ccnaQuestions = [
 function chooseMode(mode){
     currentMode = mode;
     document.getElementById("feedbackBox").textContent = "";
+    document.getElementById("optionsBox").innerHTML = "";
+
+    document.getElementById("gameGrid").style.display = "none";
+    document.getElementById("backBtn").style.display = "inline-block";
+
     var p = getActiveProfile();
     var inst = document.getElementById("instructions");
     var title = document.getElementById("gameTitle");
@@ -1488,6 +1630,19 @@ function chooseMode(mode){
             missionText;
     }
     newQuestion();
+}
+
+function backToMenu() {
+    currentMode = null;
+    currentQuestion = null;
+    document.getElementById("gameGrid").style.display = "grid";
+    document.getElementById("backBtn").style.display = "none";
+    document.getElementById("questionBox").textContent = "Frage / Su’aal ayaa halkan iman doonta.";
+    document.getElementById("optionsBox").innerHTML = "";
+    document.getElementById("feedbackBox").textContent = "";
+    document.getElementById("gameTitle").textContent = "Spiel wählen / Doorow Spiel";
+    document.getElementById("instructions").textContent =
+        "Dooro ilmuhu kor, kadibna dooro modul (Mathe, Sprachen, Somalia, Schweiz, CCNA...).";
 }
 
 function newQuestion(){
@@ -1512,11 +1667,7 @@ function newQuestion(){
         var wrong2 = ans - randomInt(1,3);
         if (wrong2 < 0) wrong2 = ans + 4;
         var options = shuffle([ans, wrong1, wrong2]);
-        qData = {
-            question: a + " + " + b + " = ?",
-            options: options.map(function(o){ return String(o); }),
-            correctIndex: options.indexOf(ans)
-        };
+        qData = { question: a + " + " + b + " = ?", options: options.map(String), correctIndex: options.indexOf(ans) };
     } else if (currentMode === "sub") {
         var a2 = randomInt(5,30);
         var b2 = randomInt(1,a2);
@@ -1525,11 +1676,7 @@ function newQuestion(){
         var w2 = ans2 - randomInt(1,3);
         if (w2 < 0) w2 = ans2 + 4;
         var opts2 = shuffle([ans2, w1, w2]);
-        qData = {
-            question: a2 + " − " + b2 + " = ?",
-            options: opts2.map(String),
-            correctIndex: opts2.indexOf(ans2)
-        };
+        qData = { question: a2 + " − " + b2 + " = ?", options: opts2.map(String), correctIndex: opts2.indexOf(ans2) };
     } else if (currentMode === "mul") {
         var m1 = randomInt(1,10);
         var m2 = randomInt(1,10);
@@ -1538,11 +1685,7 @@ function newQuestion(){
         var mw2 = mans - randomInt(1,5);
         if (mw2 < 0) mw2 = mans + 6;
         var mopts = shuffle([mans, mw1, mw2]);
-        qData = {
-            question: m1 + " × " + m2 + " = ?",
-            options: mopts.map(String),
-            correctIndex: mopts.indexOf(mans)
-        };
+        qData = { question: m1 + " × " + m2 + " = ?", options: mopts.map(String), correctIndex: mopts.indexOf(mans) };
     } else if (currentMode === "frac") {
         var fracQs = [
             {q: "1/2 von 8 = ? (Af-Soomaali: nus ka mid ah 8?)", a: 4},
@@ -1555,11 +1698,7 @@ function newQuestion(){
         var fw2 = fAns - randomInt(1,2);
         if (fw2 < 0) fw2 = fAns + 2;
         var fopts = shuffle([fAns, fw1, fw2]);
-        qData = {
-            question: fq.q,
-            options: fopts.map(String),
-            correctIndex: fopts.indexOf(fAns)
-        };
+        qData = { question: fq.q, options: fopts.map(String), correctIndex: fopts.indexOf(fAns) };
     } else if (currentMode === "de") {
         var a3 = randomInt(1,20);
         var b3 = randomInt(1,20);
@@ -1568,11 +1707,7 @@ function newQuestion(){
         var dw2 = ans3 - randomInt(1,4);
         if (dw2 < 0) dw2 = ans3 + 3;
         var dopts = shuffle([ans3, dw1, dw2]);
-        qData = {
-            question: "Wie viel ist " + a3 + " plus " + b3 + " ?",
-            options: dopts.map(String),
-            correctIndex: dopts.indexOf(ans3)
-        };
+        qData = { question: "Wie viel ist " + a3 + " plus " + b3 + " ?", options: dopts.map(String), correctIndex: dopts.indexOf(ans3) };
     } else if (currentMode === "en") {
         qData = pickFromArray(enQuestions);
     } else if (currentMode === "fr") {
@@ -1659,6 +1794,7 @@ function handleChoice(index){
 
 /* ========= INIT ========= */
 
+applyDarkFromStorage();
 loadProfiles();
 updateScoreUI();
 
