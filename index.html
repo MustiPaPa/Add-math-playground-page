@@ -107,7 +107,6 @@
         cursor: pointer;
     }
 
-    /* Hamburger / Spiel-Menü */
     .menu-bar {
         margin: 15px auto 5px;
         max-width: 400px;
@@ -179,20 +178,23 @@
     .question {
         font-size: 22px;
         margin: 10px 0;
+        white-space: pre-line; /* damit \n als Zeilenumbruch */
     }
     .hint {
         font-size: 13px;
-        color: #ccc;
         margin-bottom: 8px;
     }
+    body.dark-mode .hint {
+        color: #cccccc;
+    }
     body:not(.dark-mode) .hint {
-        color: #555;
+        color: #555555;
     }
     .game-area input {
         padding: 8px 10px;
         border-radius: 8px;
         border: 1px solid var(--input-border);
-        width: 150px;
+        width: 160px;
         text-align: center;
         background: var(--card-bg);
         color: var(--text);
@@ -311,7 +313,7 @@
       Wähle oben ein Spiel aus.
     </p>
     <div class="question" id="questionBox">Frage</div>
-    <input type="text" id="answerInput" placeholder="Antwort" />
+    <input type="text" id="answerInput" placeholder="Antwort (Zahl)" />
     <br>
     <button onclick="checkAnswer()">OK</button>
     <div class="feedback" id="feedbackBox"></div>
@@ -325,9 +327,9 @@
             <ul>
                 <li><b>Mathe:</b> Addition, Subtraktion, Multiplikation, Brüche</li>
                 <li><b>Deutsch:</b> Aufgaben mit Text („Wie viel ist…“)</li>
-                <li><b>Englisch & Französisch:</b> Zahl eingeben (1, 2 oder 3) für die richtige Antwort</li>
+                <li><b>Englisch & Französisch:</b> mit 🇬🇧/🇫🇷 und Antwort 1, 2 oder 3</li>
                 <li><b>Informatik Basics:</b> PC-Komponenten & Outlook spielerisch kennenlernen</li>
-                <li><b>Flaggen Afrika:</b> Flagge-Wissensspiel mit Antwort 1, 2 oder 3</li>
+                <li><b>Flaggen Afrika:</b> Flagge & Land + kleine Eselsbrücke</li>
             </ul>
         </li>
         <li>Antwort eintippen (meist Zahl wie 1, 2, 3 oder ein Ergebnis z.B. 12) und auf OK klicken.</li>
@@ -343,46 +345,69 @@
 </div>
 
 <script>
-let currentMode = null;
-let currentAnswer = null;
-let score = 0;
-let currentGrade = "1";
+var currentMode = null;
+var currentAnswer = null;
+var score = 0;
+var currentGrade = "1";
 
-// Sprach-/Flaggenfragen (immer mit Antwort 1, 2 oder 3)
-const enQuestions = [
-    { text: "Was heißt \"Hund\" auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
-    { text: "Was heißt \"Katze\" auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
-    { text: "Was heißt \"Haus\" auf Englisch?\n1) house   2) car   3) tree", ans: 1 },
-    { text: "Was heißt \"rot\" auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
-    { text: "Was heißt \"blau\" auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 }
+// Englisch-Fragen (immer mit 1, 2 oder 3)
+var enQuestions = [
+    { text: "🇬🇧 Was heißt \"Hund\" auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
+    { text: "🇬🇧 Was heißt \"Katze\" auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
+    { text: "🇬🇧 Was heißt \"Haus\" auf Englisch?\n1) house   2) car   3) tree", ans: 1 },
+    { text: "🇬🇧 Was heißt \"rot\" auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
+    { text: "🇬🇧 Was heißt \"blau\" auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 }
 ];
 
-const frQuestions = [
-    { text: "Was heißt \"Hund\" auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
-    { text: "Was heißt \"Katze\" auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
-    { text: "Was heißt \"rot\" auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
-    { text: "Was heißt \"blau\" auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
-    { text: "Was heißt \"Haus\" auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
+// Französisch-Fragen
+var frQuestions = [
+    { text: "🇫🇷 Was heißt \"Hund\" auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
+    { text: "🇫🇷 Was heißt \"Katze\" auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
+    { text: "🇫🇷 Was heißt \"rot\" auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
+    { text: "🇫🇷 Was heißt \"blau\" auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
+    { text: "🇫🇷 Was heißt \"Haus\" auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
 ];
 
-const itBasicsQuestions = [
-    { text: "Welche Komponente ist das? 💻\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
-    { text: "Welche Komponente ist das? 🖱️\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
-    { text: "Welche Komponente ist das? ⌨️\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
-    { text: "Wofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
-    { text: "Was ist wichtig bei einem sicheren Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
+// Informatik Basics – 1, 2 oder 3
+var itBasicsQuestions = [
+    { text: "💻 Mini-Bildschirm: Was ist das?\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
+    { text: "🖱️ Welche Komponente ist das?\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
+    { text: "⌨️ Welche Komponente ist das?\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
+    { text: "📧 Wofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
+    { text: "🔐 Was ist wichtig bei einem sicheren Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
 ];
 
-const flagQuestions = [
-    { text: "Welche Flagge gehört zu SOMALIA?\n1) 🇸🇴   2) 🇰🇪   3) 🇪🇹", ans: 1 },
-    { text: "Welche Flagge gehört zu KENIA?\n1) 🇬🇭   2) 🇰🇪   3) 🇳🇬", ans: 2 },
-    { text: "Welche Flagge gehört zu ÄTHIOPIEN?\n1) 🇪🇹   2) 🇿🇦   3) 🇸🇴", ans: 1 },
-    { text: "Welche Flagge gehört zu NIGERIA?\n1) 🇳🇬   2) 🇬🇭   3) 🇿🇦", ans: 1 },
-    { text: "Welche Flagge gehört zu SÜDAFRIKA?\n1) 🇰🇪   2) 🇿🇦   3) 🇳🇬", ans: 2 }
+// Flaggen Afrika – mit Eselsbrücke
+var flagQuestions = [
+    {
+        text: "🌍 Welche Flagge gehört zu SOMALIA?\n1) 🇸🇴   2) 🇰🇪   3) 🇪🇹",
+        ans: 1,
+        hint: "Eselsbrücke: Somalia 🇸🇴 = blauer Himmel + weisser Stern wie ein Licht in der Nacht."
+    },
+    {
+        text: "🌍 Welche Flagge gehört zu KENIA?\n1) 🇬🇭   2) 🇰🇪   3) 🇳🇬",
+        ans: 2,
+        hint: "Eselsbrücke: Kenia 🇰🇪 hat das Schild in der Mitte – wie ein Krieger, der die Tiere schützt."
+    },
+    {
+        text: "🌍 Welche Flagge gehört zu ÄTHIOPIEN?\n1) 🇪🇹   2) 🇿🇦   3) 🇸🇴",
+        ans: 1,
+        hint: "Eselsbrücke: Äthiopien 🇪🇹 hat Grün-Gelb-Rot mit Stern – ältestes afrikanisches Kaiserreich."
+    },
+    {
+        text: "🌍 Welche Flagge gehört zu NIGERIA?\n1) 🇳🇬   2) 🇬🇭   3) 🇿🇦",
+        ans: 1,
+        hint: "Eselsbrücke: Nigeria 🇳🇬 = grün-weiss-grün wie zwei Palmen und ein Fluss in der Mitte."
+    },
+    {
+        text: "🌍 Welche Flagge gehört zu SÜDAFRIKA?\n1) 🇰🇪   2) 🇿🇦   3) 🇳🇬",
+        ans: 2,
+        hint: "Eselsbrücke: Südafrika 🇿🇦 hat viele Farben und ein Y – wie viele Wege, die zusammenkommen."
+    }
 ];
 
 function updateName(){
-    const name = document.getElementById('username').value.trim();
+    var name = document.getElementById('username').value.trim();
     if(name){
         document.title = name + " – Mathe & Deutsch Spielplatz";
     } else {
@@ -391,7 +416,7 @@ function updateName(){
 }
 
 function updateGrade(){
-    const sel = document.getElementById('gradeSelect');
+    var sel = document.getElementById('gradeSelect');
     currentGrade = sel.value;
     if(currentMode !== null){
         newQuestion();
@@ -399,7 +424,7 @@ function updateGrade(){
 }
 
 function toggleMenu(){
-    const menu = document.getElementById('menuList');
+    var menu = document.getElementById('menuList');
     if(menu.style.display === "block"){
         menu.style.display = "none";
     } else {
@@ -408,12 +433,14 @@ function toggleMenu(){
 }
 
 function toggleDarkMode(){
-    const body = document.body;
-    const toggle = document.getElementById('darkToggle');
+    var body = document.body;
+    var toggle = document.getElementById('darkToggle');
     if(toggle.checked){
-        body.classList.add('dark-mode');
+        if(body.className.indexOf('dark-mode') === -1){
+            body.className += (body.className ? ' ' : '') + 'dark-mode';
+        }
     } else {
-        body.classList.remove('dark-mode');
+        body.className = body.className.replace('dark-mode','').replace('  ',' ').trim();
     }
 }
 
@@ -446,47 +473,48 @@ function getSettingsForGrade(){
 }
 
 function newQuestion(){
-    const qBox = document.getElementById('questionBox');
-    const title = document.getElementById('gameTitle');
-    const inst = document.getElementById('instructions');
-    const input = document.getElementById('answerInput');
-    const settings = getSettingsForGrade();
+    var qBox = document.getElementById('questionBox');
+    var title = document.getElementById('gameTitle');
+    var inst = document.getElementById('instructions');
+    var input = document.getElementById('answerInput');
+    var settings = getSettingsForGrade();
 
     input.value = '';
     input.focus();
 
-    let a, b;
+    var a, b;
+    var q;
 
     if(currentMode === 'add'){
         title.innerText = "Addition";
-        inst.innerText = "Berechne die Summe.";
+        inst.innerText = "Berechne die Summe. (Antwort als Zahl, z.B. 12)";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
         qBox.innerText = a + " + " + b + " = ?";
         currentAnswer = a + b;
     } else if(currentMode === 'sub'){
         title.innerText = "Subtraktion";
-        inst.innerText = "Berechne die Differenz.";
+        inst.innerText = "Berechne die Differenz. (Antwort als Zahl)";
         a = randomInt(1, settings.subMax);
         b = randomInt(1, a);
         qBox.innerText = a + " − " + b + " = ?";
         currentAnswer = a - b;
     } else if(currentMode === 'mul'){
         title.innerText = "Multiplikation";
-        inst.innerText = "Berechne das Produkt.";
+        inst.innerText = "Berechne das Produkt. (Antwort als Zahl)";
         a = randomInt(1, settings.mulMax);
         b = randomInt(1, settings.mulMax);
         qBox.innerText = a + " × " + b + " = ?";
         currentAnswer = a * b;
     } else if(currentMode === 'frac'){
         title.innerText = "Brüche";
-        inst.innerText = "Löse die Bruchaufgabe.";
-        const questions = [
+        inst.innerText = "Löse die Bruchaufgabe. (Antwort als Zahl)";
+        var fracQuestions = [
             { text: "1/2 von 8 = ?", ans: 4 },
             { text: "1/3 von 9 = ?", ans: 3 },
             { text: "1/4 von 20 = ?", ans: 5 }
         ];
-        const q = questions[randomInt(0, questions.length-1)];
+        q = fracQuestions[randomInt(0, fracQuestions.length-1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
     } else if(currentMode === 'de'){
@@ -499,11 +527,81 @@ function newQuestion(){
     } else if(currentMode === 'en'){
         title.innerText = "Englisch";
         inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        const q = enQuestions[randomInt(0, enQuestions.length-1)];
+        q = enQuestions[randomInt(0, enQuestions.length-1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
     } else if(currentMode === 'fr'){
         title.innerText = "Französisch";
         inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        const q = frQuestions[randomInt(0, frQuestions.length-1)];
-        qBox.innerText = q.t
+        q = frQuestions[randomInt(0, frQuestions.length-1)];
+        qBox.innerText = q.text;
+        currentAnswer = q.ans;
+    } else if(currentMode === 'itbasics'){
+        title.innerText = "Informatik Basics";
+        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
+        q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length-1)];
+        qBox.innerText = q.text;
+        currentAnswer = q.ans;
+    } else if(currentMode === 'flags'){
+        title.innerText = "Flaggen Afrika";
+        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
+        q = flagQuestions[randomInt(0, flagQuestions.length-1)];
+        qBox.innerText = q.text;
+        currentAnswer = { val: q.ans, hint: q.hint };
+    } else {
+        title.innerText = "Spiel";
+        qBox.innerText = "Wähle oben ein Spiel aus.";
+        inst.innerText = "";
+        currentAnswer = null;
+    }
+}
+
+function checkAnswer(){
+    if(currentAnswer === null){
+        return;
+    }
+    var val = document.getElementById('answerInput').value.trim();
+    var fb = document.getElementById('feedbackBox');
+
+    if(val === ""){
+        fb.innerText = "Bitte gib zuerst eine Antwort ein.";
+        fb.style.color = "orange";
+        return;
+    }
+
+    var userNum = Number(val);
+
+    // Flaggen-special-case: currentAnswer kann Objekt sein
+    if(currentMode === 'flags' && typeof currentAnswer === 'object'){
+        if(userNum === currentAnswer.val){
+            fb.innerText = "Richtig! 👏\n" + currentAnswer.hint;
+            fb.style.color = "lightgreen";
+            score++;
+            document.getElementById('scoreBox').innerText = "Punkte: " + score;
+            setTimeout(newQuestion, 1200);
+        } else {
+            fb.innerText = "Falsch. Versuch es noch einmal.";
+            fb.style.color = "red";
+        }
+        return;
+    }
+
+    if(userNum === currentAnswer){
+        fb.innerText = "Richtig! 👏";
+        fb.style.color = "lightgreen";
+        score++;
+        document.getElementById('scoreBox').innerText = "Punkte: " + score;
+        setTimeout(newQuestion, 800);
+    } else {
+        fb.innerText = "Falsch. Versuch es noch einmal.";
+        fb.style.color = "red";
+    }
+}
+
+function randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+</script>
+
+</body>
+</html>
