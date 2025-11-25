@@ -218,14 +218,72 @@
         padding: 8px 14px;
         border-radius: 10px;
         border: none;
-        background: var(--button-ok);
-        color: #fff;
-        font-weight: bold;
         cursor: pointer;
         min-width: 70px;
+        font-weight: bold;
+        color: #fff;
     }
-    .answers button:hover {
-        background: var(--button-ok-hover);
+
+    /* Mathe / Deutsch */
+    .answers-math button {
+        background: #28a745;
+    }
+    .answers-math button:hover {
+        background: #1f7f37;
+    }
+
+    /* Lesen */
+    .answers-read button {
+        background: #ff9800;
+    }
+    .answers-read button:hover {
+        background: #e68900;
+    }
+
+    /* Sprachen (Englisch / Französisch) */
+    .answers-lang button {
+        background: #007bff;
+        border-radius: 999px;
+        padding-inline: 18px;
+    }
+    .answers-lang button:hover {
+        background: #0062cc;
+    }
+
+    /* Informatik */
+    .answers-it button {
+        background: #9c27b0;
+    }
+    .answers-it button:hover {
+        background: #7b1fa2;
+    }
+
+    /* Flaggen – special style */
+    .answers-flags {
+        gap: 16px;
+    }
+    .answers-flags button {
+        background: transparent;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 6px 8px;
+        color: var(--text);
+        min-width: 80px;
+    }
+    .answers-flags button img {
+        display: block;
+        height: 40px;
+        margin: 0 auto 4px;
+        border-radius: 6px;
+        box-shadow: 0 0 4px rgba(0,0,0,0.4);
+    }
+    .answers-flags button span {
+        font-size: 12px;
+        display: block;
+    }
+    .answers-flags button:hover {
+        border-color: var(--accent);
+        background: rgba(255,255,255,0.12);
     }
 
     .feedback {
@@ -234,7 +292,7 @@
     }
 
     .side-info {
-        max-width: 750px;
+        max-width: 800px;
         margin: 0 auto 30px;
         background: var(--side-bg);
         border-radius: 12px;
@@ -252,7 +310,53 @@
     }
     .hall-item {
         font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .hall-bars {
+        margin-top: 4px;
         margin-bottom: 4px;
+    }
+    .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 3px;
+    }
+    .bar-row-label {
+        width: 60px;
+        font-size: 12px;
+    }
+    .bar-row-bar {
+        flex: 1;
+        background: rgba(0,0,0,0.1);
+        border-radius: 999px;
+        overflow: hidden;
+        height: 8px;
+    }
+    .bar-row-bar-fill {
+        height: 8px;
+        border-radius: 999px;
+    }
+    .bar-row-bar-fill-mathe {
+        background: #28a745;
+    }
+    .bar-row-bar-fill-lesen {
+        background: #ff9800;
+    }
+    .bar-row-bar-fill-sprache {
+        background: #007bff;
+    }
+    .bar-row-pct {
+        width: 38px;
+        font-size: 11px;
+        text-align: right;
+    }
+
+    .hall-feedback {
+        font-size: 12px;
+        font-style: italic;
+        margin-top: 2px;
     }
 </style>
 </head>
@@ -321,19 +425,19 @@
             <span>🇩🇪</span> Deutschaufgaben <small>„Wie viel ist…“ Sätze</small>
         </button>
         <button class="menu-item" onclick="chooseMode('read')">
-            <span>📖</span> Lesen / Leseverstehen <small>Text + Frage (1–3)</small>
+            <span>📖</span> Lesen / Leseverstehen <small>Text + Frage</small>
         </button>
         <button class="menu-item" onclick="chooseMode('en')">
-            <span>🇬🇧</span> Englisch <small>Wörter & Farben (1–3)</small>
+            <span>🇬🇧</span> Englisch <small>Wörter & Farben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('fr')">
-            <span>🇫🇷</span> Französisch <small>Wörter & Farben (1–3)</small>
+            <span>🇫🇷</span> Französisch <small>Wörter & Farben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('itbasics')">
             <span>💻</span> Informatik Basics <small>PC, Maus, Tastatur, Outlook</small>
         </button>
         <button class="menu-item" onclick="chooseMode('flags')">
-            <span>🌍</span> Flaggen Afrika <small>Calan + Waddan (1–3)</small>
+            <span>🌍</span> Flaggen Afrika <small>Calan + Waddan</small>
         </button>
     </div>
 </div>
@@ -359,7 +463,7 @@
                 <li>eigene Punkte (Score) und Modul-Fortschritt (Mathe / Lesen / Sprachen).</li>
             </ul>
         </li>
-        <li>Beim Wechsel der Klasse bleibt das Profil gleich – du siehst langfristig, wie sich das Kind entwickelt.</li>
+        <li>Diagramme zeigen pro Kind, wie stark es in <b>Mathe</b>, <b>Lesen</b> und <b>Sprachen</b> ist.</li>
     </ul>
 
     <h3>Hall of Fame – Übersicht pro Kind</h3>
@@ -369,12 +473,12 @@
 <script>
 /* ---------- GLOBAL STATE ---------- */
 var currentMode = null;
-var currentQuestion = null; // { correctValue, choices:[{value,text}], hint?, mode }
+var currentQuestion = null; // { correctValue, choices, hint, mode }
 var score = 0;
 var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v2";
+var STORAGE_KEY = "musti_playground_profiles_v3";
 
 /* ---------- QUESTION POOLS ---------- */
 
@@ -405,39 +509,52 @@ var itBasicsQuestions = [
     { text: "🔐 Passwort-Sicherheit\n\nWas ist ein gutes Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
 ];
 
-// Flaggen Afrika
+// Flaggen Afrika – jawaabtu waa calan, bukan 1/2/3
+// country: magaca waddanka (Af-Soomaali / Deutsch mix)
+// correct: code-ka calanka (so, ke, et, ng, za)
+// others: liiska laba calan oo kale oo la isku qaldo
 var flagQuestions = [
     {
-        flag: "🇸🇴",
-        options: ["Soomaaliya", "Kenia", "Äthiopien"],
-        ans: 1,
+        country: "Soomaaliya",
+        correct: "so",
+        others: ["ke","et"],
         hint: "Eselsbrücke: Soomaaliya 🇸🇴 = buluug (bad & cirka) + xiddig cad oo dhexe kaga taal."
     },
     {
-        flag: "🇰🇪",
-        options: ["Ghana", "Kenia", "Nigeria"],
-        ans: 2,
+        country: "Kenia",
+        correct: "ke",
+        others: ["so","ng"],
         hint: "Eselsbrücke: Kenia 🇰🇪 – calanka leh gaashaan madow oo dhexe yaal, sida geesi ilaalinaya duurka."
     },
     {
-        flag: "🇪🇹",
-        options: ["Äthiopien", "Südafrika", "Soomaaliya"],
-        ans: 1,
+        country: "Äthiopien",
+        correct: "et",
+        others: ["so","za"],
         hint: "Eselsbrücke: Äthiopien 🇪🇹 – cagaar-jaalle-cas + xiddig dhexda, calan taariikhi ah."
     },
     {
-        flag: "🇳🇬",
-        options: ["Nigeria", "Ghana", "Südafrika"],
-        ans: 1,
+        country: "Nigeria",
+        correct: "ng",
+        others: ["gh","ke"],
         hint: "Eselsbrücke: Nigeria 🇳🇬 – cagaar-cad-cagaar, sida labo geed cagaaran iyo wabiga dhexda maraya."
     },
     {
-        flag: "🇿🇦",
-        options: ["Kenia", "Südafrika", "Nigeria"],
-        ans: 2,
+        country: "Südafrika",
+        correct: "za",
+        others: ["ng","ke"],
         hint: "Eselsbrücke: Südafrika 🇿🇦 – midabyo badan + xaraf Y, waddooyin badan oo isku yimaada."
     }
 ];
+
+// map flag-code -> {url, name}
+var flagMap = {
+    so: { url: "https://flagcdn.com/w80/so.png", label: "Soomaaliya" },
+    ke: { url: "https://flagcdn.com/w80/ke.png", label: "Kenia" },
+    et: { url: "https://flagcdn.com/w80/et.png", label: "Äthiopien" },
+    ng: { url: "https://flagcdn.com/w80/ng.png", label: "Nigeria" },
+    za: { url: "https://flagcdn.com/w80/za.png", label: "Südafrika" },
+    gh: { url: "https://flagcdn.com/w80/gh.png", label: "Ghana" }
+};
 
 // Lesen / Leseverstehen
 var readQuestions = [
@@ -595,7 +712,7 @@ function updateScoreUI() {
     document.getElementById('scoreBox').innerText = "Punkte: " + score;
 }
 
-/* ---------- HALL OF FAME ---------- */
+/* ---------- HALL OF FAME + DIAGRAM + FEEDBACK ---------- */
 
 function renderHallOfFame() {
     var container = document.getElementById('hallOfFame');
@@ -612,20 +729,89 @@ function renderHallOfFame() {
     var html = "";
     sorted.forEach(function(p, idx){
         ensureModules(p);
-        var matheCorrect = p.modules.add.correct + p.modules.sub.correct +
-                           p.modules.mul.correct + p.modules.frac.correct;
-        var lesenCorrect = p.modules.read.correct + p.modules.de.correct;
-        var sprachenCorrect = p.modules.en.correct + p.modules.fr.correct;
-        html += '<div class="hall-item">'
-            + (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
-            + (p.grade === "special" ? "6/7" : p.grade)
-            + ") – Punkte: " + (p.score || 0)
-            + " · Mathe: " + matheCorrect
-            + " · Lesen: " + lesenCorrect
-            + " · Sprachen: " + sprachenCorrect
-            + "</div>";
+        var m = p.modules;
+
+        var matheCorr = m.add.correct + m.sub.correct + m.mul.correct + m.frac.correct;
+        var matheTot  = m.add.total   + m.sub.total   + m.mul.total   + m.frac.total;
+        var lesenCorr = m.read.correct + m.de.correct;
+        var lesenTot  = m.read.total   + m.de.total;
+        var sprCorr   = m.en.correct + m.fr.correct;
+        var sprTot    = m.en.total   + m.fr.total;
+
+        var mathePct = matheTot > 0 ? Math.round(matheCorr / matheTot * 100) : 0;
+        var lesenPct = lesenTot > 0 ? Math.round(lesenCorr / lesenTot * 100) : 0;
+        var sprPct   = sprTot   > 0 ? Math.round(sprCorr   / sprTot   * 100) : 0;
+
+        html += '<div class="hall-item">';
+        html += (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
+             + (p.grade === "special" ? "6/7" : p.grade)
+             + ") – Punkte: " + (p.score || 0);
+
+        html += '<div class="hall-bars">';
+        html += renderBarRow("Mathe", mathePct, "mathe");
+        html += renderBarRow("Lesen", lesenPct, "lesen");
+        html += renderBarRow("Sprachen", sprPct, "sprache");
+        html += '</div>';
+
+        html += '<div class="hall-feedback">' + escapeHtml(buildFeedback(mathePct, lesenPct, sprPct)) + '</div>';
+
+        html += '</div>';
     });
     container.innerHTML = html;
+}
+
+function renderBarRow(label, pct, type) {
+    var cl = "bar-row-bar-fill-";
+    if (type === "mathe") cl += "mathe";
+    else if (type === "lesen") cl += "lesen";
+    else cl += "sprache";
+
+    return '' +
+        '<div class="bar-row">' +
+            '<div class="bar-row-label">' + label + '</div>' +
+            '<div class="bar-row-bar"><div class="bar-row-bar-fill ' + cl +
+                '" style="width:' + pct + '%;"></div></div>' +
+            '<div class="bar-row-pct">' + pct + '%</div>' +
+        '</div>';
+}
+
+function buildFeedback(mathePct, lesenPct, sprPct) {
+    var cats = [
+        { key: "Mathe", pct: mathePct },
+        { key: "Lesen", pct: lesenPct },
+        { key: "Sprachen", pct: sprPct }
+    ];
+    var totals = mathePct + lesenPct + sprPct;
+    if (totals === 0) {
+        return "Noch keine Daten – einfach ein paar Aufgaben lösen, dann gibt es Feedback.";
+    }
+
+    cats.sort(function(a,b){ return b.pct - a.pct; });
+    var best = cats[0];
+    var middle = cats[1];
+    var worst = cats[2];
+
+    var text = "";
+
+    if (best.pct >= 70) {
+        text += "Sehr stark in " + best.key + ". ";
+    } else if (best.pct >= 40) {
+        text += "Gut unterwegs in " + best.key + ". ";
+    } else {
+        text += "Du bist noch am Aufbauen – Schritt für Schritt in " + best.key + ". ";
+    }
+
+    if (worst.pct <= 30) {
+        text += "In " + worst.key + " darfst du noch extra üben. ";
+    } else if (worst.pct < best.pct) {
+        text += worst.key + " ist ok, aber da geht noch mehr. ";
+    }
+
+    if (middle.pct > 0 && middle !== best && middle !== worst) {
+        text += "In " + middle.key + " bist du auf einem guten Weg.";
+    }
+
+    return text.trim();
 }
 
 /* ---------- GENERAL UI ---------- */
@@ -713,11 +899,11 @@ function getReadingPoolForGrade() {
     return pool.length ? pool : readQuestions;
 }
 
-/* ---------- QUESTION CREATION ---------- */
+/* ---------- ANSWER RENDERING ---------- */
 
-function setChoices(choices) {
-    // choices: [{value,text}]
+function setChoices(choices, answersClass) {
     var container = document.getElementById('answersContainer');
+    container.className = "answers " + (answersClass || "");
     container.innerHTML = "";
     choices.forEach(function(c){
         var btn = document.createElement('button');
@@ -726,6 +912,36 @@ function setChoices(choices) {
         container.appendChild(btn);
     });
 }
+
+function setFlagChoices(correctCode, otherCodes) {
+    var container = document.getElementById('answersContainer');
+    container.className = "answers answers-flags";
+    container.innerHTML = "";
+
+    var codes = [correctCode].concat(otherCodes);
+    // shuffle
+    for (var i = codes.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = codes[i]; codes[i] = codes[j]; codes[j] = tmp;
+    }
+
+    codes.forEach(function(code){
+        var info = flagMap[code];
+        if (!info) return;
+        var btn = document.createElement('button');
+        var img = document.createElement('img');
+        img.src = info.url;
+        img.alt = info.label;
+        var span = document.createElement('span');
+        span.textContent = info.label;
+        btn.appendChild(img);
+        btn.appendChild(span);
+        btn.onclick = function(){ handleChoice(code); };
+        container.appendChild(btn);
+    });
+}
+
+/* ---------- QUESTION CREATION ---------- */
 
 function makeNumericChoices(correct) {
     var vals = [correct];
@@ -748,10 +964,10 @@ function newQuestion() {
     var qBox = document.getElementById('questionBox');
     var title = document.getElementById('gameTitle');
     var inst = document.getElementById('instructions');
-    var answersDiv = document.getElementById('answersContainer');
-    answersDiv.innerHTML = "";
     var fb = document.getElementById('feedbackBox');
     fb.innerText = "";
+    var answersDiv = document.getElementById('answersContainer');
+    answersDiv.innerHTML = "";
 
     var settings = getSettingsForGrade();
     var p = getActiveProfile();
@@ -764,22 +980,21 @@ function newQuestion() {
         return;
     }
 
-    var a, b, q;
+    var a, b, q, corr;
 
     if (currentMode === 'add') {
         title.innerText = "Addition – Zahlen-Training";
         inst.innerText = "Rechne die Plus-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
-        var corr = a + b;
+        corr = a + b;
         qBox.innerText = a + " + " + b + " = ?";
         currentQuestion = {
             correctValue: corr,
             hint: null,
-            choices: makeNumericChoices(corr),
             mode: "add"
         };
-        setChoices(currentQuestion.choices);
+        setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'sub') {
         title.innerText = "Subtraktion – Minus & Unterschiede";
         inst.innerText = "Rechne die Minus-Aufgabe und klicke die richtige Zahl.";
@@ -790,10 +1005,9 @@ function newQuestion() {
         currentQuestion = {
             correctValue: corr,
             hint: null,
-            choices: makeNumericChoices(corr),
             mode: "sub"
         };
-        setChoices(currentQuestion.choices);
+        setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'mul') {
         title.innerText = "Multiplikation – Mal-Spiel";
         inst.innerText = "Löse die Mal-Aufgabe und klicke die richtige Zahl.";
@@ -804,10 +1018,9 @@ function newQuestion() {
         currentQuestion = {
             correctValue: corr,
             hint: null,
-            choices: makeNumericChoices(corr),
             mode: "mul"
         };
-        setChoices(currentQuestion.choices);
+        setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'frac') {
         title.innerText = "Brüche – Teil vom Ganzen";
         inst.innerText = "Berechne den Anteil und klicke die richtige Zahl.";
@@ -822,10 +1035,9 @@ function newQuestion() {
         currentQuestion = {
             correctValue: corr,
             hint: null,
-            choices: makeNumericChoices(corr),
             mode: "frac"
         };
-        setChoices(currentQuestion.choices);
+        setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'de') {
         title.innerText = "Deutschaufgabe – Rechnen im Satz";
         inst.innerText = "Lies den Satz und klicke die richtige Zahl.";
@@ -838,10 +1050,9 @@ function newQuestion() {
         currentQuestion = {
             correctValue: corr,
             hint: null,
-            choices: makeNumericChoices(corr),
             mode: "de"
         };
-        setChoices(currentQuestion.choices);
+        setChoices(makeNumericChoices(corr), "answers-math");
     } else if (currentMode === 'read') {
         title.innerText = "Lesen / Leseverstehen";
         inst.innerText = "Lies den Text und klicke 1, 2 oder 3.";
@@ -851,46 +1062,52 @@ function newQuestion() {
         currentQuestion = {
             correctValue: q.ans,
             hint: null,
-            choices: [
+            mode: "read"
+        };
+        setChoices(
+            [
                 { value: 1, text: "1" },
                 { value: 2, text: "2" },
                 { value: 3, text: "3" }
             ],
-            mode: "read"
-        };
-        setChoices(currentQuestion.choices);
+            "answers-read"
+        );
     } else if (currentMode === 'en') {
         title.innerText = "Englisch – Wörter & Farben";
-        inst.innerText = "Lies die Optionen und klicke 1, 2 oder 3.";
+        inst.innerText = "Lies die Optionen im Text und klicke 1, 2 oder 3.";
         q = enQuestions[randomInt(0, enQuestions.length - 1)];
         qBox.innerText = q.text;
         currentQuestion = {
             correctValue: q.ans,
             hint: null,
-            choices: [
+            mode: "en"
+        };
+        setChoices(
+            [
                 { value: 1, text: "1" },
                 { value: 2, text: "2" },
                 { value: 3, text: "3" }
             ],
-            mode: "en"
-        };
-        setChoices(currentQuestion.choices);
+            "answers-lang"
+        );
     } else if (currentMode === 'fr') {
         title.innerText = "Französisch – Wörter & Farben";
-        inst.innerText = "Lies die Optionen und klicke 1, 2 oder 3.";
+        inst.innerText = "Lies die Optionen im Text und klicke 1, 2 oder 3.";
         q = frQuestions[randomInt(0, frQuestions.length - 1)];
         qBox.innerText = q.text;
         currentQuestion = {
             correctValue: q.ans,
             hint: null,
-            choices: [
+            mode: "fr"
+        };
+        setChoices(
+            [
                 { value: 1, text: "1" },
                 { value: 2, text: "2" },
                 { value: 3, text: "3" }
             ],
-            mode: "fr"
-        };
-        setChoices(currentQuestion.choices);
+            "answers-lang"
+        );
     } else if (currentMode === 'itbasics') {
         title.innerText = "Informatik Basics – PC-Wissen";
         inst.innerText = "Lies die Frage und klicke 1, 2 oder 3.";
@@ -899,35 +1116,27 @@ function newQuestion() {
         currentQuestion = {
             correctValue: q.ans,
             hint: null,
-            choices: [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
             mode: "itbasics"
         };
-        setChoices(currentQuestion.choices);
-    } else if (currentMode === 'flags') {
-        title.innerText = "Flaggen Afrika – Calan & Waddan";
-        inst.innerText = "Eeg calanka, akhri su’aasha, kadib klicke 1, 2 ama 3.";
-        q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
-        var text =
-            q.flag + "\n\nCalankani waxa iska leh kee?\n" +
-            "1) " + q.options[0] + "\n" +
-            "2) " + q.options[1] + "\n" +
-            "3) " + q.options[2];
-        qBox.innerText = text;
-        currentQuestion = {
-            correctValue: q.ans,
-            hint: q.hint,
-            choices: [
+        setChoices(
+            [
                 { value: 1, text: "1" },
                 { value: 2, text: "2" },
                 { value: 3, text: "3" }
             ],
+            "answers-it"
+        );
+    } else if (currentMode === 'flags') {
+        title.innerText = "Flaggen Afrika – Calan & Waddan";
+        inst.innerText = "Dooro calanka saxda ah ee waddanka hoose.";
+        q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
+        qBox.innerText = "🌍 Waddan: " + q.country + "\n\nDooro calanka saxda ah:";
+        currentQuestion = {
+            correctValue: q.correct,
+            hint: q.hint,
             mode: "flags"
         };
-        setChoices(currentQuestion.choices);
+        setFlagChoices(q.correct, q.others);
     } else {
         title.innerText = "Spiel";
         qBox.innerText = "Wähle oben ein Spiel aus.";
@@ -981,7 +1190,7 @@ function handleChoice(selectedValue) {
         saveProfiles();
         updateScoreUI();
         renderHallOfFame();
-        setTimeout(newQuestion, mode === "flags" ? 1300 : 900);
+        setTimeout(newQuestion, mode === "flags" ? 1400 : 900);
     } else {
         saveProfiles();
         renderHallOfFame();
