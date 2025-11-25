@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Math & Deutsch – Playground (Musti)</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #84c0f0; /* buluug fun ah */
+        text-align: center;
+    }
+    header {
+        background: #1b75d0; /* buluug qoto dheer */
+        padding: 15px;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    header small {
+        display: block;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+    .top-bar {
+        margin-top: 10px;
+    }
+    .top-bar input {
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 160px;
+    }
+    .top-bar .score {
+        margin-left: 10px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .card {
+        background: white;
+        border-radius: 15px;
+        padding: 18px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .card:hover {
+        transform: scale(1.05);
+        background: #e3f2ff;
+    }
+    .card .emoji {
+        font-size: 40px;
+    }
+    .card .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 8px;
+    }
+    .card .sub {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .game-area {
+        max-width: 500px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+    .game-area h2 {
+        margin-top: 0;
+    }
+    .question {
+        font-size: 22px;
+        margin: 10px 0;
+    }
+    .hint {
+        font-size: 13px;
+        color: #555;
+        margin-bottom: 8px;
+    }
+    .game-area input {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 100px;
+        text-align: center;
+    }
+    .game-area button {
+        margin-top: 10px;
+        padding: 10px 18px;
+        background: #28a745; /* cagaar fun ah */
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .game-area button:hover {
+        background: #218838;
+    }
+    .feedback {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .side-info {
+        max-width: 600px;
+        margin: 10px auto 30px;
+        background: #fffbcc; /* jaalle khafiif ah */
+        border-radius: 12px;
+        padding: 10px 15px;
+        font-size: 14px;
+        text-align: left;
+    }
+    .side-info h3 {
+        margin-top: 0;
+    }
+    .side-info ul {
+        padding-left: 20px;
+        margin: 5px 0 10px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+  Math & Deutsch – Playground (Musti Edition)
+  <small>“Rechnen & Deutsch lernen – Xisaab iyo Jarmal isku mar”</small>
+</header>
+
+<div class="top-bar">
+    <input type="text" id="username" placeholder="Magaca / Name" oninput="updateName()" />
+    <span class="score" id="scoreBox">Score: 0</span>
+</div>
+
+<div class="game-grid">
+    <div class="card" onclick="chooseMode('add')">
+        <div class="emoji">➕</div>
+        <div class="title">Addition</div>
+        <div class="sub">3 + 4, 10 + 5 ...</div>
+    </div>
+    <div class="card" onclick="chooseMode('sub')">
+        <div class="emoji">➖</div>
+        <div class="title">Subtraction</div>
+        <div class="sub">10 − 6, 15 − 7 ...</div>
+    </div>
+    <div class="card" onclick="chooseMode('mul')">
+        <div class="emoji">✖️</div>
+        <div class="title">Multiplication</div>
+        <div class="sub">2 × 3, 5 × 4 ...</div>
+    </div>
+    <div class="card" onclick="chooseMode('frac')">
+        <div class="emoji">🧩</div>
+        <div class="title">Fractions</div>
+        <div class="sub">1/2 ka mid ah 8? ...</div>
+    </div>
+    <div class="card" onclick="chooseMode('de')">
+        <div class="emoji">🇩🇪</div>
+        <div class="title">Deutsch Rechnen</div>
+        <div class="sub">“Wie viel ist 3 + 5?”</div>
+    </div>
+</div>
+
+<div class="game-area" id="gameArea" style="display:none;">
+    <h2 id="gameTitle">Game</h2>
+    <p class="hint" id="instructions">
+      Door game / Wähl ein Spiel oben.
+    </p>
+    <div class="question" id="questionBox">Frage / Su’aal</div>
+    <input type="text" id="answerInput" placeholder="Jawaab / Antwort" />
+    <br>
+    <button onclick="checkAnswer()">OK</button>
+    <div class="feedback" id="feedbackBox"></div>
+</div>
+
+<div class="side-info">
+    <h3>Deutsch Wörter – Math</h3>
+    <ul>
+        <li><b>plus</b> = + (tusaale: 3 plus 4)</li>
+        <li><b>minus</b> = − (tusaale: 7 minus 2)</li>
+        <li><b>mal</b> = × (tusaale: 3 mal 5)</li>
+        <li><b>geteilt durch</b> = ÷ (tusaale: 8 geteilt durch 2)</li>
+        <li><b>Ergebnis</b> = natiijo / result</li>
+    </ul>
+    <p>
+      Af-Deutsch instructions fudud:<br>
+      – Wähle ein Spiel oben. (Kor ka dooro ciyaarta.)<br>
+      – Lies die Frage. (Akhri su’aasha.)<br>
+      – Schreib die Antwort in das Feld. (Qor jawaabta sanduuqa.)<br>
+      – Klick auf OK. (Guji OK.)
+    </p>
+</div>
+
+<script>
+let currentMode = null;
+let currentAnswer = null;
+let score = 0;
+
+function updateName(){
+    const name = document.getElementById('username').value.trim();
+    if(name){
+        document.title = name + " – Math & Deutsch Playground";
+    } else {
+        document.title = "Math & Deutsch – Playground (Musti)";
+    }
+}
+
+function chooseMode(mode){
+    currentMode = mode;
+    document.getElementById('gameArea').style.display = 'block';
+    document.getElementById('feedbackBox').innerText = '';
+    newQuestion();
+}
+
+function newQuestion(){
+    const qBox = document.getElementById('questionBox');
+    const title = document.getElementById('gameTitle');
+    const inst = document.getElementById('instructions');
+    const input = document.getElementById('answerInput');
+    input.value = '';
+    input.focus();
+
+    let a, b;
+
+    if(currentMode === 'add'){
+        title.innerText = "Addition";
+        inst.innerText = "Af-Deutsch: Rechne die Summe. / Xisaabi isku darka.";
+        a = randomInt(1, 20);
+        b = randomInt(1, 20);
+        qBox.innerText = a + " + " + b + " = ?";
+        currentAnswer = a + b;
+    } else if(currentMode === 'sub'){
+        title.innerText = "Subtraction";
+        inst.innerText = "Af-Deutsch: Rechne die Differenz. / Xisaabi ka-jaridda.";
+        a = randomInt(5, 30);
+        b = randomInt(1, a);
+        qBox.innerText = a + " − " + b + " = ?";
+        currentAnswer = a - b;
+    } else if(currentMode === 'mul'){
+        title.innerText = "Multiplikation";
+        inst.innerText = "Af-Deutsch: Rechne das Produkt. / Xisaabi isku dhufashada.";
+        a = randomInt(1, 10);
+        b = randomInt(1, 10);
+        qBox.innerText = a + " × " + b + " = ?";
+        currentAnswer = a * b;
+    } else if(currentMode === 'frac'){
+        title.innerText = "Fractions";
+        inst.innerText = "Af-Deutsch: Bruchaufgabe. / Su’aal jajab ah.";
+        // Tusaale fudud
+        const questions = [
+            { text: "1/2 von 8 = ? (Af-Soomaali: nus ka mid ah 8?)", ans: 4 },
+            { text: "1/3 von 9 = ? (Af-Soomaali: 1/3 ka mid ah 9?)", ans: 3 },
+            { text: "1/4 von 20 = ? (Af-Soomaali: rubuc ka mid ah 20?)", ans: 5 }
+        ];
+        const q = questions[randomInt(0, questions.length-1)];
+        qBox.innerText = q.text;
+        currentAnswer = q.ans;
+    } else if(currentMode === 'de'){
+        title.innerText = "Deutsch Rechnen";
+        inst.innerText = "Af-Deutsch: Lies die Aufgabe auf Deutsch, antworte mit Zahl. / Su’aasha waa Jarmal, jawaabtu waa tiro.";
+        a = randomInt(1, 20);
+        b = randomInt(1, 20);
+        qBox.innerText = "Wie viel ist " + a + " plus " + b + " ?";
+        currentAnswer = a + b;
+    } else {
+        title.innerText = "Game";
+        qBox.innerText = "Dooro ciyaar kor / Wähl ein Spiel oben.";
+        inst.innerText = "";
+        currentAnswer = null;
+    }
+}
+
+function checkAnswer(){
+    if(currentAnswer === null){
+        return;
+    }
+    const val = document.getElementById('answerInput').value.trim();
+    const fb = document.getElementById('feedbackBox');
+
+    if(val === ""){
+        fb.innerText = "Fülle zuerst die Antwort aus. / Marka hore geli jawaab.";
+        fb.style.color = "orange";
+        return;
+    }
+
+    const userNum = Number(val);
+    if(userNum === currentAnswer){
+        fb.innerText = "Richtig! / Waa sax 👏";
+        fb.style.color = "green";
+        score++;
+        document.getElementById('scoreBox').innerText = "Score: " + score;
+        setTimeout(newQuestion, 800);
+    } else {
+        fb.innerText = "Falsch. Versuch es noch einmal. / Khalad, mar kale isku day.";
+        fb.style.color = "red";
+    }
+}
+
+function randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+</script>
+
+</body>
+</html>
