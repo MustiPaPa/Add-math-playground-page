@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mathe & Deutsch – Spielplatz (Musti)</title>
+<title>Mustis Lernwelt – Mathe, Sprachen & Weltwissen</title>
 
 <style>
     :root {
         --bg: #84c0f0;
-        --header-bg: #1b75d0;
+        --header-bg: linear-gradient(90deg,#014a94,#018ba8);
         --text: #000000;
         --card-bg: #ffffff;
         --card-shadow: rgba(0,0,0,0.3);
@@ -24,7 +24,7 @@
 
     body.dark-mode {
         --bg: #021626;
-        --header-bg: #001133;
+        --header-bg: linear-gradient(90deg,#000814,#003566);
         --text: #f5f5f5;
         --card-bg: #0f2233;
         --card-shadow: rgba(0,0,0,0.8);
@@ -45,35 +45,89 @@
         color: var(--text);
         text-align: center;
     }
+
     header {
         background: var(--header-bg);
-        padding: 8px 12px;
+        padding: 10px 12px 8px;
         color: white;
         font-size: 20px;
         font-weight: bold;
         display: flex;
-        align-items: center;
+        align-items: stretch;
         justify-content: space-between;
         box-sizing: border-box;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
     }
+
     .header-center {
         flex: 1;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 8px;
     }
-    header small {
+
+    .header-title {
+        font-size: 20px;
+        letter-spacing: 0.5px;
+    }
+
+    .header-sub {
         display: block;
-        font-size: 13px;
-        margin-top: 4px;
+        font-size: 12px;
+        margin-top: 3px;
         font-weight: normal;
+        opacity: 0.95;
     }
-    .flag {
-        width: 50px;
-        text-align: center;
+
+    .flag-hero {
+        width: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
     }
-    .flag img {
-        height: 28px;
+
+    .flag-hero-inner {
+        width: 100%;
+        border-radius: 10px;
+        padding: 4px 4px 6px;
+        box-shadow: 0 0 6px rgba(0,0,0,0.5);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .flag-hero-so {
+        background-image: linear-gradient(to bottom,#0099ff,#00c8ff 40%,#ffe9b3);
+    }
+
+    .flag-hero-ch {
+        background-image: linear-gradient(to bottom,#e0f5ff,#cde7ff 45%,#ffffff);
+    }
+
+    .flag-hero img {
+        height: 26px;
         border-radius: 4px;
         box-shadow: 0 0 4px rgba(0,0,0,0.4);
+        border: 1px solid rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.7);
+    }
+
+    .flag-scene {
+        margin-top: 4px;
+        font-size: 13px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .flag-scene span {
+        display: block;
+        font-size: 10px;
+        font-weight: normal;
     }
 
     .top-bar {
@@ -240,7 +294,7 @@
         background: #e68900;
     }
 
-    /* Sprachen (Englisch / Französisch) – options text like Flaggen */
+    /* Sprachen (Englisch / Französisch) – text options */
     .answers-lang button {
         background: #007bff;
         border-radius: 999px;
@@ -258,15 +312,20 @@
         background: #7b1fa2;
     }
 
-    /* Geografie (Schweiz / Somalia) */
+    /* Geografie (Schweiz / Somalia) – card style */
     .answers-geo button {
         background: #009688;
+        border-radius: 12px;
+        padding: 8px 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        white-space: nowrap;
     }
     .answers-geo button:hover {
         background: #00796b;
+        transform: translateY(-1px);
     }
 
-    /* Flaggen – special style */
+    /* Flaggen – special */
     .answers-flags {
         gap: 16px;
     }
@@ -390,15 +449,36 @@
 <body>
 
 <header>
-  <div class="flag">
-    <img src="https://flagcdn.com/w40/so.png" alt="Somalia">
+  <!-- Somalia side – Beach & Play -->
+  <div class="flag-hero">
+    <div class="flag-hero-inner flag-hero-so">
+      <img src="https://flagcdn.com/w40/so.png" alt="Somalia">
+      <div class="flag-scene">
+        🏖️🌴⚽
+        <span>Xeeb dheer & ciyaar</span>
+      </div>
+    </div>
   </div>
+
+  <!-- Center title -->
   <div class="header-center">
-    Mathe & Deutsch – Spielplatz (Musti Edition)
-    <small>Grundschule · Rechnen, Sprachen & Wissen lernen</small>
+    <div class="header-title">
+      Mustis Lernwelt – Mathe, Sprachen & Weltwissen
+    </div>
+    <small class="header-sub">
+      „Xisaab, luqado & juquraafi“ – spielerisch lernen für 1.–6. Klasse
+    </small>
   </div>
-  <div class="flag">
-    <img src="https://flagcdn.com/w40/ch.png" alt="Schweiz">
+
+  <!-- Switzerland side – Alps & Cable Car -->
+  <div class="flag-hero">
+    <div class="flag-hero-inner flag-hero-ch">
+      <img src="https://flagcdn.com/w40/ch.png" alt="Schweiz">
+      <div class="flag-scene">
+        🏔️🚡⛷️
+        <span>Berge, Schnee & Lifte</span>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -507,16 +587,16 @@
 <script>
 /* ---------- GLOBAL STATE ---------- */
 var currentMode = null;
-var currentQuestion = null; // { correctValue, mode, hint? }
+var currentQuestion = null;
 var score = 0;
 var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v5";
+var STORAGE_KEY = "musti_playground_profiles_v6";
 
 /* ---------- QUESTION POOLS ---------- */
 
-/* Englisch – jetzt mit Optionen (wie Flaggen) */
+/* Englisch – Optionen */
 var enQuestions = [
     {
         question: "„Hund“ auf Englisch?",
@@ -615,7 +695,7 @@ var flagQuestions = [
         country: "Kenia",
         correct: "ke",
         others: ["so","ng"],
-        hint: "Eselsbrücke: Kenia 🇰🇪 – gaashaan madow oo dhexe yaal, sida geesi ilaalinaya duurka."
+        hint: "Eselsbrücke: Kenia 🇰🇪 – gaashaan madow oo dhexe yaal, sida geesi duurka ilaalinaya."
     },
     {
         country: "Äthiopien",
@@ -680,69 +760,86 @@ var readQuestions = [
     }
 ];
 
-/* Schweiz / Kantone – graded: Klasse 3 Berge/Seen, Klasse 6 population/resources */
+/* Schweiz / Kantone – options style */
 var chQuestions = [
     {
         min: 1, max: 4,
-        text: "🏔️ Schweiz – Kantone\n\nIn welchem Kanton liegt die Stadt Zürich?\n1) Kanton Zürich   2) Kanton Bern   3) Kanton Tessin",
-        ans: 1
+        question: "🏔️ Schweiz – Kantone\n\nIn welchem Kanton liegt die Stadt Zürich?",
+        options: ["Zürich", "Bern", "Tessin"],
+        correctIndex: 0
     },
     {
         min: 3, max: 5,
-        text: "🏔️ Schweiz – Berge\n\nDas Matterhorn ist ein bekannter Berg. In welchem Kanton liegt er?\n1) Wallis   2) Graubünden   3) Aargau",
-        ans: 1
+        question: "🏔️ Schweiz – Berge\n\nDas Matterhorn ist ein sehr bekannter Berg. In welchem Kanton liegt er?",
+        options: ["Wallis", "Graubünden", "Aargau"],
+        correctIndex: 0
     },
     {
         min: 3, max: 5,
-        text: "🏞️ Schweiz – Seen\n\nDer Vierwaldstättersee liegt in der Zentralschweiz.\nWelche Stadt liegt an diesem See?\n1) Luzern   2) Basel   3) Genf",
-        ans: 1
+        question: "🏞️ Schweiz – Seen\n\nDer Vierwaldstättersee liegt in der Zentralschweiz.\nWelche Stadt liegt an diesem See?",
+        options: ["Luzern", "Basel", "Genf"],
+        correctIndex: 0
     },
     {
         min: 5, max: 7,
-        text: "👨‍👩‍👧‍👦 Schweiz – Bevölkerung\n\nWie viele Menschen leben ungefähr in der Schweiz?\n1) 2 Millionen   2) 9 Millionen   3) 50 Millionen",
-        ans: 2
+        question: "👨‍👩‍👧‍👦 Schweiz – Bevölkerung\n\nWie viele Menschen leben ungefähr in der Schweiz?",
+        options: ["ca. 2 Millionen", "ca. 9 Millionen", "ca. 50 Millionen"],
+        correctIndex: 1
     },
     {
         min: 5, max: 7,
-        text: "⌚ Schweiz – Ressourcen & Bekanntes\n\nWofür ist die Schweiz besonders bekannt?\n1) Uhren, Schokolade und Berge   2) Wüsten und Kamele   3) Strände am Meer",
-        ans: 1
+        question: "⌚ Schweiz – Bekanntes\n\nWofür ist die Schweiz besonders bekannt?",
+        options: [
+            "Uhren, Schokolade und Berge",
+            "Wüsten und Kamele",
+            "Strände am Meer"
+        ],
+        correctIndex: 0
     },
     {
         min: 5, max: 7,
-        text: "🎿 Schweiz – Wintersport\n\nWelche Region ist als Wintersportort sehr bekannt?\n1) St. Moritz   2) Zürich   3) Lausanne",
-        ans: 1
+        question: "🎿 Schweiz – Wintersport\n\nWelche Region ist als Wintersportort sehr bekannt?",
+        options: ["St. Moritz", "Zürich", "Lausanne"],
+        correctIndex: 0
     }
 ];
 
-/* Somalia & Geografie – taariikh, gobollo, xeeb, magaalooyin, webiyo */
+/* Somalia & Geografie – options style */
 var soQuestions = [
     {
-        text: "🇸🇴 Somalia – Taariikh\n\nGoorma ayay Soomaaliya xorowday (midowga labada gobol Waqooyi & Koonfur)?\n1) 1960   2) 1970   3) 1985",
-        ans: 1
+        question: "🇸🇴 Somalia – Taariikh\n\nGoorma ayay Soomaaliya xorowday (midowga Waqooyi & Koonfur)?",
+        options: ["1960", "1970", "1985"],
+        correctIndex: 0
     },
     {
-        text: "🇸🇴 Somalia – Madaxweyne\n\nKee ayaa muddo dheer madaxweyne ka ahaa Soomaaliya ilaa 1991?\n1) Aden Cadde   2) Siyaad Barre   3) Sharmarke",
-        ans: 2
+        question: "🇸🇴 Somalia – Madaxweyne\n\nKee ayaa muddo dheer madaxweyne ka ahaa Soomaaliya ilaa 1991?",
+        options: ["Aden Cadde", "Siyaad Barre", "Sharmarke"],
+        correctIndex: 1
     },
     {
-        text: "🇸🇴 Somalia – Gobollada\n\nSomalia waxaa caadi ahaan lagu sheegaa in ay ka kooban tahay…\n1) 5 gobol   2) 10 gobol   3) qiyaastii 18 gobol",
-        ans: 3
+        question: "🇸🇴 Somalia – Gobollada\n\nIntee qiyaastii ah ayay gobollada Soomaaliya yihiin?",
+        options: ["5 gobol", "10 gobol", "qiyaastii 18 gobol"],
+        correctIndex: 2
     },
     {
-        text: "🌊 Somalia – Xeebaha\n\nSomalia waxay leedahay xeeb aad u dheer oo ku taal badda…\n1) Caspian Sea   2) Indian Ocean   3) Baltic Sea",
-        ans: 2
+        question: "🌊 Somalia – Xeebaha\n\nSomalia waxay leedahay xeeb aad u dheer oo ku taal badda…",
+        options: ["Caspian Sea", "Indian Ocean", "Baltic Sea"],
+        correctIndex: 1
     },
     {
-        text: "🏙️ Somalia – Magaalooyin\n\nWaa kuwee caasimadda Soomaaliya?\n1) Hargeysa   2) Muqdisho   3) Kismaayo",
-        ans: 2
+        question: "🏙️ Somalia – Magaalooyin\n\nWaa kuwee caasimadda Soomaaliya?",
+        options: ["Hargeysa", "Muqdisho", "Kismaayo"],
+        correctIndex: 1
     },
     {
-        text: "🏞️ Somalia – Webiyaal\n\nMid ka mid ah webiyada waaweyn ee Soomaaliya waa…\n1) Rhein   2) Shabeelle   3) Amazonas",
-        ans: 2
+        question: "🏞️ Somalia – Webiyaal\n\nMid ka mid ah webiyada waaweyn ee Soomaaliya waa…",
+        options: ["Rhein", "Shabeelle", "Amazonas"],
+        correctIndex: 1
     },
     {
-        text: "🌍 Somalia – Deris\n\nSomalia waxay deris la tahay Itoobiya iyo…\n1) Kenya   2) Spain   3) Brazil",
-        ans: 1
+        question: "🌍 Somalia – Deris\n\nSomalia waxay deris la tahay Itoobiya iyo…",
+        options: ["Kenya", "Spain", "Brazil"],
+        correctIndex: 0
     }
 ];
 
@@ -906,9 +1003,8 @@ function renderHallOfFame() {
         var lesenTot  = m.read.total   + m.de.total;
         var sprCorr   = m.en.correct + m.fr.correct;
         var sprTot    = m.en.total   + m.fr.total;
-        // Wissen: IT + Flaggen + Schweiz + Somalia
-        var wCorr = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
-        var wTot  = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
+        var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
+        var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
 
         var mathePct = matheTot > 0 ? Math.round(matheCorr / matheTot * 100) : 0;
         var lesenPct = lesenTot > 0 ? Math.round(lesenCorr / lesenTot * 100) : 0;
@@ -1274,33 +1370,25 @@ function newQuestion() {
         setFlagChoices(q.correct, q.others);
     } else if (currentMode === 'chgeo') {
         title.innerText = "Schweiz & Kantone – Geografie";
-        inst.innerText = "Frage lesen und 1, 2 oder 3 klicken.";
+        inst.innerText = "Frage lesen und richtige Region anklicken.";
         var chPool = getChPoolForGrade();
         q = chPool[randomInt(0, chPool.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = { correctValue: q.ans, mode: "chgeo" };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-geo"
-        );
+        qBox.innerText = q.question;
+        currentQuestion = { correctValue: q.correctIndex, mode: "chgeo" };
+        var chChoices = q.options.map(function(opt, idx){
+            return { value: idx, text: opt };
+        });
+        setChoices(chChoices, "answers-geo");
     } else if (currentMode === 'soinfo') {
         title.innerText = "Somalia & Geografie – Taariikh & Aqoon";
-        inst.innerText = "Akhri su’aasha, kadib klicke 1, 2 oder 3.";
+        inst.innerText = "Akhri su’aasha, kadib ku dhufo jawaabta saxda ah.";
         q = soQuestions[randomInt(0, soQuestions.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = { correctValue: q.ans, mode: "soinfo" };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-geo"
-        );
+        qBox.innerText = q.question;
+        currentQuestion = { correctValue: q.correctIndex, mode: "soinfo" };
+        var soChoices = q.options.map(function(opt, idx){
+            return { value: idx, text: opt };
+        });
+        setChoices(soChoices, "answers-geo");
     } else {
         title.innerText = "Spiel";
         qBox.innerText = "Wähle oben ein Spiel aus.";
