@@ -1,638 +1,763 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="so">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mustis Lernwelt – Mathe, Sprachen & Weltwissen</title>
-
+<title>Musti – Lern-Spielplatz</title>
 <style>
-    :root {
-        --bg: #84c0f0;
-        --header-bg: linear-gradient(90deg,#014a94,#018ba8);
-        --text: #000000;
-        --card-bg: #ffffff;
-        --card-shadow: rgba(0,0,0,0.3);
-        --accent: #0056a6;
-        --score-bg: #1b75d0;
-        --side-bg: #fffbcc;
-        --button-ok: #28a745;
-        --button-ok-hover: #218838;
-        --menu-bg: #ffffff;
-        --menu-hover: #e3f2ff;
-        --input-border: #ccc;
+    * {
+        box-sizing: border-box;
     }
-
-    body.dark-mode {
-        --bg: #021626;
-        --header-bg: linear-gradient(90deg,#000814,#003566);
-        --text: #f5f5f5;
-        --card-bg: #0f2233;
-        --card-shadow: rgba(0,0,0,0.8);
-        --accent: #2296ff;
-        --score-bg: #004080;
-        --side-bg: #2d2a0f;
-        --button-ok: #1c8c3a;
-        --button-ok-hover: #0f6b2a;
-        --menu-bg: #071521;
-        --menu-hover: #123047;
-        --input-border: #555;
-    }
-
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: var(--bg);
-        color: var(--text);
+        background: linear-gradient(135deg, #84c0f0, #f7f9ff);
         text-align: center;
+        color: #123;
     }
-
     header {
-        background: var(--header-bg);
-        padding: 10px 12px 8px;
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        display: flex;
-        align-items: stretch;
-        justify-content: space-between;
-        box-sizing: border-box;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-    }
-
-    .header-center {
-        flex: 1;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 0 8px;
-    }
-
-    .header-title {
-        font-size: 20px;
-        letter-spacing: 0.5px;
-    }
-
-    .header-sub {
-        display: block;
-        font-size: 12px;
-        margin-top: 3px;
-        font-weight: normal;
-        opacity: 0.95;
-    }
-
-    .flag-hero {
-        width: 90px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
-
-    .flag-hero-inner {
-        width: 100%;
-        border-radius: 10px;
-        padding: 4px 4px 6px;
-        box-shadow: 0 0 6px rgba(0,0,0,0.5);
-        background-size: cover;
-        background-position: center;
         position: relative;
-        overflow: hidden;
-    }
-
-    .flag-hero-so {
-        background-image: linear-gradient(to bottom,#0099ff,#00c8ff 40%,#ffe9b3);
-    }
-
-    .flag-hero-ch {
-        background-image: linear-gradient(to bottom,#e0f5ff,#cde7ff 45%,#ffffff);
-    }
-
-    .flag-hero img {
-        height: 26px;
-        border-radius: 4px;
-        box-shadow: 0 0 4px rgba(0,0,0,0.4);
-        border: 1px solid rgba(255,255,255,0.8);
-        background: rgba(255,255,255,0.7);
-    }
-
-    .flag-scene {
-        margin-top: 4px;
-        font-size: 13px;
-        font-weight: bold;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-    }
-
-    .flag-scene span {
-        display: block;
-        font-size: 10px;
-        font-weight: normal;
-    }
-
-    .top-bar {
-        margin: 10px auto 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        justify-content: center;
-        align-items: center;
-        font-size: 13px;
-    }
-    .top-bar select,
-    .top-bar button {
-        padding: 6px 10px;
-        border-radius: 10px;
-        border: 1px solid var(--input-border);
-        background: var(--card-bg);
-        color: var(--text);
-        font-size: 13px;
-    }
-    .top-bar button {
-        cursor: pointer;
-        border: none;
-        background: var(--accent);
-        color: #fff;
-        font-weight: bold;
-    }
-    .top-bar button:hover {
-        opacity: 0.9;
-    }
-    .top-label {
-        font-weight: bold;
-    }
-    .score {
-        font-weight: bold;
-        color: #fff;
-        background: var(--score-bg);
-        padding: 4px 10px;
-        border-radius: 10px;
-        font-size: 13px;
-    }
-    .dark-toggle label {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 13px;
-        cursor: pointer;
-    }
-
-    .profile-buttons-bar {
-        max-width: 900px;
-        margin: 6px auto 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        justify-content: center;
-    }
-    .profile-buttons-bar button {
-        border-radius: 999px;
-        border: none;
-        padding: 4px 10px;
-        font-size: 12px;
-        cursor: pointer;
-        background: rgba(0,0,0,0.08);
-        color: var(--text);
-    }
-    .profile-buttons-bar button.active {
-        background: var(--accent);
-        color: #fff;
-    }
-    .profile-buttons-bar button:hover {
-        opacity: 0.9;
-    }
-
-    .menu-bar {
-        margin: 15px auto 5px;
-        max-width: 450px;
-    }
-    .hamburger-btn {
-        width: 100%;
-        padding: 10px 14px;
-        border-radius: 12px;
-        border: none;
-        background: var(--accent);
+        padding: 18px 10px 12px;
         color: white;
-        font-size: 16px;
+        font-size: 24px;
         font-weight: bold;
-        cursor: pointer;
+        background: linear-gradient(90deg, #004f9f, #0099ff);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+    header small {
+        display: block;
+        font-size: 13px;
+        margin-top: 5px;
+        opacity: 0.9;
+    }
+    .header-flags {
+        position: absolute;
+        top: 8px;
+        right: 10px;
         display: flex;
+        gap: 8px;
+        font-size: 26px;
+    }
+    .header-flags span {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        box-shadow: 0 3px 6px var(--card-shadow);
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
+        background: rgba(0,0,0,0.15);
     }
-    .hamburger-icon {
-        font-size: 20px;
-    }
-    .menu-list {
-        margin-top: 6px;
-        display: none;
-        background: var(--menu-bg);
-        border-radius: 12px;
-        box-shadow: 0 3px 8px var(--card-shadow);
-        overflow: hidden;
-    }
-    .menu-item {
-        width: 100%;
-        padding: 10px 14px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        text-align: left;
-        font-size: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: var(--text);
-    }
-    .menu-item span {
-        font-size: 18px;
-        margin-right: 8px;
-    }
-    .menu-item small {
+    .header-flags span.flag-label {
         font-size: 12px;
+        width: auto;
+        height: auto;
+        box-shadow: none;
+        background: transparent;
+        font-weight: bold;
+        text-shadow: none;
+    }
+
+    .top-wrap {
+        max-width: 1100px;
+        margin: 10px auto 0;
+        padding: 0 10px 5px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr);
+        gap: 10px;
+    }
+
+    .top-bar, .profile-panel {
+        background: rgba(255,255,255,0.9);
+        border-radius: 12px;
+        padding: 8px 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        text-align: left;
+    }
+    .top-bar-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+    .top-bar input[type="text"] {
+        padding: 5px 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        min-width: 130px;
+    }
+    .top-bar .score {
+        font-weight: bold;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #1b75d0;
+        color: #fff;
+    }
+    .top-bar small {
+        font-size: 11px;
         opacity: 0.8;
     }
-    .menu-item:hover {
-        background: var(--menu-hover);
+
+    .profile-panel h3 {
+        margin: 0 0 6px;
+        font-size: 15px;
+    }
+    .profile-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .profile-form input,
+    .profile-form select {
+        padding: 5px 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 13px;
+    }
+    .profile-form button {
+        padding: 5px 10px;
+        border-radius: 10px;
+        border: none;
+        background: #28a745;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .profile-form button:hover {
+        background: #218838;
+    }
+    .profile-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 5px;
+    }
+    .profile-btn {
+        border-radius: 999px;
+        padding: 4px 10px;
+        border: none;
+        font-size: 12px;
+        cursor: pointer;
+        background: #eee;
+    }
+    .profile-btn.active {
+        background: #1b75d0;
+        color: white;
+        font-weight: bold;
+    }
+    .hall-of-fame {
+        margin-top: 6px;
+        font-size: 11px;
+        max-height: 180px;
+        overflow: auto;
+    }
+    .hall-of-fame table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .hall-of-fame th,
+    .hall-of-fame td {
+        border-bottom: 1px solid #ddd;
+        padding: 2px 3px;
+        text-align: left;
+        white-space: nowrap;
+    }
+    .hall-of-fame th {
+        background: #f1f5ff;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .layout-main {
+        max-width: 1100px;
+        margin: 10px auto 20px;
+        padding: 0 10px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+        gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+        .top-wrap,
+        .layout-main {
+            grid-template-columns: minmax(0,1fr);
+        }
+    }
+
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        padding: 10px 0;
+    }
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.23);
+        cursor: pointer;
+        transition: 0.18s;
+        text-align: center;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+        background: #e6f2ff;
+    }
+    .card .emoji {
+        font-size: 32px;
+    }
+    .card .title {
+        font-size: 15px;
+        font-weight: bold;
+        margin-top: 6px;
+    }
+    .card .sub {
+        font-size: 11px;
+        color: #555;
     }
 
     .game-area {
-        max-width: 520px;
-        margin: 15px auto 20px;
-        background: var(--card-bg);
+        background: #ffffff;
         border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 4px 10px var(--card-shadow);
-        text-align: center;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-align: left;
+        min-height: 240px;
     }
     .game-area h2 {
         margin-top: 0;
+        margin-bottom: 6px;
     }
     .question {
-        font-size: 20px;
-        margin: 10px 0;
+        font-size: 18px;
+        margin: 8px 0;
         white-space: pre-line;
     }
     .hint {
-        font-size: 13px;
-        margin-bottom: 8px;
-    }
-    body.dark-mode .hint {
-        color: #cccccc;
-    }
-    body:not(.dark-mode) .hint {
-        color: #555555;
-    }
-
-    .answers {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-    }
-    .answers button {
-        padding: 8px 14px;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        min-width: 70px;
-        font-weight: bold;
-        color: #fff;
-    }
-
-    /* Mathe / Deutsch */
-    .answers-math button {
-        background: #28a745;
-    }
-    .answers-math button:hover {
-        background: #1f7f37;
-    }
-
-    /* Lesen */
-    .answers-read button {
-        background: #ff9800;
-    }
-    .answers-read button:hover {
-        background: #e68900;
-    }
-
-    /* Sprachen (Englisch / Französisch) – text options */
-    .answers-lang button {
-        background: #007bff;
-        border-radius: 999px;
-        padding-inline: 18px;
-    }
-    .answers-lang button:hover {
-        background: #0062cc;
-    }
-
-    /* Informatik */
-    .answers-it button {
-        background: #9c27b0;
-    }
-    .answers-it button:hover {
-        background: #7b1fa2;
-    }
-
-    /* Geografie (Schweiz / Somalia) – card style */
-    .answers-geo button {
-        background: #009688;
-        border-radius: 12px;
-        padding: 8px 16px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        white-space: nowrap;
-    }
-    .answers-geo button:hover {
-        background: #00796b;
-        transform: translateY(-1px);
-    }
-
-    /* Flaggen – special */
-    .answers-flags {
-        gap: 16px;
-    }
-    .answers-flags button {
-        background: transparent;
-        border: 2px solid transparent;
-        border-radius: 12px;
-        padding: 6px 8px;
-        color: var(--text);
-        min-width: 80px;
-    }
-    .answers-flags button img {
-        display: block;
-        height: 40px;
-        margin: 0 auto 4px;
-        border-radius: 6px;
-        box-shadow: 0 0 4px rgba(0,0,0,0.4);
-    }
-    .answers-flags button span {
         font-size: 12px;
-        display: block;
+        color: #555;
+        margin-bottom: 4px;
+        white-space: pre-line;
     }
-    .answers-flags button:hover {
-        border-color: var(--accent);
-        background: rgba(255,255,255,0.12);
+    .options {
+        margin-top: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .option-btn {
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        background: #f8f9ff;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+    }
+    .option-btn:hover {
+        background: #dfefff;
     }
 
     .feedback {
-        margin-top: 10px;
+        margin-top: 8px;
         font-weight: bold;
-        white-space: pre-line;
     }
 
     .side-info {
-        max-width: 900px;
-        margin: 0 auto 30px;
-        background: var(--side-bg);
+        background: #fffbcc;
         border-radius: 12px;
-        padding: 10px 15px 15px;
-        font-size: 14px;
+        padding: 10px 12px;
+        font-size: 12px;
         text-align: left;
-        color: var(--text);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.18);
     }
     .side-info h3 {
-        margin-top: 5px;
+        margin-top: 0;
     }
     .side-info ul {
-        padding-left: 20px;
-        margin: 5px 0 10px;
-    }
-    .hall-item {
-        font-size: 13px;
-        margin-bottom: 10px;
-    }
-
-    .hall-bars {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-    .bar-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 3px;
-    }
-    .bar-row-label {
-        width: 80px;
-        font-size: 12px;
-    }
-    .bar-row-bar {
-        flex: 1;
-        background: rgba(0,0,0,0.1);
-        border-radius: 999px;
-        overflow: hidden;
-        height: 8px;
-    }
-    .bar-row-bar-fill {
-        height: 8px;
-        border-radius: 999px;
-    }
-    .bar-row-bar-fill-mathe {
-        background: #28a745;
-    }
-    .bar-row-bar-fill-lesen {
-        background: #ff9800;
-    }
-    .bar-row-bar-fill-sprache {
-        background: #007bff;
-    }
-    .bar-row-bar-fill-wissen {
-        background: #009688;
-    }
-    .bar-row-pct {
-        width: 38px;
-        font-size: 11px;
-        text-align: right;
-    }
-
-    .hall-feedback {
-        font-size: 12px;
-        font-style: italic;
-        margin-top: 2px;
-    }
-
-    .hall-testbutton {
-        margin-top: 4px;
-    }
-    .hall-testbutton button {
-        padding: 3px 10px;
-        border-radius: 999px;
-        border: none;
-        font-size: 11px;
-        cursor: pointer;
-        background: var(--accent);
-        color: #fff;
-    }
-    .hall-testbutton button:hover {
-        opacity: 0.9;
+        padding-left: 18px;
+        margin: 5px 0 8px;
     }
 </style>
 </head>
 <body>
 
 <header>
-  <!-- Somalia side – Beach & Play -->
-  <div class="flag-hero">
-    <div class="flag-hero-inner flag-hero-so">
-      <img src="https://flagcdn.com/w40/so.png" alt="Somalia">
-      <div class="flag-scene">
-        🏖️🌴⚽
-        <span>Xeeb dheer & ciyaar</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Center title -->
-  <div class="header-center">
-    <div class="header-title">
-      Mustis Lernwelt – Mathe, Sprachen & Weltwissen
-    </div>
-    <small class="header-sub">
-      „Xisaab, luqado & juquraafi“ – spielerisch lernen für 1.–6. Klasse
-    </small>
-  </div>
-
-  <!-- Switzerland side – Alps & Cable Car -->
-  <div class="flag-hero">
-    <div class="flag-hero-inner flag-hero-ch">
-      <img src="https://flagcdn.com/w40/ch.png" alt="Schweiz">
-      <div class="flag-scene">
-        🏔️🚡⛷️
-        <span>Berge, Schnee & Lifte</span>
-      </div>
-    </div>
+  Musti – Lern-Spielplatz für Kinder
+  <small>Mathe · Deutsch · Englisch · Französisch · Informatik · Somalia · Schweiz</small>
+  <div class="header-flags">
+      <span title="Schweiz">🇨🇭</span>
+      <span title="Somalia">🇸🇴</span>
   </div>
 </header>
 
-<div class="top-bar">
-    <span class="top-label">Kind:</span>
-    <select id="profileSelect" onchange="selectProfile()">
-        <option value="">– Kind wählen –</option>
-    </select>
-    <button type="button" onclick="addProfile()">Neues Kind</button>
-    <button type="button" onclick="resetActiveProfile()">Reset Profil</button>
+<div class="top-wrap">
+    <div class="top-bar">
+        <div class="top-bar-row">
+            <label style="font-size:12px;">Desktop-Name / Magaca PC:</label>
+            <input type="text" id="pcName" placeholder="z.B. Musti-PC" oninput="updatePcNameTitle()" />
+            <span class="score" id="scoreBox">Score: 0</span>
+        </div>
+        <small>
+            1) Dooro ilmuhu & fasalkiisa (rechts). 2) Markaas dooro Spiel (hoos). 3) Jawaabo guji.
+            Hadaf maalinle: qiyaastii 20 su'aal (~15–20 min).
+        </small>
+    </div>
 
-    <span class="top-label">Klasse:</span>
-    <select id="gradeSelect" onchange="updateGrade()">
-        <option value="1">1. Klasse</option>
-        <option value="2">2. Klasse</option>
-        <option value="3">3. Klasse</option>
-        <option value="4">4. Klasse</option>
-        <option value="5">5. Klasse</option>
-        <option value="6">6. Klasse</option>
-        <option value="special">Spezial 6/7</option>
-    </select>
-
-    <span class="score" id="scoreBox">Punkte: 0</span>
-
-    <div class="dark-toggle">
-        <label>
-            <input type="checkbox" id="darkToggle" onchange="toggleDarkMode()">
-            🌙 Dark Mode
-        </label>
+    <div class="profile-panel">
+        <h3>👨‍👩‍👧‍👦 Kinder-Profile / Carruurta</h3>
+        <div class="profile-form">
+            <input type="text" id="childName" placeholder="Magaca ilmaha" />
+            <select id="childGrade">
+                <option value="1">Klasse 1</option>
+                <option value="2">Klasse 2</option>
+                <option value="3">Klasse 3</option>
+                <option value="4">Klasse 4</option>
+                <option value="5">Klasse 5</option>
+                <option value="6">Klasse 6</option>
+                <option value="special">Spezial 6/7</option>
+            </select>
+            <button onclick="addProfile()">Speichern / Save</button>
+        </div>
+        <div class="profile-buttons" id="profileButtons"></div>
+        <div class="hall-of-fame" id="hallOfFame"></div>
     </div>
 </div>
 
-<div id="profileButtonsBar" class="profile-buttons-bar"></div>
+<div class="layout-main">
+    <div>
+        <div class="game-grid">
+            <div class="card" onclick="chooseMode('add')">
+                <div class="emoji">➕</div>
+                <div class="title">Addition</div>
+                <div class="sub">1–20 · 3 Antworten</div>
+            </div>
+            <div class="card" onclick="chooseMode('sub')">
+                <div class="emoji">➖</div>
+                <div class="title">Subtraktion</div>
+                <div class="sub">Ka-jarid · 1–30</div>
+            </div>
+            <div class="card" onclick="chooseMode('mul')">
+                <div class="emoji">✖️</div>
+                <div class="title">Multiplikation</div>
+                <div class="sub">2er–10er Reihe</div>
+            </div>
+            <div class="card" onclick="chooseMode('frac')">
+                <div class="emoji">🧩</div>
+                <div class="title">Brüche</div>
+                <div class="sub">1/2, 1/3, 1/4 ...</div>
+            </div>
+            <div class="card" onclick="chooseMode('de')">
+                <div class="emoji">🇩🇪</div>
+                <div class="title">Deutsch Rechnen</div>
+                <div class="sub">„Wie viel ist 3 + 5?“</div>
+            </div>
+            <div class="card" onclick="chooseMode('en')">
+                <div class="emoji">🇬🇧</div>
+                <div class="title">English A1–B2</div>
+                <div class="sub">Conversation + Grammar</div>
+            </div>
+            <div class="card" onclick="chooseMode('fr')">
+                <div class="emoji">🇫🇷</div>
+                <div class="title">Français A1–B2</div>
+                <div class="sub">Conversation + Grammaire</div>
+            </div>
+            <div class="card" onclick="chooseMode('delang')">
+                <div class="emoji">📘</div>
+                <div class="title">Deutsch Grammatik</div>
+                <div class="sub">A1–B2 Sätze</div>
+            </div>
+            <div class="card" onclick="chooseMode('itbasics')">
+                <div class="emoji">💻</div>
+                <div class="title">Informatik Basics</div>
+                <div class="sub">PC, Komponenten, Outlook</div>
+            </div>
+            <div class="card" onclick="chooseMode('flags')">
+                <div class="emoji">🌍</div>
+                <div class="title">Flaggen Afrika</div>
+                <div class="sub">Calamo + 3 Antworten</div>
+            </div>
+            <div class="card" onclick="chooseMode('chgeo')">
+                <div class="emoji">🏔️</div>
+                <div class="title">Schweiz – Kantone</div>
+                <div class="sub">Wallis, Graubünden, Aargau ...</div>
+            </div>
+            <div class="card" onclick="chooseMode('soinfo')">
+                <div class="emoji">🏖️</div>
+                <div class="title">Somalia – Wissen</div>
+                <div class="sub">Gobollo, xeebaha, taariikh</div>
+            </div>
+        </div>
 
-<div class="menu-bar">
-    <button class="hamburger-btn" onclick="toggleMenu()">
-        <span class="hamburger-icon">☰</span>
-        Spiele wählen (Mathe / Sprachen / Wissen)
-    </button>
-    <div class="menu-list" id="menuList">
-        <button class="menu-item" onclick="chooseMode('add')">
-            <span>➕</span> Addition <small>Einfache Plus-Aufgaben</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('sub')">
-            <span>➖</span> Subtraktion <small>Minus & Unterschiede</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('mul')">
-            <span>✖️</span> Multiplikation <small>Mal-Rechnen</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('frac')">
-            <span>🧩</span> Brüche <small>Teile vom Ganzen</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('de')">
-            <span>🇩🇪</span> Deutschaufgaben <small>„Wie viele…“ Sätze</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('read')">
-            <span>📖</span> Lesen / Leseverstehen <small>Text + Frage</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('en')">
-            <span>🇬🇧</span> Englisch <small>Wörter & Farben (Optionen)</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('fr')">
-            <span>🇫🇷</span> Französisch <small>Wörter & Farben (Optionen)</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('itbasics')">
-            <span>💻</span> Informatik Basics <small>PC, Maus, Tastatur, Outlook</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('flags')">
-            <span>🌍</span> Flaggen Afrika <small>Calan + Waddan</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('chgeo')">
-            <span>🏔️</span> Schweiz & Kantone <small>Berge, Städte & Sport</small>
-        </button>
-        <button class="menu-item" onclick="chooseMode('soinfo')">
-            <span>🇸🇴</span> Somalia & Geografie <small>Taariikh, Gobollo, Xeebaha</small>
-        </button>
+        <div class="game-area" id="gameArea" style="margin-top:10px;">
+            <h2 id="gameTitle">Spiel wählen / Doorow Spiel</h2>
+            <p class="hint" id="instructions">
+                Dooro ilmuhu kor, kadibna dooro modul (Mathe, Sprachen, Somalia, Schweiz...).
+            </p>
+            <div class="question" id="questionBox">Frage / Su’aal ayaa halkan iman doonta.</div>
+            <div class="options" id="optionsBox"></div>
+            <div class="feedback" id="feedbackBox"></div>
+        </div>
     </div>
-</div>
 
-<div class="game-area" id="gameArea" style="display:none;">
-    <h2 id="gameTitle">Spiel</h2>
-    <p class="hint" id="instructions">
-      Wähle oben ein Spiel und ein Kind aus.
-    </p>
-    <div class="question" id="questionBox">Frage</div>
-    <div id="answersContainer" class="answers"></div>
-    <div class="feedback" id="feedbackBox"></div>
-</div>
-
-<div class="side-info">
-    <h3>Profile, Klassen & Fortschritt</h3>
-    <ul>
-        <li>Bis zu 10 Kinder (Profile) – jedes mit:
-            <ul>
-                <li>Name & Klasse (1–6 oder Spezial 6/7)</li>
-                <li>Punkte (Score)</li>
-                <li>Level pro Modul (5 Fragen, ab 4 Richtigen → nächstes Level)</li>
-                <li>Modul-Fortschritt:
-                    <b>Mathe</b>, <b>Lesen</b>, <b>Sprachen</b>, <b>Wissen (IT + Länder)</b>.
-                </li>
-            </ul>
-        </li>
-        <li>Oben siehst du Namens-Buttons, um schnell ein Kind zu wählen.</li>
-        <li>„Reset Profil“ setzt Punkte und Level vom aktiven Kind zurück.</li>
-    </ul>
-
-    <h3>Hall of Fame – Übersicht pro Kind</h3>
-    <div id="hallOfFame"></div>
+    <div class="side-info">
+        <h3>Deutsch Wörter – Math</h3>
+        <ul>
+            <li><b>plus</b> = + (z. B. 3 plus 4)</li>
+            <li><b>minus</b> = − (z. B. 7 minus 2)</li>
+            <li><b>mal</b> = × (z. B. 3 mal 5)</li>
+            <li><b>geteilt durch</b> = ÷ (z. B. 8 geteilt durch 2)</li>
+            <li><b>Ergebnis</b> = natiijo / Resultat</li>
+        </ul>
+        <p>
+        Af-Deutsch instructions fudud:<br>
+        – Wähle oben ein Spiel. (Kor ka dooro ciyaarta.)<br>
+        – Lies die Frage. (Akhri su’aasha.)<br>
+        – Klick auf eine Antwort. (Guji jawaabta saxda ah.)<br>
+        – Du siehst sofort: richtig oder falsch. (Isla markiiba waad arkaysaa sax/khalad.)
+        </p>
+        <p style="font-size:11px;opacity:0.8;">
+            Maalin walba hadaf: ~20 su’aal (15–20 min). App-ku wuxuu kaydiyaa:  
+            – Imisa su’aal oo maanta la qabtay<br>
+            – Qeybaha uu ilmuhu ku fiican yahay / ku daciif yahay (Mathe, Lesen, Sprachen, Wissen).
+        </p>
+    </div>
 </div>
 
 <script>
-/* ---------- GLOBAL STATE ---------- */
+/* ========= GLOBAL STATE ========= */
+
+var STORAGE_KEY = "musti-lernspielplatz-profiles-v1";
+
+var profiles = [];
+var activeProfileId = null;
 var currentMode = null;
 var currentQuestion = null;
 var score = 0;
-var currentGrade = "1";
-var profiles = [];
-var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v6";
 
-/* Level-run: 5 Fragen → 4+ richtig = Level up */
-var currentRun = { mode: null, count: 0, correct: 0 };
+/* ========= DAILY HELPERS ========= */
 
-/* ---------- QUESTION POOLS ---------- */
+function todayStr() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+}
 
-/* Englisch – Optionen */
+function ensureDaily(profile) {
+    if (!profile.daily) {
+        profile.daily = {
+            date: todayStr(),
+            questions: 0
+        };
+    }
+}
+
+/* ========= MODULES INIT ========= */
+
+function ensureModules(profile) {
+    if (!profile.modules) profile.modules = {};
+    var modes = [
+        "add","sub","mul","frac",
+        "de",
+        "en","fr","delang",
+        "itbasics",
+        "flags",
+        "chgeo",
+        "soinfo"
+    ];
+    modes.forEach(function(m){
+        if (!profile.modules[m]) {
+            profile.modules[m] = {
+                correct: 0,
+                total: 0
+            };
+        }
+    });
+}
+
+/* ========= STORAGE ========= */
+
+function saveProfiles() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    } catch(e) {
+        console.warn("localStorage error", e);
+    }
+}
+
+function loadProfiles() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        profiles = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        profiles = [];
+    }
+    for (var i=0;i<profiles.length;i++){
+        ensureModules(profiles[i]);
+        ensureDaily(profiles[i]);
+    }
+    renderProfileButtons();
+    renderHallOfFame();
+}
+
+/* ========= PROFILE HELPERS ========= */
+
+function addProfile() {
+    var name = document.getElementById("childName").value.trim();
+    var grade = document.getElementById("childGrade").value;
+    if (!name) return;
+
+    var newProfile = {
+        id: Date.now(),
+        name: name,
+        grade: grade,
+        score: 0,
+        modules: {},
+        daily: null
+    };
+    ensureModules(newProfile);
+    ensureDaily(newProfile);
+
+    profiles.push(newProfile);
+    activeProfileId = newProfile.id;
+    saveProfiles();
+    renderProfileButtons();
+    renderHallOfFame();
+    updateScoreUI();
+    document.getElementById("childName").value = "";
+}
+
+function getActiveProfile() {
+    if (!activeProfileId) return null;
+    for (var i=0;i<profiles.length;i++){
+        if (profiles[i].id === activeProfileId) return profiles[i];
+    }
+    return null;
+}
+
+function setActiveProfile(id) {
+    activeProfileId = id;
+    var p = getActiveProfile();
+    if (p) {
+        score = p.score || 0;
+    } else {
+        score = 0;
+    }
+    updateScoreUI();
+    renderProfileButtons();
+    renderHallOfFame();
+    // reset game info text
+    var inst = document.getElementById("instructions");
+    inst.textContent = "Kind: " + p.name + " · Bitte Spiel wählen.";
+}
+
+function renderProfileButtons() {
+    var box = document.getElementById("profileButtons");
+    box.innerHTML = "";
+    profiles.forEach(function(p){
+        var btn = document.createElement("button");
+        btn.className = "profile-btn" + (p.id === activeProfileId ? " active" : "");
+        btn.textContent = p.name + " (Kl. " + (p.grade === "special" ? "6/7" : p.grade) + ")";
+        btn.onclick = function(){ setActiveProfile(p.id); };
+        box.appendChild(btn);
+    });
+}
+
+function percentage(corr, tot) {
+    return tot > 0 ? Math.round(corr / tot * 100) : 0;
+}
+
+function renderHallOfFame() {
+    var box = document.getElementById("hallOfFame");
+    if (!profiles.length) {
+        box.innerHTML = "<em>Noch keine Kinder hinzugefügt.</em>";
+        return;
+    }
+    var html = "<table><thead><tr>" +
+        "<th>Kind</th><th>Kl.</th>" +
+        "<th>Mathe</th><th>Lesen</th><th>Sprachen</th><th>Wissen</th>" +
+        "<th>Heute</th>" +
+        "</tr></thead><tbody>";
+    profiles.forEach(function(p){
+        ensureModules(p);
+        ensureDaily(p);
+        var m = p.modules;
+
+        var matheCorr = m.add.correct + m.sub.correct + m.mul.correct + m.frac.correct;
+        var matheTot  = m.add.total   + m.sub.total   + m.mul.total   + m.frac.total;
+        var lesenCorr = m.de.correct;
+        var lesenTot  = m.de.total;
+        var sprCorr   = m.en.correct + m.fr.correct + (m.delang ? m.delang.correct : 0);
+        var sprTot    = m.en.total   + m.fr.total   + (m.delang ? m.delang.total   : 0);
+        var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
+        var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
+
+        var mathePct = percentage(matheCorr, matheTot);
+        var lesenPct = percentage(lesenCorr, lesenTot);
+        var sprPct   = percentage(sprCorr,   sprTot);
+        var wPct     = percentage(wCorr,     wTot);
+
+        var today = todayStr();
+        var qToday = (p.daily && p.daily.date === today) ? (p.daily.questions || 0) : 0;
+
+        html += "<tr>" +
+            "<td>" + escapeHtml(p.name) + "</td>" +
+            "<td>" + (p.grade === "special" ? "6/7" : p.grade) + "</td>" +
+            "<td>" + mathePct + "%</td>" +
+            "<td>" + lesenPct + "%</td>" +
+            "<td>" + sprPct + "%</td>" +
+            "<td>" + wPct + "%</td>" +
+            "<td>" + qToday + "</td>" +
+            "</tr>";
+    });
+    html += "</tbody></table>";
+    box.innerHTML = html;
+}
+
+/* ========= OTHER HELPERS ========= */
+
+function updatePcNameTitle() {
+    var val = document.getElementById("pcName").value.trim();
+    if (val) {
+        document.title = val + " – Musti Lern-Spielplatz";
+    } else {
+        document.title = "Musti – Lern-Spielplatz";
+    }
+}
+
+function updateScoreUI() {
+    document.getElementById("scoreBox").textContent = "Score: " + score;
+}
+
+function randomInt(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+        var j = randomInt(0, i);
+        var t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
+    }
+    return arr;
+}
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
+}
+
+/* ========= DAILY UPDATE ON ANSWER ========= */
+
+function updateDailyOnAnswer() {
+    var p = getActiveProfile();
+    if (!p) return;
+
+    ensureDaily(p);
+
+    var today = todayStr();
+    if (p.daily.date !== today) {
+        p.daily.date = today;
+        p.daily.questions = 0;
+    }
+    p.daily.questions++;
+}
+
+/* ========= DAILY MISSION TEXT ========= */
+
+function buildDailyMission(profile) {
+    ensureModules(profile);
+    ensureDaily(profile);
+
+    var today = todayStr();
+    var questionsToday = (profile.daily.date === today) ? (profile.daily.questions || 0) : 0;
+    var target = 20;
+    var remaining = Math.max(target - questionsToday, 0);
+
+    var m = profile.modules;
+
+    var matheCorr = m.add.correct + m.sub.correct + m.mul.correct + m.frac.correct;
+    var matheTot  = m.add.total   + m.sub.total   + m.mul.total   + m.frac.total;
+    var lesenCorr = m.de.correct;
+    var lesenTot  = m.de.total;
+    var sprCorr   = m.en.correct + m.fr.correct + (m.delang ? m.delang.correct : 0);
+    var sprTot    = m.en.total   + m.fr.total   + (m.delang ? m.delang.total   : 0);
+    var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
+    var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
+
+    function pct(corr, tot) {
+        return tot > 0 ? Math.round(corr / tot * 100) : 0;
+    }
+
+    var mathePct = pct(matheCorr, matheTot);
+    var lesenPct = pct(lesenCorr, lesenTot);
+    var sprPct   = pct(sprCorr,   sprTot);
+    var wPct     = pct(wCorr,     wTot);
+
+    var cats = [
+        { key: "Mathe", pct: mathePct },
+        { key: "Lesen", pct: lesenPct },
+        { key: "Sprachen", pct: sprPct },
+        { key: "Wissen", pct: wPct }
+    ];
+    cats.sort(function(a,b){ return a.pct - b.pct; });
+    var weakest = cats[0];
+
+    var txt = "Maanta: " + questionsToday + "/" + target + " su'aalood.";
+    if (remaining > 0) {
+        txt += " Waxaa ka hadhay " + remaining + " su'aal si aad u gaarto hadafka maalinlaha.";
+    } else {
+        txt += " 🎉 Hadafkii maanta waad dhammaysay!";
+    }
+
+    if (weakest && weakest.pct < 70) {
+        txt += " Fokus: " + weakest.key + " (waxaan kor u qaadeynaa qeybtaan).";
+    }
+
+    return txt;
+}
+
+/* ========= LEVEL HELPERS ========= */
+
+function getProfileLevel(profile, mode) {
+    ensureModules(profile);
+    var mod = profile.modules[mode];
+    if (!mod) return 1;
+    var corr = mod.correct || 0;
+    return 1 + Math.floor(corr / 5); // 5 sax = level up
+}
+
+function getModeLabel(mode) {
+    var map = {
+        add: "Addition",
+        sub: "Subtraktion",
+        mul: "Multiplikation",
+        frac: "Brüche",
+        de: "Deutsch Rechnen",
+        en: "English",
+        fr: "Français",
+        delang: "Deutsch Grammatik",
+        itbasics: "Informatik Basics",
+        flags: "Flaggen Afrika",
+        chgeo: "Schweiz – Kantone",
+        soinfo: "Somalia – Wissen"
+    };
+    return map[mode] || mode;
+}
+
+/* ========= QUESTION BANKS ========= */
+
+/* ENGLISH A1–B2 */
 var enQuestions = [
-    /* A1 – Greetings & Basics */
+    /* A1 */
     {
         level: "A1",
         type: "conversation",
@@ -678,7 +803,7 @@ var enQuestions = [
         correctIndex: 0
     },
 
-    /* A2 – Everyday situations & Present Continuous */
+    /* A2 */
     {
         level: "A2",
         type: "conversation",
@@ -724,7 +849,7 @@ var enQuestions = [
         correctIndex: 0
     },
 
-    /* B1 – Work & Problem Situations */
+    /* B1 */
     {
         level: "B1",
         type: "conversation",
@@ -770,7 +895,7 @@ var enQuestions = [
         correctIndex: 0
     },
 
-    /* B2 – Professional & Polite Language */
+    /* B2 */
     {
         level: "B2",
         type: "conversation",
@@ -817,9 +942,9 @@ var enQuestions = [
     }
 ];
 
-/* Französisch – Optionen */
+/* FRANZÖSISCH A1–B2 */
 var frQuestions = [
-    /* A1 – Saluer & se présenter */
+    /* A1 */
     {
         level: "A1",
         type: "conversation",
@@ -865,7 +990,7 @@ var frQuestions = [
         correctIndex: 0
     },
 
-    /* A2 – Vie quotidienne & présent */
+    /* A2 */
     {
         level: "A2",
         type: "conversation",
@@ -911,7 +1036,7 @@ var frQuestions = [
         correctIndex: 0
     },
 
-    /* B1 – Travail & situations plus longues */
+    /* B1 */
     {
         level: "B1",
         type: "conversation",
@@ -957,7 +1082,7 @@ var frQuestions = [
         correctIndex: 0
     },
 
-    /* B2 – Langue formelle & nuancée */
+    /* B2 */
     {
         level: "B2",
         type: "conversation",
@@ -1004,960 +1129,469 @@ var frQuestions = [
     }
 ];
 
-/* Informatik Basics – Optionen */
-var itBasicsQuestions = [
+/* DEUTSCH A1–B2 – Grammatik */
+var deLanguageQuestions = [
+    /* A1 */
     {
-        question: "Welches Gerät ist ein Computer?",
-        options: ["Laptop", "Maus", "Tastatur"],
+        level: "A1",
+        type: "grammar",
+        question: "Wähle den richtigen Satz:",
+        options: [
+            "Ich bin Musti.",
+            "Ich bist Musti.",
+            "Ich sind Musti."
+        ],
         correctIndex: 0
     },
     {
-        question: "Das kleine Gerät in der Hand zum Klicken. Was ist das?",
-        options: ["Bildschirm", "Maus", "Drucker"],
-        correctIndex: 1
-    },
-    {
-        question: "Damit tippst du Buchstaben und Zahlen. Was ist das?",
-        options: ["Lautsprecher", "Tastatur", "Kabel"],
-        correctIndex: 1
-    },
-    {
-        question: "Wofür benutzt man Outlook meistens?",
-        options: ["E-Mails", "Spiele", "Musik"],
+        level: "A1",
+        type: "grammar",
+        question: "Welche Antwort passt?\n„Wie geht es dir?“",
+        options: [
+            "Mir geht es gut, danke.",
+            "Ich Fußball.",
+            "Du Name Wasser."
+        ],
         correctIndex: 0
     },
     {
-        question: "Was ist ein gutes Passwort?",
-        options: ["nur Name", "lang & gemischt", "nur 1234"],
-        correctIndex: 1
+        level: "A1",
+        type: "grammar",
+        question: "Richtiger Satz:",
+        options: [
+            "Das ist ein Buch.",
+            "Das ein ist Buch.",
+            "Ist das Buch ein."
+        ],
+        correctIndex: 0
+    },
+
+    /* A2 */
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Welcher Satz ist richtig?",
+        options: [
+            "Ich stehe um 7 Uhr auf.",
+            "Ich aufstehe um 7 Uhr.",
+            "Ich stehe um auf 7 Uhr."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Welche Antwort ist höflich?\n„Können Sie mir bitte helfen?“",
+        options: [
+            "Ja, natürlich, ich helfe Ihnen gern.",
+            "Nein.",
+            "Später vielleicht oder nie."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Ergänze: „Ich ______ in der Schweiz.“",
+        options: [
+            "wohne",
+            "wohnt",
+            "wohnen (ich)"
+        ],
+        correctIndex: 0
+    },
+
+    /* B1 */
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Wähle den besten Satz:",
+        options: [
+            "Ich lerne Deutsch, weil ich in der Schweiz lebe.",
+            "Ich lerne Deutsch, weil ich lebe in der Schweiz.",
+            "Ich lerne Deutsch, ich lebe weil in der Schweiz."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Perfekt-Form wählen:",
+        options: [
+            "Gestern habe ich lange gearbeitet.",
+            "Gestern ich habe gearbeitet lange.",
+            "Gestern habe gearbeitet ich lange."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "conversation",
+        question: "Kollege fragt: „Kannst du mir das bitte erklären?“\nBeste Antwort:",
+        options: [
+            "Ja, klar. Ich erkläre es dir Schritt für Schritt.",
+            "Nein, ich keine Lust.",
+            "Später, vielleicht nie."
+        ],
+        correctIndex: 0
+    },
+
+    /* B2 */
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Wähle die beste Version:",
+        options: [
+            "Obwohl ich müde bin, mache ich die Aufgabe fertig.",
+            "Ich bin müde, obwohl mache ich die Aufgabe fertig.",
+            "Obwohl müde ich bin, ich mache fertig die Aufgabe."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Formulierung im beruflichen Kontext:",
+        options: [
+            "Könnten Sie mir bitte sagen, wann der Termin stattfindet?",
+            "Sag mir, wann Termin ist.",
+            "Hey, Termin wann?"
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "conversation",
+        question: "Du bist nicht einverstanden, aber höflich:",
+        options: [
+            "Ich verstehe Ihren Standpunkt, aber ich sehe es etwas anders.",
+            "Du hast Unrecht.",
+            "Deine Idee ist schlecht."
+        ],
+        correctIndex: 0
     }
 ];
 
-/* Flaggen Afrika – jawaabtu waa calan (code) */
+/* FLAGGEN AFRIKA – simple */
 var flagQuestions = [
     {
-        country: "Soomaaliya",
-        correct: "so",
-        others: ["ke","et"],
-        hint: "Eselsbrücke: Soomaaliya 🇸🇴 = buluug (bad & cirka) + xiddig cad oo dhexe kaga taal."
+        question: "Waa calanka Kenya?",
+        options: [
+            "🇰🇪",
+            "🇧🇷",
+            "🇪🇸"
+        ],
+        correctIndex: 0
     },
     {
-        country: "Kenia",
-        correct: "ke",
-        others: ["so","ng"],
-        hint: "Eselsbrücke: Kenia 🇰🇪 – gaashaan madow oo dhexe yaal, sida geesi duurka ilaalinaya."
+        question: "Waa calanka Somalia?",
+        options: [
+            "🇸🇴",
+            "🇨🇭",
+            "🇸🇪"
+        ],
+        correctIndex: 0
     },
     {
-        country: "Äthiopien",
-        correct: "et",
-        others: ["so","za"],
-        hint: "Eselsbrücke: Äthiopien 🇪🇹 – cagaar-jaalle-cas + xiddig dhexda, calan taariikhi ah."
-    },
-    {
-        country: "Nigeria",
-        correct: "ng",
-        others: ["gh","ke"],
-        hint: "Eselsbrücke: Nigeria 🇳🇬 – cagaar-cad-cagaar, sida labo geed cagaaran iyo wabiga dhexda maraya."
-    },
-    {
-        country: "Südafrika",
-        correct: "za",
-        others: ["ng","ke"],
-        hint: "Eselsbrücke: Südafrika 🇿🇦 – midabyo badan + xaraf Y, waddooyin badan oo isku yimaada."
+        question: "Waa calanka Ethiopia?",
+        options: [
+            "🇪🇹",
+            "🇩🇪",
+            "🇫🇷"
+        ],
+        correctIndex: 0
     }
 ];
 
-var flagMap = {
-    so: { url: "https://flagcdn.com/w80/so.png", label: "Soomaaliya" },
-    ke: { url: "https://flagcdn.com/w80/ke.png", label: "Kenia" },
-    et: { url: "https://flagcdn.com/w80/et.png", label: "Äthiopien" },
-    ng: { url: "https://flagcdn.com/w80/ng.png", label: "Nigeria" },
-    za: { url: "https://flagcdn.com/w80/za.png", label: "Südafrika" },
-    gh: { url: "https://flagcdn.com/w80/gh.png", label: "Ghana" }
-};
-
-/* Lesen / Leseverstehen */
-var readQuestions = [
-    {
-        min: 1, max: 2,
-        text: "📖 Lesen (1.–2. Klasse)\n\nTom hat einen roten Ball. Er spielt im Garten.\n\nFrage: Wo spielt Tom?\n1) In der Schule   2) Im Garten   3) Im Auto",
-        ans: 2
-    },
-    {
-        min: 1, max: 2,
-        text: "📖 Lesen (1.–2. Klasse)\n\nLina hat 3 Bücher. Sie liest gern im Bett.\n\nFrage: Wo liest Lina?\n1) Im Bett   2) Auf dem Spielplatz   3) Im Bus",
-        ans: 1
-    },
-    {
-        min: 3, max: 4,
-        text: "📖 Lesen (3.–4. Klasse)\n\nMax fährt mit dem Bus zur Schule. Der Bus braucht 15 Minuten.\n\nFrage: Womit fährt Max zur Schule?\n1) Mit dem Auto   2) Mit dem Bus   3) Zu Fuß",
-        ans: 2
-    },
-    {
-        min: 3, max: 4,
-        text: "📖 Lesen (3.–4. Klasse)\n\nIm Sommer geht die Klasse 3a ins Schwimmbad. Alle bringen Handtücher und Badehosen mit.\n\nFrage: Wohin geht die Klasse 3a?\n1) In die Bibliothek   2) Ins Schwimmbad   3) In den Zoo",
-        ans: 2
-    },
-    {
-        min: 5, max: 7,
-        text: "📖 Lesen (5.–6. Klasse)\n\nSara liebt Bücher über Tiere. In der Bibliothek leiht sie ein Buch über Löwen und eines über Elefanten aus.\n\nFrage: Was leiht Sara aus?\n1) Bücher über Autos   2) Bücher über Tiere   3) Bücher über Mathematik",
-        ans: 2
-    },
-    {
-        min: 5, max: 7,
-        text: "📖 Lesen (5.–6. Klasse)\n\nIn der Pause spielen die Kinder Fußball auf dem Pausenhof. Nach der Pause gehen alle wieder ins Klassenzimmer.\n\nFrage: Was machen die Kinder in der Pause?\n1) Sie schlafen im Klassenzimmer.\n2) Sie spielen Fußball auf dem Pausenhof.\n3) Sie fahren nach Hause.",
-        ans: 2
-    }
-];
-
-/* Schweiz / Kantone – options style */
+/* SCHWEIZ – Kantone */
 var chQuestions = [
     {
-        min: 1, max: 4,
-        question: "🏔️ Schweiz – Kantone\n\nIn welchem Kanton liegt die Stadt Zürich?",
-        options: ["Zürich", "Bern", "Tessin"],
-        correctIndex: 0
-    },
-    {
-        min: 3, max: 5,
-        question: "🏔️ Schweiz – Berge\n\nDas Matterhorn ist ein sehr bekannter Berg. In welchem Kanton liegt er?",
-        options: ["Wallis", "Graubünden", "Aargau"],
-        correctIndex: 0
-    },
-    {
-        min: 3, max: 5,
-        question: "🏞️ Schweiz – Seen\n\nDer Vierwaldstättersee liegt in der Zentralschweiz.\nWelche Stadt liegt an diesem See?",
-        options: ["Luzern", "Basel", "Genf"],
-        correctIndex: 0
-    },
-    {
-        min: 5, max: 7,
-        question: "👨‍👩‍👧‍👦 Schweiz – Bevölkerung\n\nWie viele Menschen leben ungefähr in der Schweiz?",
-        options: ["ca. 2 Millionen", "ca. 9 Millionen", "ca. 50 Millionen"],
-        correctIndex: 1
-    },
-    {
-        min: 5, max: 7,
-        question: "⌚ Schweiz – Bekanntes\n\nWofür ist die Schweiz besonders bekannt?",
+        question: "Kanton Wallis (VS) wuxuu caan ku yahay:",
         options: [
-            "Uhren, Schokolade und Berge",
-            "Wüsten und Kamele",
-            "Strände am Meer"
+            "Buuraha iyo barafka (Matterhorn, ski)",
+            "Xeebaha badda",
+            "Cidlada lamadegaanka"
         ],
         correctIndex: 0
     },
     {
-        min: 5, max: 7,
-        question: "🎿 Schweiz – Wintersport\n\nWelche Region ist als Wintersportort sehr bekannt?",
-        options: ["St. Moritz", "Zürich", "Lausanne"],
-        correctIndex: 0
-    }
-];
-
-/* Somalia & Geografie – options style (NO „Kenya Spain Brazil“ combo) */
-  var soQuestions = [
-    {
-        question: "🇸🇴 Somalia – Taariikh\n\nGoorma ayay Soomaaliya xorowday (midowga Waqooyi & Koonfur)?",
-        options: ["1960", "1970", "1985"],
-        correctIndex: 0
-    },
-    {
-        question: "🇸🇴 Somalia – Madaxweyne\n\nKee ayaa muddo dheer madaxweyne ka ahaa Soomaaliya ilaa 1991?",
-        options: ["Aden Cadde", "Siyaad Barre", "Sharmarke"],
-        correctIndex: 1
-    },
-    {
-        question: "🇸🇴 Somalia – Gobollada\n\nIntee qiyaastii ah ayay gobollada Soomaaliya yihiin?",
-        options: ["5 gobol", "10 gobol", "qiyaastii 18 gobol"],
-        correctIndex: 2
-    },
-    {
-        question: "🇸🇴 Somalia – Gobollada\n\nGobolkee ayay magaalada Hargeysa ku taallaa?",
-        options: ["Woqooyi Galbeed", "Banaadir", "Bay"],
-        correctIndex: 0
-    },
-    {
-        question: "🇸🇴 Somalia – Gobollada\n\nGobolkee ayay magaalada Kismaayo ku taallaa?",
-        options: ["Jubbada Hoose", "Galguduud", "Hiiraan"],
-        correctIndex: 0
-    },
-    {
-        question: "🏙️ Somalia – Magaalooyin\n\nWaa kuwee caasimadda Soomaaliya?",
-        options: ["Hargeysa", "Muqdisho", "Kismaayo"],
-        correctIndex: 1
-    },
-    {
-        question: "🏙️ Somalia – Magaalooyin\n\nGaroowe waa magaalo muhiim ah oo xarun u ah…",
-        options: ["Puntland", "Jubbaland", "Galmudug"],
-        correctIndex: 0
-    },
-    {
-        question: "🏞️ Somalia – Webiyaal\n\nMid ka mid ah webiyada waaweyn ee Soomaaliya waa…",
-        options: ["Rhein", "Shabeelle", "Amazonas"],
-        correctIndex: 1
-    },
-    {
-        question: "🌊 Somalia – Xeebaha\n\nSomalia waxay leedahay xeeb aad u dheer oo ku taal badda…",
-        options: ["Caspian Sea", "Indian Ocean", "Baltic Sea"],
-        correctIndex: 1
-    },
-    {
-        question: "🌍 Somalia – Deris\n\nSomalia waxay deris la tahay Itoobiya iyo…",
-        options: ["Kenya", "Japan", "Canada"],
-        correctIndex: 0
-    },
-    {
-        question: "🌍 Somalia – Qaaradda\n\nSomalia waxay ku taallaa qaaradda…",
-        options: ["Afrika", "Aasiya", "Yurub"],
-        correctIndex: 0
-    },
-    {
-        question: "💰 Somalia – Lacagta\n\nLacagta rasmiga ah ee Soomaaliya waa…",
-        options: ["Shilin Soomaali", "Euro", "Shilingi Kenya"],
-        correctIndex: 0
-    },
-    {
-        question: "🗣️ Somalia – Luuqadaha\n\nLuuqadaha rasmiga ah ee Soomaaliya waa…",
+        question: "Graubünden (GR) – maxaa lagu yaqaan?",
         options: [
-            "Af-Soomaali & Carabi",
-            "Af-Jarmal & Af-Faransiis",
-            "Af-Taliyaani & Af-Maay"
+            "Alpen, ski, Davos & St. Moritz",
+            "Jaziirado badeed",
+            "Wabiga Nile"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Aargau (AG) wuxuu ku yaal:",
+        options: [
+            "Bartamaha/woqooyi, Rhine agtiisa",
+            "Xeebta badweynta Hindiya",
+            "Jasiirad ka tirsan Karibik"
         ],
         correctIndex: 0
     }
 ];
 
-/* ---------- PROFILES & STORAGE ---------- */
-
-function ensureModules(profile) {
-    if (!profile.modules) profile.modules = {};
-    if (!profile.levels) profile.levels = {};
-    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo","soinfo"];
-    keys.forEach(function(k){
-        if (!profile.modules[k]) {
-            profile.modules[k] = { correct: 0, total: 0 };
-        }
-        if (!profile.levels[k]) {
-            profile.levels[k] = 1;
-        }
-    });
-}
-
-function loadProfiles() {
-    try {
-        var raw = localStorage.getItem(STORAGE_KEY);
-        profiles = raw ? JSON.parse(raw) : [];
-    } catch (e) {
-        profiles = [];
+/* SOMALIA – basic info */
+var soInfoQuestions = [
+    {
+        question: "Waa kuwee caasimadda Soomaaliya?",
+        options: [
+            "Hargeysa",
+            "Muqdisho",
+            "Baydhabo"
+        ],
+        correctIndex: 1
+    },
+    {
+        question: "Soomaaliya waxay madax-bannaani qaadatay:",
+        options: [
+            "1960",
+            "1991",
+            "2001"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Soomaaliya waxay leedahay xeeb dheer oo:",
+        options: [
+            "Badweynta Hindiya",
+            "Badweynta Pacific",
+            "Badweynta Atlantic"
+        ],
+        correctIndex: 0
     }
-    profiles.forEach(ensureModules);
-    renderProfileOptions();
-    renderProfileButtons();
-    renderHallOfFame();
-}
+];
 
-function saveProfiles() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
-    } catch (e) {
-        console.log("LocalStorage Error:", e);
+/* IT BASICS – PC & Outlook */
+var itBasicsQuestions = [
+    {
+        question: "Waa kee qayb ka mid ah kombiyuutarka (Hardware)?",
+        options: [
+            "CPU (Processor)",
+            "E-mail",
+            "Excel file"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Outlook waxaa loo isticmaalaa:",
+        options: [
+            "E-mail & Calendar",
+            "Sawir-qaadis (Camera)",
+            "Cunto kariyaha (Küche)"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Monitor-ka waxa uu muujinayaa:",
+        options: [
+            "Screen / shaashad",
+            "Kaydinta gudaha (Harddisk)",
+            "Koronto"
+        ],
+        correctIndex: 0
     }
-}
+];
 
-function renderProfileOptions() {
-    var sel = document.getElementById('profileSelect');
-    sel.innerHTML = '<option value="">– Kind wählen –</option>';
-    profiles.forEach(function(p) {
-        var opt = document.createElement('option');
-        opt.value = String(p.id);
-        opt.textContent = p.name + " (Klasse " + (p.grade === "special" ? "6/7" : p.grade) + ")";
-        sel.appendChild(opt);
-    });
+/* ========= GAME LOGIC ========= */
 
-    if (activeProfileId !== null) {
-        var found = profiles.find(function(p){ return p.id === activeProfileId; });
-        if (found) {
-            sel.value = String(activeProfileId);
-        } else {
-            activeProfileId = null;
-            score = 0;
-            updateScoreUI();
-        }
-    }
-}
-
-function renderProfileButtons() {
-    var bar = document.getElementById('profileButtonsBar');
-    if (!bar) return;
-    bar.innerHTML = "";
-    profiles.forEach(function(p){
-        var btn = document.createElement('button');
-        btn.textContent = p.name;
-        if (p.id === activeProfileId) {
-            btn.classList.add('active');
-        }
-        btn.onclick = function(){ selectProfileById(p.id, true); };
-        bar.appendChild(btn);
-    });
-}
-
-function addProfile() {
-    if (profiles.length >= 10) {
-        alert("Maximal 10 Kinder können registriert werden.");
-        return;
-    }
-    var name = prompt("Name des Kindes eingeben:");
-    if (!name) return;
-    name = name.trim();
-    if (!name) return;
-
-    var grade = document.getElementById('gradeSelect').value || "1";
-    var newProfile = {
-        id: Date.now(),
-        name: name,
-        grade: grade,
-        score: 0,
-        modules: {},
-        levels: {}
-    };
-    ensureModules(newProfile);
-    profiles.push(newProfile);
-    activeProfileId = newProfile.id;
-    score = 0;
-    saveProfiles();
-    renderProfileOptions();
-    renderProfileButtons();
-    document.getElementById('profileSelect').value = String(newProfile.id);
-    currentGrade = grade;
-    document.getElementById('gradeSelect').value = grade;
-    updateScoreUI();
-    renderHallOfFame();
-}
-
-function resetActiveProfile() {
-    var p = getActiveProfile();
-    if (!p) {
-        alert("Kein aktives Kind ausgewählt.");
-        return;
-    }
-    if (!confirm("Profil von " + p.name + " komplett zurücksetzen (Punkte + Level)?")) {
-        return;
-    }
-    p.score = 0;
-    if (!p.modules) p.modules = {};
-    if (!p.levels) p.levels = {};
-    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo","soinfo"];
-    keys.forEach(function(k){
-        p.modules[k] = { correct: 0, total: 0 };
-        p.levels[k] = 1;
-    });
-    score = 0;
-    currentRun = { mode: currentMode, count: 0, correct: 0 };
-    saveProfiles();
-    updateScoreUI();
-    renderHallOfFame();
-    renderProfileButtons();
-    var fb = document.getElementById('feedbackBox');
-    if (fb) fb.innerText = "Profil wurde zurückgesetzt.";
-}
-
-function selectProfile() {
-    var sel = document.getElementById('profileSelect');
-    var val = sel.value;
-    if (!val) {
-        activeProfileId = null;
-        score = 0;
-        updateScoreUI();
-        renderHallOfFame();
-        renderProfileButtons();
-        return;
-    }
-    selectProfileById(Number(val), false);
-}
-
-function selectProfileById(id, scrollToTop) {
-    var profile = profiles.find(function(p){ return p.id === id; });
-    if (!profile) {
-        activeProfileId = null;
-        score = 0;
-        updateScoreUI();
-        renderHallOfFame();
-        renderProfileButtons();
-        return;
-    }
-    ensureModules(profile);
-    activeProfileId = id;
-    currentGrade = profile.grade || "1";
-    document.getElementById('gradeSelect').value = currentGrade;
-    score = profile.score || 0;
-    updateScoreUI();
-
-    var sel = document.getElementById('profileSelect');
-    if (sel) sel.value = String(id);
-
-    renderHallOfFame();
-    renderProfileButtons();
-    if (scrollToTop) {
-        window.scrollTo({top:0, behavior:"smooth"});
-    }
-    if (currentMode !== null) {
-        resetRunForMode(currentMode);
-        newQuestion();
-    }
-}
-
-function getActiveProfile() {
-    if (activeProfileId === null) return null;
-    return profiles.find(function(p){ return p.id === activeProfileId; }) || null;
-}
-
-function updateScoreUI() {
-    document.getElementById('scoreBox').innerText = "Punkte: " + score;
-}
-
-/* ---------- HALL OF FAME + DIAGRAM + FEEDBACK ---------- */
-
-function renderHallOfFame() {
-    var container = document.getElementById('hallOfFame');
-    if (!container) return;
-    if (!profiles.length) {
-        container.innerHTML = "<p>Noch keine Kinder registriert.</p>";
-        return;
-    }
-
-    var sorted = profiles.slice().sort(function(a,b){
-        return (b.score || 0) - (a.score || 0);
-    });
-
-    var html = "";
-    sorted.forEach(function(p, idx){
-        ensureModules(p);
-        var m = p.modules;
-
-        var matheCorr = m.add.correct + m.sub.correct + m.mul.correct + m.frac.correct;
-        var matheTot  = m.add.total   + m.sub.total   + m.mul.total   + m.frac.total;
-        var lesenCorr = m.read.correct + m.de.correct;
-        var lesenTot  = m.read.total   + m.de.total;
-        var sprCorr   = m.en.correct + m.fr.correct;
-        var sprTot    = m.en.total   + m.fr.total;
-        var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
-        var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
-
-        var mathePct = matheTot > 0 ? Math.round(matheCorr / matheTot * 100) : 0;
-        var lesenPct = lesenTot > 0 ? Math.round(lesenCorr / lesenTot * 100) : 0;
-        var sprPct   = sprTot   > 0 ? Math.round(sprCorr   / sprTot   * 100) : 0;
-        var wPct     = wTot    > 0 ? Math.round(wCorr      / wTot     * 100) : 0;
-
-        html += '<div class="hall-item">';
-        html += (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
-             + (p.grade === "special" ? "6/7" : p.grade)
-             + ") – Punkte: " + (p.score || 0);
-
-        html += '<div class="hall-bars">';
-        html += renderBarRow("Mathe", mathePct, "mathe");
-        html += renderBarRow("Lesen", lesenPct, "lesen");
-        html += renderBarRow("Sprachen", sprPct, "sprache");
-        html += renderBarRow("Wissen", wPct, "wissen");
-        html += '</div>';
-
-        html += '<div class="hall-feedback">' +
-                escapeHtml(buildFeedback(mathePct, lesenPct, sprPct, wPct)) +
-                '</div>';
-
-        html += '<div class="hall-testbutton"><button type="button" onclick="selectProfileById(' +
-                p.id + ', true)">Test mit ' + escapeHtml(p.name) + '</button></div>';
-
-        html += '</div>';
-    });
-    container.innerHTML = html;
-}
-
-function renderBarRow(label, pct, type) {
-    var cl = "bar-row-bar-fill-";
-    if (type === "mathe") cl += "mathe";
-    else if (type === "lesen") cl += "lesen";
-    else if (type === "sprache") cl += "sprache";
-    else cl += "wissen";
-
-    return '' +
-        '<div class="bar-row">' +
-            '<div class="bar-row-label">' + label + '</div>' +
-            '<div class="bar-row-bar"><div class="bar-row-bar-fill ' + cl +
-                '" style="width:' + pct + '%;"></div></div>' +
-            '<div class="bar-row-pct">' + pct + '%</div>' +
-        '</div>';
-}
-
-function buildFeedback(mathePct, lesenPct, sprPct, wPct) {
-    var cats = [
-        { key: "Mathe", pct: mathePct },
-        { key: "Lesen", pct: lesenPct },
-        { key: "Sprachen", pct: sprPct },
-        { key: "Wissen (IT & Länder)", pct: wPct }
-    ];
-    var sum = mathePct + lesenPct + sprPct + wPct;
-    if (sum === 0) {
-        return "Noch keine Daten – ein paar Aufgaben lösen, dann gibt es persönliches Feedback.";
-    }
-
-    cats.sort(function(a,b){ return b.pct - a.pct; });
-    var best = cats[0];
-    var worst = cats[cats.length - 1];
-
-    var text = "";
-
-    if (best.pct >= 70) {
-        text += "Sehr stark in " + best.key + ". ";
-    } else if (best.pct >= 40) {
-        text += "Gut unterwegs in " + best.key + ". ";
-    } else {
-        text += "Du bist noch am Aufbauen – Schritt für Schritt in " + best.key + ". ";
-    }
-
-    if (worst.pct <= 30) {
-        text += "In " + worst.key + " darfst du noch extra üben. ";
-    } else if (worst.pct < best.pct) {
-        text += worst.key + " ist ok, aber da geht noch mehr. ";
-    }
-
-    var mid = cats[1];
-    if (mid && mid !== best && mid !== worst) {
-        text += "In " + mid.key + " bist du auf einem guten Weg.";
-    }
-
-    return text.trim();
-}
-
-/* ---------- LEVEL HELPERS ---------- */
-
-function getModeLabel(mode) {
-    switch (mode) {
-        case "add": return "Addition";
-        case "sub": return "Subtraktion";
-        case "mul": return "Multiplikation";
-        case "frac": return "Brüche";
-        case "de": return "Deutschaufgaben";
-        case "read": return "Lesen";
-        case "en": return "Englisch";
-        case "fr": return "Französisch";
-        case "itbasics": return "Informatik";
-        case "flags": return "Flaggen Afrika";
-        case "chgeo": return "Schweiz";
-        case "soinfo": return "Somalia";
-        default: return "Modul";
-    }
-}
-
-function getProfileLevel(profile, mode) {
-    if (!profile || !profile.levels) return 1;
-    return profile.levels[mode] || 1;
-}
-
-function setProfileLevel(profile, mode, level) {
-    if (!profile.levels) profile.levels = {};
-    profile.levels[mode] = level;
-}
-
-function resetRunForMode(mode) {
-    currentRun = { mode: mode, count: 0, correct: 0 };
-}
-
-/* ---------- GENERAL UI ---------- */
-
-function updateGrade() {
-    var sel = document.getElementById('gradeSelect');
-    currentGrade = sel.value;
-
-    var p = getActiveProfile();
-    if (p) {
-        p.grade = currentGrade;
-        saveProfiles();
-        renderProfileOptions();
-        renderProfileButtons();
-        renderHallOfFame();
-    }
-
-    if (currentMode !== null) {
-        resetRunForMode(currentMode);
-        newQuestion();
-    }
-}
-
-function toggleMenu() {
-    var menu = document.getElementById('menuList');
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-
-function toggleDarkMode() {
-    var body = document.body;
-    var toggle = document.getElementById('darkToggle');
-    if (toggle.checked) {
-        if (body.className.indexOf('dark-mode') === -1) {
-            body.className += (body.className ? ' ' : '') + 'dark-mode';
-        }
-    } else {
-        body.className = body.className.replace('dark-mode','').replace('  ',' ').trim();
-    }
-}
-
-function chooseMode(mode) {
+function chooseMode(mode){
     currentMode = mode;
-    resetRunForMode(mode);
-    document.getElementById('gameArea').style.display = 'block';
-    document.getElementById('feedbackBox').innerText = '';
-
+    document.getElementById("feedbackBox").textContent = "";
     var p = getActiveProfile();
+    var inst = document.getElementById("instructions");
+    var title = document.getElementById("gameTitle");
+
+    title.textContent = getModeLabel(mode);
+
     if (!p) {
-        document.getElementById('instructions').innerText =
-          "Bitte zuerst ein Kind auswählen und dann das Spiel starten.";
+        inst.textContent = "Bitte zuerst ein Kind auswählen / Marka hore dooro ilmaha.";
     } else {
         var lvl = getProfileLevel(p, mode);
-        document.getElementById('instructions').innerText =
-          "Kind: " + p.name + " · Klasse: " +
-          (p.grade === "special" ? "6/7" : p.grade) +
-          " · Level " + lvl + " in " + getModeLabel(mode) +
-          " (5 Fragen pro Level).";
+        var missionText = buildDailyMission(p);
+        inst.textContent =
+            "Kind: " + p.name +
+            " · Klasse: " + (p.grade === "special" ? "6/7" : p.grade) +
+            " · Level " + lvl + " in " + getModeLabel(mode) +
+            " (5 richtig = Level up).\n" +
+            missionText;
     }
-
     newQuestion();
 }
 
-/* ---------- GRADE HELPERS ---------- */
+function newQuestion(){
+    var qBox = document.getElementById("questionBox");
+    var optionsBox = document.getElementById("optionsBox");
+    optionsBox.innerHTML = "";
+    document.getElementById("feedbackBox").textContent = "";
+    currentQuestion = null;
 
-function gradeNumber() {
-    if (currentGrade === "special") return 7;
-    var n = parseInt(currentGrade, 10);
-    if (isNaN(n)) return 1;
-    return n;
-}
-
-function getSettingsForGrade() {
-    switch (currentGrade) {
-        case "1": return { addMax: 10, subMax: 10, mulMax: 5 };
-        case "2": return { addMax: 20, subMax: 20, mulMax: 8 };
-        case "3": return { addMax: 30, subMax: 30, mulMax: 10 };
-        case "4": return { addMax: 50, subMax: 50, mulMax: 10 };
-        case "5": return { addMax: 80, subMax: 80, mulMax: 12 };
-        case "6": return { addMax: 100, subMax: 100, mulMax: 12 };
-        case "special": return { addMax: 150, subMax: 150, mulMax: 15 };
-        default: return { addMax: 20, subMax: 20, mulMax: 10 };
-    }
-}
-
-function getReadingPoolForGrade() {
-    var g = gradeNumber();
-    var pool = readQuestions.filter(function(q){
-        return g >= q.min && g <= q.max;
-    });
-    return pool.length ? pool : readQuestions;
-}
-
-function getChPoolForGrade() {
-    var g = gradeNumber();
-    var pool = chQuestions.filter(function(q){
-        return g >= q.min && g <= q.max;
-    });
-    return pool.length ? pool : chQuestions;
-}
-
-/* ---------- ANSWER RENDERING ---------- */
-
-function setChoices(choices, answersClass) {
-    var container = document.getElementById('answersContainer');
-    container.className = "answers " + (answersClass || "");
-    container.innerHTML = "";
-    choices.forEach(function(c){
-        var btn = document.createElement('button');
-        btn.textContent = c.text;
-        btn.onclick = function(){ handleChoice(c.value); };
-        container.appendChild(btn);
-    });
-}
-
-function setFlagChoices(correctCode, otherCodes) {
-    var container = document.getElementById('answersContainer');
-    container.className = "answers answers-flags";
-    container.innerHTML = "";
-
-    var codes = [correctCode].concat(otherCodes);
-    for (var i = codes.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = codes[i]; codes[i] = codes[j]; codes[j] = tmp;
-    }
-
-    codes.forEach(function(code){
-        var info = flagMap[code];
-        if (!info) return;
-        var btn = document.createElement('button');
-        var img = document.createElement('img');
-        img.src = info.url;
-        img.alt = info.label;
-        var span = document.createElement('span');
-        span.textContent = info.label;
-        btn.appendChild(img);
-        btn.appendChild(span);
-        btn.onclick = function(){ handleChoice(code); };
-        container.appendChild(btn);
-    });
-}
-
-/* ---------- QUESTION CREATION ---------- */
-
-function makeNumericChoices(correct) {
-    var vals = [correct];
-    while (vals.length < 3) {
-        var delta = randomInt(-5, 5);
-        if (delta === 0) continue;
-        var cand = correct + delta;
-        if (cand <= 0) continue;
-        if (vals.indexOf(cand) === -1) vals.push(cand);
-    }
-    for (var i = vals.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = vals[i]; vals[i] = vals[j]; vals[j] = tmp;
-    }
-    return vals.map(function(v){ return { value: v, text: String(v) }; });
-}
-
-function newQuestion() {
-    var qBox = document.getElementById('questionBox');
-    var title = document.getElementById('gameTitle');
-    var inst = document.getElementById('instructions');
-    var fb = document.getElementById('feedbackBox');
-    fb.innerText = "";
-    var answersDiv = document.getElementById('answersContainer');
-    answersDiv.innerHTML = "";
-
-    var settings = getSettingsForGrade();
-    var p = getActiveProfile();
-
-    if (!p) {
-        title.innerText = "Spiel";
-        qBox.innerText = "Bitte zuerst ein Kind auswählen.";
-        inst.innerText = "Wähle oben ein Kind, dann ein Spiel.";
-        currentQuestion = null;
+    if (!currentMode) {
+        qBox.textContent = "Dooro Spiel kor / Wähle ein Spiel oben.";
         return;
     }
 
-    var a, b, q, corr;
+    var qData = null;
 
-    if (currentMode === 'add') {
-        title.innerText = "Addition – Zahlen-Training";
-        a = randomInt(1, settings.addMax);
-        b = randomInt(1, settings.addMax);
-        corr = a + b;
-        qBox.innerText = a + " + " + b + " = ?";
-        currentQuestion = { correctValue: corr, mode: "add" };
-        setChoices(makeNumericChoices(corr), "answers-math");
-    } else if (currentMode === 'sub') {
-        title.innerText = "Subtraktion – Minus & Unterschiede";
-        a = randomInt(1, settings.subMax);
-        b = randomInt(1, a);
-        corr = a - b;
-        qBox.innerText = a + " − " + b + " = ?";
-        currentQuestion = { correctValue: corr, mode: "sub" };
-        setChoices(makeNumericChoices(corr), "answers-math");
-    } else if (currentMode === 'mul') {
-        title.innerText = "Multiplikation – Mal-Spiel";
-        a = randomInt(1, settings.mulMax);
-        b = randomInt(1, settings.mulMax);
-        corr = a * b;
-        qBox.innerText = a + " × " + b + " = ?";
-        currentQuestion = { correctValue: corr, mode: "mul" };
-        setChoices(makeNumericChoices(corr), "answers-math");
-    } else if (currentMode === 'frac') {
-        title.innerText = "Brüche – Teil vom Ganzen";
-        var fracQuestions = [
-            { text: "1/2 von 8 = ?", ans: 4 },
-            { text: "1/3 von 9 = ?", ans: 3 },
-            { text: "1/4 von 20 = ?", ans: 5 }
+    if (currentMode === "add") {
+        var a = randomInt(1,20);
+        var b = randomInt(1,20);
+        var ans = a + b;
+        var wrong1 = ans + randomInt(1,3);
+        var wrong2 = ans - randomInt(1,3);
+        if (wrong2 < 0) wrong2 = ans + 4;
+        var options = shuffle([ans, wrong1, wrong2]);
+        qData = {
+            question: a + " + " + b + " = ?",
+            options: options.map(function(o){ return String(o); }),
+            correctIndex: options.indexOf(ans)
+        };
+    } else if (currentMode === "sub") {
+        var a2 = randomInt(5,30);
+        var b2 = randomInt(1,a2);
+        var ans2 = a2 - b2;
+        var w1 = ans2 + randomInt(1,3);
+        var w2 = ans2 - randomInt(1,3);
+        if (w2 < 0) w2 = ans2 + 4;
+        var opts2 = shuffle([ans2, w1, w2]);
+        qData = {
+            question: a2 + " − " + b2 + " = ?",
+            options: opts2.map(String),
+            correctIndex: opts2.indexOf(ans2)
+        };
+    } else if (currentMode === "mul") {
+        var m1 = randomInt(1,10);
+        var m2 = randomInt(1,10);
+        var mans = m1 * m2;
+        var mw1 = mans + randomInt(1,5);
+        var mw2 = mans - randomInt(1,5);
+        if (mw2 < 0) mw2 = mans + 6;
+        var mopts = shuffle([mans, mw1, mw2]);
+        qData = {
+            question: m1 + " × " + m2 + " = ?",
+            options: mopts.map(String),
+            correctIndex: mopts.indexOf(mans)
+        };
+    } else if (currentMode === "frac") {
+        var fracQs = [
+            {q: "1/2 von 8 = ? (Af-Soomaali: nus ka mid ah 8?)", a: 4},
+            {q: "1/3 von 9 = ? (Af-Soomaali: 1/3 ka mid ah 9?)", a: 3},
+            {q: "1/4 von 20 = ? (Af-Soomaali: rubuc ka mid ah 20?)", a: 5}
         ];
-        q = fracQuestions[randomInt(0, fracQuestions.length - 1)];
-        qBox.innerText = q.text;
-        corr = q.ans;
-        currentQuestion = { correctValue: corr, mode: "frac" };
-        setChoices(makeNumericChoices(corr), "answers-math");
-    } else if (currentMode === 'de') {
-        title.innerText = "Deutschaufgabe – Rechnen im Satz";
-        a = randomInt(1, settings.addMax);
-        b = randomInt(1, settings.addMax);
-        corr = a + b;
-        qBox.innerText =
-            "Anna hat " + a + " Äpfel und bekommt noch " + b +
-            " dazu.\nWie viele Äpfel hat Anna jetzt insgesamt?";
-        currentQuestion = { correctValue: corr, mode: "de" };
-        setChoices(makeNumericChoices(corr), "answers-math");
-    } else if (currentMode === 'read') {
-        title.innerText = "Lesen / Leseverstehen";
-        var pool = getReadingPoolForGrade();
-        q = pool[randomInt(0, pool.length - 1)];
-        qBox.innerText = q.text;
-        currentQuestion = { correctValue: q.ans, mode: "read" };
-        setChoices(
-            [
-                { value: 1, text: "1" },
-                { value: 2, text: "2" },
-                { value: 3, text: "3" }
-            ],
-            "answers-read"
-        );
-    } else if (currentMode === 'en') {
-        title.innerText = "Englisch – Wörter & Farben";
-        q = enQuestions[randomInt(0, enQuestions.length - 1)];
-        qBox.innerText = "🇬🇧 Englisch\n" + q.question;
-        currentQuestion = { correctValue: q.correctIndex, mode: "en" };
-        var choices = q.options.map(function(opt, idx){
-            return { value: idx, text: opt };
-        });
-        setChoices(choices, "answers-lang");
-    } else if (currentMode === 'fr') {
-        title.innerText = "Französisch – Wörter & Farben";
-        q = frQuestions[randomInt(0, frQuestions.length - 1)];
-        qBox.innerText = "🇫🇷 Französisch\n" + q.question;
-        currentQuestion = { correctValue: q.correctIndex, mode: "fr" };
-        var choicesFr = q.options.map(function(opt, idx){
-            return { value: idx, text: opt };
-        });
-        setChoices(choicesFr, "answers-lang");
-    } else if (currentMode === 'itbasics') {
-        title.innerText = "Informatik Basics – PC-Wissen";
-        q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length - 1)];
-        qBox.innerText = "💻 Informatik\n" + q.question;
-        currentQuestion = { correctValue: q.correctIndex, mode: "itbasics" };
-        var choicesIt = q.options.map(function(opt, idx){
-            return { value: idx, text: opt };
-        });
-        setChoices(choicesIt, "answers-it");
-    } else if (currentMode === 'flags') {
-        title.innerText = "Flaggen Afrika – Calan & Waddan";
-        q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
-        qBox.innerText = "🌍 Waddan: " + q.country + "\n\nDooro calanka saxda ah:";
-        currentQuestion = { correctValue: q.correct, hint: q.hint, mode: "flags" };
-        setFlagChoices(q.correct, q.others);
-    } else if (currentMode === 'chgeo') {
-        title.innerText = "Schweiz & Kantone – Geografie";
-        var chPool = getChPoolForGrade();
-        q = chPool[randomInt(0, chPool.length - 1)];
-        qBox.innerText = q.question;
-        currentQuestion = { correctValue: q.correctIndex, mode: "chgeo" };
-        var chChoices = q.options.map(function(opt, idx){
-            return { value: idx, text: opt };
-        });
-        setChoices(chChoices, "answers-geo");
-    } else if (currentMode === 'soinfo') {
-        title.innerText = "Somalia & Geografie – Taariikh & Aqoon";
-        q = soQuestions[randomInt(0, soQuestions.length - 1)];
-        qBox.innerText = q.question;
-        currentQuestion = { correctValue: q.correctIndex, mode: "soinfo" };
-        var soChoices = q.options.map(function(opt, idx){
-            return { value: idx, text: opt };
-        });
-        setChoices(soChoices, "answers-geo");
-    } else {
-        title.innerText = "Spiel";
-        qBox.innerText = "Wähle oben ein Spiel aus.";
-        inst.innerText = "";
-        currentQuestion = null;
+        var fq = fracQs[randomInt(0, fracQs.length-1)];
+        var fAns = fq.a;
+        var fw1 = fAns + randomInt(1,3);
+        var fw2 = fAns - randomInt(1,2);
+        if (fw2 < 0) fw2 = fAns + 2;
+        var fopts = shuffle([fAns, fw1, fw2]);
+        qData = {
+            question: fq.q,
+            options: fopts.map(String),
+            correctIndex: fopts.indexOf(fAns)
+        };
+    } else if (currentMode === "de") {
+        var a3 = randomInt(1,20);
+        var b3 = randomInt(1,20);
+        var ans3 = a3 + b3;
+        var dw1 = ans3 + randomInt(1,4);
+        var dw2 = ans3 - randomInt(1,4);
+        if (dw2 < 0) dw2 = ans3 + 3;
+        var dopts = shuffle([ans3, dw1, dw2]);
+        qData = {
+            question: "Wie viel ist " + a3 + " plus " + b3 + " ?",
+            options: dopts.map(String),
+            correctIndex: dopts.indexOf(ans3)
+        };
+    } else if (currentMode === "en") {
+        qData = pickFromArray(enQuestions);
+    } else if (currentMode === "fr") {
+        qData = pickFromArray(frQuestions);
+    } else if (currentMode === "delang") {
+        qData = pickFromArray(deLanguageQuestions);
+    } else if (currentMode === "itbasics") {
+        qData = pickFromArray(itBasicsQuestions);
+    } else if (currentMode === "flags") {
+        qData = pickFromArray(flagQuestions);
+    } else if (currentMode === "chgeo") {
+        qData = pickFromArray(chQuestions);
+    } else if (currentMode === "soinfo") {
+        qData = pickFromArray(soInfoQuestions);
     }
-}
 
-/* ---------- ANSWER HANDLING + LEVEL LOGIC ---------- */
-
-function updateModuleStats(mode, isCorrect) {
-    var p = getActiveProfile();
-    if (!p) return;
-    ensureModules(p);
-    var m = p.modules[mode];
-    if (!m) {
-        m = { correct: 0, total: 0 };
-        p.modules[mode] = m;
-    }
-    m.total++;
-    if (isCorrect) m.correct++;
-}
-
-function handleChoice(selectedValue) {
-    var fb = document.getElementById('feedbackBox');
-    var p = getActiveProfile();
-    if (!p || !currentQuestion) {
-        fb.innerText = "Bitte zuerst ein Kind und ein Spiel auswählen.";
-        fb.style.color = "orange";
+    if (!qData) {
+        qBox.textContent = "Su’aal lama helin.";
         return;
     }
 
-    var correct = currentQuestion.correctValue;
-    var mode = currentMode;
-    var isCorrect = (selectedValue === correct);
+    currentQuestion = qData;
+    qBox.textContent = qData.question;
 
-    if (!currentRun.mode || currentRun.mode !== mode) {
-        resetRunForMode(mode);
-    }
+    qData.options.forEach(function(optText, idx){
+        var btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = (idx+1) + ") " + optText;
+        btn.onclick = function(){ handleChoice(idx); };
+        optionsBox.appendChild(btn);
+    });
+}
 
-    if (mode === "flags" && currentQuestion.hint && isCorrect) {
-        fb.innerText = "Richtig! 👏\n" + currentQuestion.hint;
-    } else if (isCorrect) {
-        fb.innerText = "Richtig! 👏";
-    } else {
-        fb.innerText = "Falsch. Versuch es noch einmal.";
-    }
-    fb.style.color = isCorrect ? "lightgreen" : "red";
+function pickFromArray(arr) {
+    if (!arr || !arr.length) return null;
+    var i = randomInt(0, arr.length-1);
+    return {
+        question: arr[i].question,
+        options: arr[i].options.slice(),
+        correctIndex: arr[i].correctIndex
+    };
+}
 
-    updateModuleStats(mode, isCorrect);
+function handleChoice(index){
+    if (!currentQuestion) return;
+    var fb = document.getElementById("feedbackBox");
+    var isCorrect = (index === currentQuestion.correctIndex);
 
-    /* Level-run update */
-    currentRun.count++;
-    if (isCorrect) currentRun.correct++;
-
-    var extraMsg = "";
-
-    if (currentRun.count >= 5) {
+    var p = getActiveProfile();
+    if (p && currentMode) {
         ensureModules(p);
-        var lvl = getProfileLevel(p, mode);
-        if (currentRun.correct >= 4) {
-            lvl++;
-            setProfileLevel(p, mode, lvl);
-            extraMsg = "\nLevel geschafft! Du bist jetzt Level " + lvl +
-                       " in " + getModeLabel(mode) + ".";
-        } else {
-            extraMsg = "\nLevel nicht bestanden – du bleibst auf Level " + lvl +
-                       " in " + getModeLabel(mode) + ".";
-        }
-        fb.innerText += extraMsg;
-        currentRun.count = 0;
-        currentRun.correct = 0;
-    }
 
-    saveProfiles();
-    renderHallOfFame();
-    renderProfileButtons();
+        var mod = p.modules[currentMode];
+        if (!mod) {
+            mod = {correct:0,total:0};
+            p.modules[currentMode] = mod;
+        }
+        mod.total++;
+        if (isCorrect) mod.correct++;
+
+        updateDailyOnAnswer();
+        if (!p.score) p.score = 0;
+        if (isCorrect) {
+            p.score++;
+            score = p.score;
+        }
+        saveProfiles();
+        renderHallOfFame();
+        renderProfileButtons();
+        updateScoreUI();
+    }
 
     if (isCorrect) {
-        score++;
-        p.score = score;
-        updateScoreUI();
-        setTimeout(newQuestion, mode === "flags" ? 1400 : 900);
+        fb.textContent = "Richtig! / Waa sax 👏";
+        fb.style.color = "green";
+        setTimeout(function(){ newQuestion(); }, 900);
+    } else {
+        fb.textContent = "Falsch. Versuch es noch einmal. / Khalad, mar kale isku day.";
+        fb.style.color = "red";
     }
 }
 
-/* ---------- HELPERS ---------- */
-
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function escapeHtml(str) {
-    return String(str)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
-
-/* ---------- INIT ---------- */
+/* ========= INIT ========= */
 
 loadProfiles();
 updateScoreUI();
+
 </script>
 
 </body>
