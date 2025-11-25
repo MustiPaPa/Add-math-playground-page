@@ -632,58 +632,374 @@ var currentRun = { mode: null, count: 0, correct: 0 };
 
 /* Englisch – Optionen */
 var enQuestions = [
+    /* A1 – Greetings & Basics */
     {
-    level: "A1",
-    question: "You meet someone. They say: “Hello, how are you?” What is a good answer?",
-    options: ["I am fine, thank you.", "I cooking.", "You are nice."],
-    correctIndex: 0
-},
-{
-    level: "A1",
-    question: "You want to buy bread. What do you say to the shopkeeper?",
-    options: ["One bread, please.", "I am bread.", "Give bread now."],
-    correctIndex: 0
-},
-{
-    level: "A1",
-    question: "Someone asks: “What is your name?” What do you answer?",
-    options: ["My name is Musti.", "I name home.", "You name water."],
-    correctIndex: 0
-},
-{
-    level: "A1",
-    question: "You ask for the time. What do you say?",
-    options: ["What time is it?", "Where is my time?", "Time you."],
-    correctIndex: 0
-}
-    
+        level: "A1",
+        type: "conversation",
+        question: "You meet someone. They say: “Hello, how are you?”\nWhich answer is best?",
+        options: [
+            "I am fine, thank you.",
+            "I cooking.",
+            "You are name."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A1",
+        type: "conversation",
+        question: "You are in a shop and want bread.\nWhat do you say?",
+        options: [
+            "One bread, please.",
+            "I am bread.",
+            "Give bread now."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A1",
+        type: "grammar",
+        question: "Choose the correct sentence:",
+        options: [
+            "He is my friend.",
+            "He are my friend.",
+            "He am my friend."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A1",
+        type: "grammar",
+        question: "Which sentence is correct?",
+        options: [
+            "I have a dog.",
+            "I has a dog.",
+            "I having a dog."
+        ],
+        correctIndex: 0
+    },
+
+    /* A2 – Everyday situations & Present Continuous */
+    {
+        level: "A2",
+        type: "conversation",
+        question: "You call a friend: “Can we meet this afternoon?”\nBest answer:",
+        options: [
+            "Yes, I am free after 4 o’clock.",
+            "Yes, I free 4.",
+            "I tomorrow free."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "conversation",
+        question: "At the doctor: “What’s the problem?”\nWhat do you say?",
+        options: [
+            "I have a headache and feel tired.",
+            "You have problem.",
+            "My head is very interesting."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Correct present continuous:",
+        options: [
+            "She is reading a book.",
+            "She reading a book.",
+            "She are reading a book."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Fill the gap: “I am ______ for a new job.”",
+        options: [
+            "looking",
+            "look",
+            "looked"
+        ],
+        correctIndex: 0
+    },
+
+    /* B1 – Work & Problem Situations */
+    {
+        level: "B1",
+        type: "conversation",
+        question: "At work: “Can you explain this again?”\nBest answer:",
+        options: [
+            "Sure, let me explain it step by step.",
+            "No talk today.",
+            "I explain but no understand."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "conversation",
+        question: "You missed the train.\nWhat is the most natural sentence?",
+        options: [
+            "I missed my train, when is the next one?",
+            "Train bad, me angry.",
+            "Why train go?"
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Choose the correct past tense sentence:",
+        options: [
+            "Yesterday I went to the cinema.",
+            "Yesterday I go to the cinema.",
+            "Yesterday I was go to the cinema."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Correct sentence for talking about experience:",
+        options: [
+            "I have worked in IT for three years.",
+            "I am working in IT since three years.",
+            "I was work in IT for three years."
+        ],
+        correctIndex: 0
+    },
+
+    /* B2 – Professional & Polite Language */
+    {
+        level: "B2",
+        type: "conversation",
+        question: "Meeting: “Can you summarize the main point?”\nBest answer:",
+        options: [
+            "Yes, the main point is that we need to improve our workflow efficiency.",
+            "Yes, main point good.",
+            "Summary no."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "conversation",
+        question: "You disagree politely in a meeting.",
+        options: [
+            "I understand your point, but I see it differently.",
+            "You are wrong.",
+            "I don’t like your idea."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Choose the best sentence:",
+        options: [
+            "If I had more time, I would learn another language.",
+            "If I will have more time, I learn another language.",
+            "If I have more time, I would learn another language (yesterday)."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Formal e-mail:\nWhich opening is best?",
+        options: [
+            "Dear Sir or Madam,",
+            "Hey you,",
+            "Yo boss,"
+        ],
+        correctIndex: 0
+    }
 ];
 
 /* Französisch – Optionen */
 var frQuestions = [
+    /* A1 – Saluer & se présenter */
     {
-        question: "„Hund“ auf Französisch?",
-        options: ["chien", "chat", "oiseau"],
+        level: "A1",
+        type: "conversation",
+        question: "Quelle est la meilleure réponse ?\n« Bonjour, ça va ? »",
+        options: [
+            "Ça va bien, merci.",
+            "Je pain.",
+            "Tu nom eau."
+        ],
         correctIndex: 0
     },
     {
-        question: "„Katze“ auf Französisch?",
-        options: ["chien", "chat", "souris"],
-        correctIndex: 1
-    },
-    {
-        question: "Welche Farbe ist „rot“ auf Französisch?",
-        options: ["rouge", "bleu", "vert"],
+        level: "A1",
+        type: "conversation",
+        question: "Au magasin : tu veux du pain.\nQue dis-tu ?",
+        options: [
+            "Un pain, s’il vous plaît.",
+            "Je suis pain.",
+            "Donne pain maintenant."
+        ],
         correctIndex: 0
     },
     {
-        question: "Welche Farbe ist „blau“ auf Französisch?",
-        options: ["rouge", "bleu", "noir"],
-        correctIndex: 1
+        level: "A1",
+        type: "grammar",
+        question: "Choisis la phrase correcte :",
+        options: [
+            "Il est mon ami.",
+            "Il sont mon ami.",
+            "Il es mon ami."
+        ],
+        correctIndex: 0
     },
     {
-        question: "„Haus“ auf Französisch?",
-        options: ["maison", "voiture", "arbre"],
+        level: "A1",
+        type: "grammar",
+        question: "Quelle phrase est correcte ?",
+        options: [
+            "J’ai un chien.",
+            "Je ai un chien.",
+            "Je avoir un chien."
+        ],
+        correctIndex: 0
+    },
+
+    /* A2 – Vie quotidienne & présent */
+    {
+        level: "A2",
+        type: "conversation",
+        question: "Tu appelles un ami : « On peut se voir cet après-midi ? »\nMeilleure réponse :",
+        options: [
+            "Oui, je suis libre après 16 heures.",
+            "Oui, moi libre 16.",
+            "Je demain libre."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "conversation",
+        question: "Chez le médecin : « Quel est le problème ? »\nQue dis-tu ?",
+        options: [
+            "J’ai mal à la tête et je suis fatigué(e).",
+            "Tu as problème.",
+            "Ma tête est très intéressante."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Choisis le verbe au présent correct :\n« Nous ______ au cinéma. »",
+        options: [
+            "allons",
+            "allez",
+            "vas"
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "A2",
+        type: "grammar",
+        question: "Complète : « Je suis en train de ______ un livre. »",
+        options: [
+            "lire",
+            "lis",
+            "lu"
+        ],
+        correctIndex: 0
+    },
+
+    /* B1 – Travail & situations plus longues */
+    {
+        level: "B1",
+        type: "conversation",
+        question: "Au travail : « Tu peux expliquer encore une fois ? »\nMeilleure réponse :",
+        options: [
+            "Oui, bien sûr, je vais expliquer étape par étape.",
+            "Non parler aujourd’hui.",
+            "Je expliquer mais pas comprendre."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "conversation",
+        question: "Tu as raté le train.\nQuelle phrase est la plus naturelle ?",
+        options: [
+            "J’ai raté mon train, quand est le prochain ?",
+            "Train mauvais, moi fâché.",
+            "Pourquoi train partir ?"
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Choisis la phrase au passé correct :",
+        options: [
+            "Hier, je suis allé(e) au cinéma.",
+            "Hier, je vais au cinéma.",
+            "Hier, j’allais au cinéma maintenant."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B1",
+        type: "grammar",
+        question: "Parler de l’expérience professionnelle :",
+        options: [
+            "Je travaille dans l’informatique depuis trois ans.",
+            "Je travaille dans l’informatique pendant trois ans (hier).",
+            "Je travaille dans l’informatique il y a trois ans."
+        ],
+        correctIndex: 0
+    },
+
+    /* B2 – Langue formelle & nuancée */
+    {
+        level: "B2",
+        type: "conversation",
+        question: "En réunion : tu n’es pas d’accord, mais poliment.\nQuelle phrase est la meilleure ?",
+        options: [
+            "Je comprends votre point de vue, mais je ne suis pas tout à fait d’accord.",
+            "Tu as tort.",
+            "Je n’aime pas ton idée."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "conversation",
+        question: "Entretien d’embauche : « Pourquoi devrions-nous vous engager ? »",
+        options: [
+            "Parce que j’apporte de l’expérience, de la discipline et de bonnes capacités d’analyse.",
+            "Parce que je veux de l’argent.",
+            "Parce que je suis ici."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Choisis la meilleure phrase (conditionnel) :",
+        options: [
+            "Si j’avais plus de temps, j’apprendrais une autre langue.",
+            "Si j’ai plus de temps, j’apprendrais une autre langue hier.",
+            "Si j’aurai plus de temps, j’apprendra une autre langue."
+        ],
+        correctIndex: 0
+    },
+    {
+        level: "B2",
+        type: "grammar",
+        question: "Lettre formelle : quel début est le mieux ?",
+        options: [
+            "Madame, Monsieur,",
+            "Salut toi,",
+            "Yo chef,"
+        ],
         correctIndex: 0
     }
 ];
