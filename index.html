@@ -258,6 +258,14 @@
         background: #7b1fa2;
     }
 
+    /* Schweiz / Geografie */
+    .answers-geo button {
+        background: #009688;
+    }
+    .answers-geo button:hover {
+        background: #00796b;
+    }
+
     /* Flaggen – special style */
     .answers-flags {
         gap: 16px;
@@ -324,7 +332,7 @@
         margin-bottom: 3px;
     }
     .bar-row-label {
-        width: 60px;
+        width: 70px;
         font-size: 12px;
     }
     .bar-row-bar {
@@ -346,6 +354,9 @@
     }
     .bar-row-bar-fill-sprache {
         background: #007bff;
+    }
+    .bar-row-bar-fill-schweiz {
+        background: #009688;
     }
     .bar-row-pct {
         width: 38px;
@@ -439,6 +450,9 @@
         <button class="menu-item" onclick="chooseMode('flags')">
             <span>🌍</span> Flaggen Afrika <small>Calan + Waddan</small>
         </button>
+        <button class="menu-item" onclick="chooseMode('chgeo')">
+            <span>🏔️</span> Schweiz & Kantone <small>Berge, Städte & Sport</small>
+        </button>
     </div>
 </div>
 
@@ -460,10 +474,10 @@
             <ul>
                 <li>hat einen Namen,</li>
                 <li>eine Klasse (1–6 oder Spezial 6/7),</li>
-                <li>eigene Punkte (Score) und Modul-Fortschritt (Mathe / Lesen / Sprachen).</li>
+                <li>eigene Punkte (Score) und Modul-Fortschritt (Mathe / Lesen / Sprachen / Schweiz-Wissen).</li>
             </ul>
         </li>
-        <li>Diagramme zeigen pro Kind, wie stark es in <b>Mathe</b>, <b>Lesen</b> und <b>Sprachen</b> ist.</li>
+        <li>Diagramme zeigen pro Kind, wie stark es ist in <b>Mathe</b>, <b>Lesen</b>, <b>Sprachen</b> und <b>Schweiz & Wissen</b>.</li>
     </ul>
 
     <h3>Hall of Fame – Übersicht pro Kind</h3>
@@ -478,7 +492,7 @@ var score = 0;
 var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v3";
+var STORAGE_KEY = "musti_playground_profiles_v4";
 
 /* ---------- QUESTION POOLS ---------- */
 
@@ -509,10 +523,7 @@ var itBasicsQuestions = [
     { text: "🔐 Passwort-Sicherheit\n\nWas ist ein gutes Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
 ];
 
-// Flaggen Afrika – jawaabtu waa calan, bukan 1/2/3
-// country: magaca waddanka (Af-Soomaali / Deutsch mix)
-// correct: code-ka calanka (so, ke, et, ng, za)
-// others: liiska laba calan oo kale oo la isku qaldo
+// Flaggen Afrika – jawaabtu waa calan, ma aha 1/2/3
 var flagQuestions = [
     {
         country: "Soomaaliya",
@@ -590,11 +601,47 @@ var readQuestions = [
     }
 ];
 
+// Schweiz / Kantone / Berge / Sport
+var chQuestions = [
+    {
+        text: "🏔️ Schweiz – Kantone\n\nIn welchem Kanton liegt die Stadt Zürich?\n1) Kanton Zürich   2) Kanton Bern   3) Kanton Tessin",
+        ans: 1
+    },
+    {
+        text: "🏔️ Schweiz – Hauptstadt\n\nWie heisst die Hauptstadt der Schweiz?\n1) Zürich   2) Bern   3) Genf",
+        ans: 2
+    },
+    {
+        text: "🏔️ Schweiz – Berge\n\nDas Matterhorn ist ein bekannter Berg. In welchem Kanton liegt er?\n1) Wallis   2) Graubünden   3) Aargau",
+        ans: 1
+    },
+    {
+        text: "🏔️ Schweiz – Seen\n\nDer Genfersee liegt an der Grenze zu Frankreich.\nWelche Stadt liegt am Genfersee?\n1) Genf   2) Basel   3) Lugano",
+        ans: 1
+    },
+    {
+        text: "🎿 Schweiz – Wintersport\n\nWelche Region ist als Wintersportort sehr bekannt?\n1) St. Moritz   2) Zürich   3) Lausanne",
+        ans: 1
+    },
+    {
+        text: "🚂 Schweiz – Besonderheiten\n\nDie Schweiz ist berühmt für…\n1) Wüsten und Kamele   2) Uhren, Schokolade und Berge   3) Strände am Meer",
+        ans: 2
+    },
+    {
+        text: "🏙️ Schweiz – Städte\n\nWelche dieser Städte liegt im Kanton Genf?\n1) Luzern   2) Genf   3) Chur",
+        ans: 2
+    },
+    {
+        text: "🏞️ Schweiz – Natur\n\nWelcher Kanton ist bekannt für viele Seen und Berge und liegt in der Zentralschweiz?\n1) Luzern   2) Basel-Stadt   3) Neuenburg",
+        ans: 1
+    }
+];
+
 /* ---------- PROFILES & STORAGE ---------- */
 
 function ensureModules(profile) {
     if (!profile.modules) profile.modules = {};
-    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags"];
+    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags","chgeo"];
     keys.forEach(function(k){
         if (!profile.modules[k]) {
             profile.modules[k] = { correct: 0, total: 0 };
@@ -738,9 +785,14 @@ function renderHallOfFame() {
         var sprCorr   = m.en.correct + m.fr.correct;
         var sprTot    = m.en.total   + m.fr.total;
 
+        // Schweiz / Wissen: Informatik + Flaggen + Schweiz-Geografie
+        var chCorr = m.itbasics.correct + m.flags.correct + m.chgeo.correct;
+        var chTot  = m.itbasics.total   + m.flags.total   + m.chgeo.total;
+
         var mathePct = matheTot > 0 ? Math.round(matheCorr / matheTot * 100) : 0;
         var lesenPct = lesenTot > 0 ? Math.round(lesenCorr / lesenTot * 100) : 0;
         var sprPct   = sprTot   > 0 ? Math.round(sprCorr   / sprTot   * 100) : 0;
+        var chPct    = chTot    > 0 ? Math.round(chCorr    / chTot    * 100) : 0;
 
         html += '<div class="hall-item">';
         html += (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
@@ -751,9 +803,10 @@ function renderHallOfFame() {
         html += renderBarRow("Mathe", mathePct, "mathe");
         html += renderBarRow("Lesen", lesenPct, "lesen");
         html += renderBarRow("Sprachen", sprPct, "sprache");
+        html += renderBarRow("Schweiz", chPct, "schweiz");
         html += '</div>';
 
-        html += '<div class="hall-feedback">' + escapeHtml(buildFeedback(mathePct, lesenPct, sprPct)) + '</div>';
+        html += '<div class="hall-feedback">' + escapeHtml(buildFeedback(mathePct, lesenPct, sprPct, chPct)) + '</div>';
 
         html += '</div>';
     });
@@ -764,7 +817,8 @@ function renderBarRow(label, pct, type) {
     var cl = "bar-row-bar-fill-";
     if (type === "mathe") cl += "mathe";
     else if (type === "lesen") cl += "lesen";
-    else cl += "sprache";
+    else if (type === "sprache") cl += "sprache";
+    else cl += "schweiz";
 
     return '' +
         '<div class="bar-row">' +
@@ -775,21 +829,21 @@ function renderBarRow(label, pct, type) {
         '</div>';
 }
 
-function buildFeedback(mathePct, lesenPct, sprPct) {
+function buildFeedback(mathePct, lesenPct, sprPct, chPct) {
     var cats = [
         { key: "Mathe", pct: mathePct },
         { key: "Lesen", pct: lesenPct },
-        { key: "Sprachen", pct: sprPct }
+        { key: "Sprachen", pct: sprPct },
+        { key: "Schweiz & Wissen", pct: chPct }
     ];
-    var totals = mathePct + lesenPct + sprPct;
-    if (totals === 0) {
+    var sum = mathePct + lesenPct + sprPct + chPct;
+    if (sum === 0) {
         return "Noch keine Daten – einfach ein paar Aufgaben lösen, dann gibt es Feedback.";
     }
 
     cats.sort(function(a,b){ return b.pct - a.pct; });
     var best = cats[0];
-    var middle = cats[1];
-    var worst = cats[2];
+    var worst = cats[cats.length - 1];
 
     var text = "";
 
@@ -807,8 +861,10 @@ function buildFeedback(mathePct, lesenPct, sprPct) {
         text += worst.key + " ist ok, aber da geht noch mehr. ";
     }
 
-    if (middle.pct > 0 && middle !== best && middle !== worst) {
-        text += "In " + middle.key + " bist du auf einem guten Weg.";
+    // optional: mid-range commentary
+    var mid = cats[1];
+    if (mid && mid !== best && mid !== worst) {
+        text += "In " + mid.key + " bist du auf einem guten Weg.";
     }
 
     return text.trim();
@@ -1137,6 +1193,24 @@ function newQuestion() {
             mode: "flags"
         };
         setFlagChoices(q.correct, q.others);
+    } else if (currentMode === 'chgeo') {
+        title.innerText = "Schweiz & Kantone – Geografie";
+        inst.innerText = "Frage lesen und 1, 2 oder 3 klicken.";
+        q = chQuestions[randomInt(0, chQuestions.length - 1)];
+        qBox.innerText = q.text;
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: null,
+            mode: "chgeo"
+        };
+        setChoices(
+            [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            "answers-geo"
+        );
     } else {
         title.innerText = "Spiel";
         qBox.innerText = "Wähle oben ein Spiel aus.";
