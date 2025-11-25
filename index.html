@@ -80,24 +80,41 @@
         margin: 10px auto 0;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
         justify-content: center;
         align-items: center;
+        font-size: 13px;
     }
     .top-bar input,
-    .top-bar select {
+    .top-bar select,
+    .top-bar button {
         padding: 6px 10px;
         border-radius: 10px;
         border: 1px solid var(--input-border);
         background: var(--card-bg);
         color: var(--text);
+        font-size: 13px;
     }
-    .top-bar .score {
+    .top-bar button {
+        cursor: pointer;
+        border: none;
+        background: var(--accent);
+        color: #fff;
+        font-weight: bold;
+    }
+    .top-bar button:hover {
+        opacity: 0.9;
+    }
+    .top-label {
+        font-weight: bold;
+    }
+    .score {
         font-weight: bold;
         color: #fff;
         background: var(--score-bg);
         padding: 4px 10px;
         border-radius: 10px;
+        font-size: 13px;
     }
     .dark-toggle label {
         display: flex;
@@ -109,7 +126,7 @@
 
     .menu-bar {
         margin: 15px auto 5px;
-        max-width: 400px;
+        max-width: 420px;
     }
     .hamburger-btn {
         width: 100%;
@@ -164,7 +181,7 @@
     }
 
     .game-area {
-        max-width: 500px;
+        max-width: 520px;
         margin: 15px auto 20px;
         background: var(--card-bg);
         border-radius: 15px;
@@ -176,9 +193,9 @@
         margin-top: 0;
     }
     .question {
-        font-size: 22px;
+        font-size: 20px;
         margin: 10px 0;
-        white-space: pre-line; /* damit \n als Zeilenumbruch */
+        white-space: pre-line;
     }
     .hint {
         font-size: 13px;
@@ -194,7 +211,7 @@
         padding: 8px 10px;
         border-radius: 8px;
         border: 1px solid var(--input-border);
-        width: 160px;
+        width: 200px;
         text-align: center;
         background: var(--card-bg);
         color: var(--text);
@@ -252,7 +269,13 @@
 </header>
 
 <div class="top-bar">
-    <input type="text" id="username" placeholder="Name eingeben" oninput="updateName()" />
+    <span class="top-label">Kind:</span>
+    <select id="profileSelect" onchange="selectProfile()">
+        <option value="">– Kind wählen –</option>
+    </select>
+    <button type="button" onclick="addProfile()">Neues Kind</button>
+
+    <span class="top-label">Klasse:</span>
     <select id="gradeSelect" onchange="updateGrade()">
         <option value="1">1. Klasse</option>
         <option value="2">2. Klasse</option>
@@ -262,7 +285,9 @@
         <option value="6">6. Klasse</option>
         <option value="special">Spezial 6/7</option>
     </select>
+
     <span class="score" id="scoreBox">Punkte: 0</span>
+
     <div class="dark-toggle">
         <label>
             <input type="checkbox" id="darkToggle" onchange="toggleDarkMode()">
@@ -278,31 +303,34 @@
     </button>
     <div class="menu-list" id="menuList">
         <button class="menu-item" onclick="chooseMode('add')">
-            <span>➕</span> Addition <small>Plus-Aufgaben</small>
+            <span>➕</span> Addition <small>Einfache Plus-Aufgaben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('sub')">
-            <span>➖</span> Subtraktion <small>Minus-Aufgaben</small>
+            <span>➖</span> Subtraktion <small>Minus & Unterschiede</small>
         </button>
         <button class="menu-item" onclick="chooseMode('mul')">
-            <span>✖️</span> Multiplikation <small>Mal-Aufgaben</small>
+            <span>✖️</span> Multiplikation <small>Mal-Rechnen</small>
         </button>
         <button class="menu-item" onclick="chooseMode('frac')">
-            <span>🧩</span> Brüche <small>Einfache Bruchaufgaben</small>
+            <span>🧩</span> Brüche <small>Teile vom Ganzen</small>
         </button>
         <button class="menu-item" onclick="chooseMode('de')">
-            <span>🇩🇪</span> Deutschaufgaben <small>Rechnen in Deutsch</small>
+            <span>🇩🇪</span> Deutschaufgaben <small>„Wie viel ist…“ Sätze</small>
+        </button>
+        <button class="menu-item" onclick="chooseMode('read')">
+            <span>📖</span> Lesen / Leseverstehen <small>Text + Frage (1–3)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('en')">
-            <span>🇬🇧</span> Englisch <small>Wörter & Zahlen (1–3)</small>
+            <span>🇬🇧</span> Englisch <small>Wörter & Farben (1–3)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('fr')">
-            <span>🇫🇷</span> Französisch <small>Wörter & Zahlen (1–3)</small>
+            <span>🇫🇷</span> Französisch <small>Wörter & Farben (1–3)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('itbasics')">
             <span>💻</span> Informatik Basics <small>PC, Maus, Tastatur, Outlook</small>
         </button>
         <button class="menu-item" onclick="chooseMode('flags')">
-            <span>🌍</span> Flaggen Afrika <small>Flagge & Land lernen</small>
+            <span>🌍</span> Flaggen Afrika <small>Calan + Waddan (1–3)</small>
         </button>
     </div>
 </div>
@@ -310,133 +338,287 @@
 <div class="game-area" id="gameArea" style="display:none;">
     <h2 id="gameTitle">Spiel</h2>
     <p class="hint" id="instructions">
-      Wähle oben ein Spiel aus.
+      Wähle oben ein Spiel und ein Kind aus.
     </p>
     <div class="question" id="questionBox">Frage</div>
-    <input type="text" id="answerInput" placeholder="Antwort (Zahl)" />
+    <input type="text" id="answerInput" placeholder="Antwort (meist Zahl)" />
     <br>
     <button onclick="checkAnswer()">OK</button>
     <div class="feedback" id="feedbackBox"></div>
 </div>
 
 <div class="side-info">
-    <h3>Wie funktioniert der Spielplatz?</h3>
+    <h3>Profile & Klassen</h3>
     <ul>
-        <li>Klasse wählen (1.–6. Klasse oder Spezial 6/7) – bestimmt die Schwierigkeit in Mathe.</li>
-        <li>Auf „Spiele wählen“ klicken und ein Modul aussuchen:
+        <li>Maximal 10 Kinder können sich registrieren (Profile).</li>
+        <li>Jedes Kind hat:
             <ul>
-                <li><b>Mathe:</b> Addition, Subtraktion, Multiplikation, Brüche</li>
-                <li><b>Deutsch:</b> Aufgaben mit Text („Wie viel ist…“)</li>
-                <li><b>Englisch & Französisch:</b> mit 🇬🇧/🇫🇷 und Antwort 1, 2 oder 3</li>
-                <li><b>Informatik Basics:</b> PC-Komponenten & Outlook spielerisch kennenlernen</li>
-                <li><b>Flaggen Afrika:</b> Flagge & Land + kleine Eselsbrücke</li>
+                <li>seinen eigenen Namen,</li>
+                <li>seine eigene Klasse (1–6 oder Spezial 6/7),</li>
+                <li>seine eigenen Punkte (Score) – werden im Browser gespeichert.</li>
             </ul>
         </li>
-        <li>Antwort eintippen (meist Zahl wie 1, 2, 3 oder ein Ergebnis z.B. 12) und auf OK klicken.</li>
+        <li>Beim Wechsel des Kindes siehst du die Punkte von genau diesem Kind.</li>
     </ul>
-    <h3>Grundwortschatz Mathe (Deutsch)</h3>
+
+    <h3>Module</h3>
     <ul>
-        <li><b>plus</b> = + (z.&nbsp;B. 3 plus 4)</li>
-        <li><b>minus</b> = − (z.&nbsp;B. 7 minus 2)</li>
-        <li><b>mal</b> = × (z.&nbsp;B. 3 mal 5)</li>
-        <li><b>geteilt durch</b> = ÷ (z.&nbsp;B. 8 geteilt durch 2)</li>
-        <li><b>Ergebnis</b> = Resultat / Lösung</li>
+        <li><b>Mathe:</b> Addition, Subtraktion, Multiplikation, Brüche – reine Zahlenaufgaben.</li>
+        <li><b>Deutsch:</b> Rechnen im ganzen Satz („Anna hat … Äpfel“).</li>
+        <li><b>Lesen / Leseverstehen:</b> kurzer Text + Frage mit 1, 2 oder 3.</li>
+        <li><b>Englisch & Französisch:</b> Wörter & Farben – Antwort 1, 2 oder 3.</li>
+        <li><b>Informatik Basics:</b> PC, Maus, Tastatur, Outlook, Passwort-Sicherheit.</li>
+        <li><b>Flaggen Afrika:</b> Calan + Waddan, mit Eselsbrücke (Darstellung zum Merken).</li>
     </ul>
 </div>
 
 <script>
+/* ---------- GLOBAL STATE / PROFILES ---------- */
 var currentMode = null;
 var currentAnswer = null;
 var score = 0;
 var currentGrade = "1";
+var profiles = [];
+var activeProfileId = null;
+var STORAGE_KEY = "musti_playground_profiles_v1";
 
-// Englisch-Fragen (immer mit 1, 2 oder 3)
+/* ---------- QUESTION POOLS ---------- */
+
+// Englisch
 var enQuestions = [
-    { text: "🇬🇧 Was heißt \"Hund\" auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
-    { text: "🇬🇧 Was heißt \"Katze\" auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
-    { text: "🇬🇧 Was heißt \"Haus\" auf Englisch?\n1) house   2) car   3) tree", ans: 1 },
-    { text: "🇬🇧 Was heißt \"rot\" auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
-    { text: "🇬🇧 Was heißt \"blau\" auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 }
+    { text: "🇬🇧 Englisch\nWähle das richtige Wort.\n\n„Hund“ auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
+    { text: "🇬🇧 Englisch\nWähle das richtige Wort.\n\n„Katze“ auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
+    { text: "🇬🇧 Englisch\nFarben.\n\n„rot“ auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
+    { text: "🇬🇧 Englisch\nFarben.\n\n„blau“ auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 },
+    { text: "🇬🇧 Englisch\nGegenstände.\n\n„Haus“ auf Englisch?\n1) house   2) car   3) tree", ans: 1 }
 ];
 
-// Französisch-Fragen
+// Französisch
 var frQuestions = [
-    { text: "🇫🇷 Was heißt \"Hund\" auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
-    { text: "🇫🇷 Was heißt \"Katze\" auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
-    { text: "🇫🇷 Was heißt \"rot\" auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
-    { text: "🇫🇷 Was heißt \"blau\" auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
-    { text: "🇫🇷 Was heißt \"Haus\" auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
+    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Hund“ auf Französich?\n1) chien   2) chat   3) oiseau", ans: 1 },
+    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Katze“ auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
+    { text: "🇫🇷 Französisch\nFarben.\n\n„rot“ auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
+    { text: "🇫🇷 Französisch\nFarben.\n\n„blau“ auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
+    { text: "🇫🇷 Französisch\nGegenstände.\n\n„Haus“ auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
 ];
 
-// Informatik Basics – 1, 2 oder 3
+// Informatik Basics
 var itBasicsQuestions = [
-    { text: "💻 Mini-Bildschirm: Was ist das?\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
-    { text: "🖱️ Welche Komponente ist das?\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
-    { text: "⌨️ Welche Komponente ist das?\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
-    { text: "📧 Wofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
-    { text: "🔐 Was ist wichtig bei einem sicheren Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
+    { text: "💻 Informatik Basics\n\nWelches Gerät ist hier gemeint?\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
+    { text: "🖱️ Informatik Basics\n\nDas kleine Gerät in der Hand zum Klicken.\nWas ist das?\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
+    { text: "⌨️ Informatik Basics\n\nDamit tippst du Buchstaben und Zahlen.\nWas ist das?\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
+    { text: "📧 Outlook\n\nWofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
+    { text: "🔐 Passwort-Sicherheit\n\nWas ist ein gutes Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
 ];
 
-// Flaggen Afrika – mit Eselsbrücke
+// Flaggen Afrika
 var flagQuestions = [
     {
-        text: "🌍 Welche Flagge gehört zu SOMALIA?\n1) 🇸🇴   2) 🇰🇪   3) 🇪🇹",
+        flag: "🇸🇴",
+        options: ["Soomaaliya", "Kenia", "Äthiopien"],
         ans: 1,
-        hint: "Eselsbrücke: Somalia 🇸🇴 = blauer Himmel + weisser Stern wie ein Licht in der Nacht."
+        hint: "Eselsbrücke: Soomaaliya 🇸🇴 = buluug (bad & cirka) + xiddig cad oo dhexe kaga taal."
     },
     {
-        text: "🌍 Welche Flagge gehört zu KENIA?\n1) 🇬🇭   2) 🇰🇪   3) 🇳🇬",
+        flag: "🇰🇪",
+        options: ["Ghana", "Kenia", "Nigeria"],
         ans: 2,
-        hint: "Eselsbrücke: Kenia 🇰🇪 hat das Schild in der Mitte – wie ein Krieger, der die Tiere schützt."
+        hint: "Eselsbrücke: Kenia 🇰🇪 – calanka leh gaashaan madow oo dhexe yaal, sida geesi ilaalinaya duurka."
     },
     {
-        text: "🌍 Welche Flagge gehört zu ÄTHIOPIEN?\n1) 🇪🇹   2) 🇿🇦   3) 🇸🇴",
+        flag: "🇪🇹",
+        options: ["Äthiopien", "Südafrika", "Soomaaliya"],
         ans: 1,
-        hint: "Eselsbrücke: Äthiopien 🇪🇹 hat Grün-Gelb-Rot mit Stern – ältestes afrikanisches Kaiserreich."
+        hint: "Eselsbrücke: Äthiopien 🇪🇹 – cagaar-jaalle-cas + xiddig dhexda, calan taariikhi ah."
     },
     {
-        text: "🌍 Welche Flagge gehört zu NIGERIA?\n1) 🇳🇬   2) 🇬🇭   3) 🇿🇦",
+        flag: "🇳🇬",
+        options: ["Nigeria", "Ghana", "Südafrika"],
         ans: 1,
-        hint: "Eselsbrücke: Nigeria 🇳🇬 = grün-weiss-grün wie zwei Palmen und ein Fluss in der Mitte."
+        hint: "Eselsbrücke: Nigeria 🇳🇬 – cagaar-cad-cagaar, sida labo geed cagaaran iyo wabiga dhexda maraya."
     },
     {
-        text: "🌍 Welche Flagge gehört zu SÜDAFRIKA?\n1) 🇰🇪   2) 🇿🇦   3) 🇳🇬",
+        flag: "🇿🇦",
+        options: ["Kenia", "Südafrika", "Nigeria"],
         ans: 2,
-        hint: "Eselsbrücke: Südafrika 🇿🇦 hat viele Farben und ein Y – wie viele Wege, die zusammenkommen."
+        hint: "Eselsbrücke: Südafrika 🇿🇦 – midabyo badan + xaraf Y, waddooyin badan oo isku yimaada."
     }
 ];
 
-function updateName(){
-    var name = document.getElementById('username').value.trim();
-    if(name){
-        document.title = name + " – Mathe & Deutsch Spielplatz";
-    } else {
-        document.title = "Mathe & Deutsch – Spielplatz (Musti)";
+// Lesen / Leseverstehen – minGrade, maxGrade
+var readQuestions = [
+    {
+        min: 1, max: 2,
+        text: "📖 Lesen (1.–2. Klasse)\n\nTom hat einen roten Ball. Er spielt im Garten.\n\nFrage: Wo spielt Tom?\n1) In der Schule   2) Im Garten   3) Im Auto",
+        ans: 2
+    },
+    {
+        min: 1, max: 2,
+        text: "📖 Lesen (1.–2. Klasse)\n\nLina hat 3 Bücher. Sie liest gern im Bett.\n\nFrage: Wo liest Lina?\n1) Im Bett   2) Auf dem Spielplatz   3) Im Bus",
+        ans: 1
+    },
+    {
+        min: 3, max: 4,
+        text: "📖 Lesen (3.–4. Klasse)\n\nMax fährt mit dem Bus zur Schule. Der Bus braucht 15 Minuten.\n\nFrage: Womit fährt Max zur Schule?\n1) Mit dem Auto   2) Mit dem Bus   3) Zu Fuß",
+        ans: 2
+    },
+    {
+        min: 3, max: 4,
+        text: "📖 Lesen (3.–4. Klasse)\n\nIm Sommer geht die Klasse 3a ins Schwimmbad. Alle bringen Handtücher und Badehosen mit.\n\nFrage: Wohin geht die Klasse 3a?\n1) In die Bibliothek   2) Ins Schwimmbad   3) In den Zoo",
+        ans: 2
+    },
+    {
+        min: 5, max: 7,
+        text: "📖 Lesen (5.–6. Klasse)\n\nSara liebt Bücher über Tiere. In der Bibliothek leiht sie ein Buch über Löwen und eines über Elefanten aus.\n\nFrage: Was leiht Sara aus?\n1) Bücher über Autos   2) Bücher über Tiere   3) Bücher über Mathematik",
+        ans: 2
+    },
+    {
+        min: 5, max: 7,
+        text: "📖 Lesen (5.–6. Klasse)\n\nIn der Pause spielen die Kinder Fußball auf dem Pausenhof. Nach der Pause gehen alle wieder ins Klassenzimmer.\n\nFrage: Was machen die Kinder in der Pause?\n1) Sie schlafen im Klassenzimmer.\n2) Sie spielen Fußball auf dem Pausenhof.\n3) Sie fahren nach Hause.",
+        ans: 2
+    }
+];
+
+/* ---------- PROFILES + LOCALSTORAGE ---------- */
+
+function loadProfiles() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+            profiles = [];
+        } else {
+            profiles = JSON.parse(raw) || [];
+        }
+    } catch (e) {
+        profiles = [];
+    }
+    renderProfileOptions();
+}
+
+function saveProfiles() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    } catch (e) {
+        console.log("LocalStorage Error:", e);
     }
 }
 
-function updateGrade(){
+function renderProfileOptions() {
+    var sel = document.getElementById('profileSelect');
+    sel.innerHTML = '<option value="">– Kind wählen –</option>';
+    profiles.forEach(function(p) {
+        var opt = document.createElement('option');
+        opt.value = String(p.id);
+        opt.textContent = p.name + " (Klasse " + (p.grade === "special" ? "6/7" : p.grade) + ")";
+        sel.appendChild(opt);
+    });
+
+    // Mark active if still in list
+    if (activeProfileId !== null) {
+        var found = profiles.find(function(p){ return p.id === activeProfileId; });
+        if (found) {
+            sel.value = String(activeProfileId);
+        } else {
+            activeProfileId = null;
+            score = 0;
+            updateScoreUI();
+        }
+    }
+}
+
+function addProfile() {
+    if (profiles.length >= 10) {
+        alert("Maximal 10 Kinder können registriert werden.");
+        return;
+    }
+    var name = prompt("Name des Kindes eingeben:");
+    if (!name) return;
+    name = name.trim();
+    if (name === "") return;
+
+    var grade = document.getElementById('gradeSelect').value || "1";
+    var newProfile = {
+        id: Date.now(), // simple unique id
+        name: name,
+        grade: grade,
+        score: 0
+    };
+    profiles.push(newProfile);
+    activeProfileId = newProfile.id;
+    score = 0;
+    saveProfiles();
+    renderProfileOptions();
+    document.getElementById('profileSelect').value = String(newProfile.id);
+    updateGradeFromProfile();
+    updateScoreUI();
+}
+
+function selectProfile() {
+    var sel = document.getElementById('profileSelect');
+    var val = sel.value;
+    if (!val) {
+        activeProfileId = null;
+        score = 0;
+        updateScoreUI();
+        return;
+    }
+    var id = Number(val);
+    var profile = profiles.find(function(p){ return p.id === id; });
+    if (!profile) {
+        activeProfileId = null;
+        score = 0;
+        updateScoreUI();
+        return;
+    }
+    activeProfileId = id;
+    currentGrade = profile.grade || "1";
+    document.getElementById('gradeSelect').value = currentGrade;
+    score = profile.score || 0;
+    updateScoreUI();
+}
+
+function getActiveProfile() {
+    if (activeProfileId === null) return null;
+    return profiles.find(function(p){ return p.id === activeProfileId; }) || null;
+}
+
+function updateScoreUI() {
+    document.getElementById('scoreBox').innerText = "Punkte: " + score;
+}
+
+/* ---------- GENERAL UI ---------- */
+
+function updateGrade() {
     var sel = document.getElementById('gradeSelect');
     currentGrade = sel.value;
-    if(currentMode !== null){
+
+    // Update in active profile
+    var p = getActiveProfile();
+    if (p) {
+        p.grade = currentGrade;
+        saveProfiles();
+        renderProfileOptions(); // update text "(Klasse ...)"
+    }
+
+    if (currentMode !== null) {
         newQuestion();
     }
 }
 
-function toggleMenu(){
+function toggleMenu() {
     var menu = document.getElementById('menuList');
-    if(menu.style.display === "block"){
+    if (menu.style.display === "block") {
         menu.style.display = "none";
     } else {
         menu.style.display = "block";
     }
 }
 
-function toggleDarkMode(){
+function toggleDarkMode() {
     var body = document.body;
     var toggle = document.getElementById('darkToggle');
-    if(toggle.checked){
-        if(body.className.indexOf('dark-mode') === -1){
+    if (toggle.checked) {
+        if (body.className.indexOf('dark-mode') === -1) {
             body.className += (body.className ? ' ' : '') + 'dark-mode';
         }
     } else {
@@ -444,109 +626,153 @@ function toggleDarkMode(){
     }
 }
 
-function chooseMode(mode){
+function chooseMode(mode) {
     currentMode = mode;
     document.getElementById('gameArea').style.display = 'block';
     document.getElementById('feedbackBox').innerText = '';
+
+    var p = getActiveProfile();
+    if (!p) {
+        document.getElementById('instructions').innerText =
+          "Bitte zuerst ein Kind auswählen und dann das Spiel starten.";
+    } else {
+        document.getElementById('instructions').innerText =
+          "Kind: " + p.name + " · Klasse: " +
+          (p.grade === "special" ? "6/7" : p.grade) +
+          ". Aufgabe lösen und nur die Zahl eingeben.";
+    }
+
     newQuestion();
 }
 
-function getSettingsForGrade(){
-    switch(currentGrade){
-        case "1":
-            return { addMax: 10, subMax: 10, mulMax: 5 };
-        case "2":
-            return { addMax: 20, subMax: 20, mulMax: 8 };
-        case "3":
-            return { addMax: 30, subMax: 30, mulMax: 10 };
-        case "4":
-            return { addMax: 50, subMax: 50, mulMax: 10 };
-        case "5":
-            return { addMax: 80, subMax: 80, mulMax: 12 };
-        case "6":
-            return { addMax: 100, subMax: 100, mulMax: 12 };
-        case "special":
-            return { addMax: 150, subMax: 150, mulMax: 15 };
-        default:
-            return { addMax: 20, subMax: 20, mulMax: 10 };
+/* ---------- QUESTION GENERATION ---------- */
+
+function gradeNumber() {
+    if (currentGrade === "special") return 7;
+    var n = parseInt(currentGrade, 10);
+    if (isNaN(n)) return 1;
+    return n;
+}
+
+function getSettingsForGrade() {
+    switch (currentGrade) {
+        case "1": return { addMax: 10, subMax: 10, mulMax: 5 };
+        case "2": return { addMax: 20, subMax: 20, mulMax: 8 };
+        case "3": return { addMax: 30, subMax: 30, mulMax: 10 };
+        case "4": return { addMax: 50, subMax: 50, mulMax: 10 };
+        case "5": return { addMax: 80, subMax: 80, mulMax: 12 };
+        case "6": return { addMax: 100, subMax: 100, mulMax: 12 };
+        case "special": return { addMax: 150, subMax: 150, mulMax: 15 };
+        default: return { addMax: 20, subMax: 20, mulMax: 10 };
     }
 }
 
-function newQuestion(){
+function getReadingPoolForGrade() {
+    var g = gradeNumber();
+    var pool = readQuestions.filter(function(q){
+        return g >= q.min && g <= q.max;
+    });
+    if (pool.length === 0) return readQuestions;
+    return pool;
+}
+
+function newQuestion() {
     var qBox = document.getElementById('questionBox');
     var title = document.getElementById('gameTitle');
     var inst = document.getElementById('instructions');
     var input = document.getElementById('answerInput');
     var settings = getSettingsForGrade();
+    var p = getActiveProfile();
 
     input.value = '';
     input.focus();
 
-    var a, b;
-    var q;
+    var a, b, q;
 
-    if(currentMode === 'add'){
-        title.innerText = "Addition";
-        inst.innerText = "Berechne die Summe. (Antwort als Zahl, z.B. 12)";
+    if (!p) {
+        title.innerText = "Spiel";
+        qBox.innerText = "Bitte zuerst ein Kind auswählen.";
+        inst.innerText = "Wähle oben ein Kind, dann ein Spiel.";
+        currentAnswer = null;
+        return;
+    }
+
+    if (currentMode === 'add') {
+        title.innerText = "Addition – Zahlen-Training";
+        inst.innerText = "Rechne die Plus-Aufgabe. Antworte mit einer Zahl (z.B. 12).";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
         qBox.innerText = a + " + " + b + " = ?";
         currentAnswer = a + b;
-    } else if(currentMode === 'sub'){
-        title.innerText = "Subtraktion";
-        inst.innerText = "Berechne die Differenz. (Antwort als Zahl)";
+    } else if (currentMode === 'sub') {
+        title.innerText = "Subtraktion – Minus & Unterschiede";
+        inst.innerText = "Rechne die Minus-Aufgabe. Antworte mit einer Zahl.";
         a = randomInt(1, settings.subMax);
         b = randomInt(1, a);
         qBox.innerText = a + " − " + b + " = ?";
         currentAnswer = a - b;
-    } else if(currentMode === 'mul'){
-        title.innerText = "Multiplikation";
-        inst.innerText = "Berechne das Produkt. (Antwort als Zahl)";
+    } else if (currentMode === 'mul') {
+        title.innerText = "Multiplikation – Mal-Spiel";
+        inst.innerText = "Mal-Aufgabe lösen. Antworte mit einer Zahl.";
         a = randomInt(1, settings.mulMax);
         b = randomInt(1, settings.mulMax);
         qBox.innerText = a + " × " + b + " = ?";
         currentAnswer = a * b;
-    } else if(currentMode === 'frac'){
-        title.innerText = "Brüche";
-        inst.innerText = "Löse die Bruchaufgabe. (Antwort als Zahl)";
+    } else if (currentMode === 'frac') {
+        title.innerText = "Brüche – Teil vom Ganzen";
+        inst.innerText = "Berechne den Anteil. Antworte mit einer Zahl.";
         var fracQuestions = [
             { text: "1/2 von 8 = ?", ans: 4 },
             { text: "1/3 von 9 = ?", ans: 3 },
             { text: "1/4 von 20 = ?", ans: 5 }
         ];
-        q = fracQuestions[randomInt(0, fracQuestions.length-1)];
+        q = fracQuestions[randomInt(0, fracQuestions.length - 1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
-    } else if(currentMode === 'de'){
-        title.innerText = "Deutschaufgaben";
-        inst.innerText = "Lies die Aufgabe auf Deutsch und antworte mit einer Zahl.";
+    } else if (currentMode === 'de') {
+        title.innerText = "Deutschaufgabe – Rechnen im Satz";
+        inst.innerText = "Lies den Satz genau und schreibe nur die Zahl als Antwort.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
-        qBox.innerText = "Wie viel ist " + a + " plus " + b + " ?";
+        qBox.innerText =
+            "Anna hat " + a + " Äpfel und bekommt noch " + b +
+            " dazu.\nWie viele Äpfel hat Anna jetzt insgesamt?";
         currentAnswer = a + b;
-    } else if(currentMode === 'en'){
-        title.innerText = "Englisch";
-        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        q = enQuestions[randomInt(0, enQuestions.length-1)];
+    } else if (currentMode === 'read') {
+        title.innerText = "Lesen / Leseverstehen";
+        inst.innerText = "Lies den Text und wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        var pool = getReadingPoolForGrade();
+        q = pool[randomInt(0, pool.length - 1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
-    } else if(currentMode === 'fr'){
-        title.innerText = "Französisch";
-        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        q = frQuestions[randomInt(0, frQuestions.length-1)];
+    } else if (currentMode === 'en') {
+        title.innerText = "Englisch – Wörter & Farben";
+        inst.innerText = "Wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        q = enQuestions[randomInt(0, enQuestions.length - 1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
-    } else if(currentMode === 'itbasics'){
-        title.innerText = "Informatik Basics";
-        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length-1)];
+    } else if (currentMode === 'fr') {
+        title.innerText = "Französisch – Wörter & Farben";
+        inst.innerText = "Wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        q = frQuestions[randomInt(0, frQuestions.length - 1)];
         qBox.innerText = q.text;
         currentAnswer = q.ans;
-    } else if(currentMode === 'flags'){
-        title.innerText = "Flaggen Afrika";
-        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
-        q = flagQuestions[randomInt(0, flagQuestions.length-1)];
+    } else if (currentMode === 'itbasics') {
+        title.innerText = "Informatik Basics – PC-Wissen";
+        inst.innerText = "Lies die Beschreibung und wähle 1, 2 oder 3 (nur Zahl).";
+        q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length - 1)];
         qBox.innerText = q.text;
+        currentAnswer = q.ans;
+    } else if (currentMode === 'flags') {
+        title.innerText = "Flaggen Afrika – Calan & Waddan";
+        inst.innerText = "Eeg calanka, akhri su’aasha Af-Soomaali, kadib dooro 1, 2 ama 3.";
+        q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
+        var text =
+            q.flag + "\n\nCalankani waxa iska leh kee?\n" +
+            "1) " + q.options[0] + "\n" +
+            "2) " + q.options[1] + "\n" +
+            "3) " + q.options[2];
+        qBox.innerText = text;
         currentAnswer = { val: q.ans, hint: q.hint };
     } else {
         title.innerText = "Spiel";
@@ -556,14 +782,22 @@ function newQuestion(){
     }
 }
 
-function checkAnswer(){
-    if(currentAnswer === null){
+/* ---------- ANSWER CHECK ---------- */
+
+function checkAnswer() {
+    if (currentAnswer === null) {
         return;
     }
-    var val = document.getElementById('answerInput').value.trim();
     var fb = document.getElementById('feedbackBox');
+    var p = getActiveProfile();
+    if (!p) {
+        fb.innerText = "Bitte zuerst ein Kind auswählen.";
+        fb.style.color = "orange";
+        return;
+    }
 
-    if(val === ""){
+    var val = document.getElementById('answerInput').value.trim();
+    if (val === "") {
         fb.innerText = "Bitte gib zuerst eine Antwort ein.";
         fb.style.color = "orange";
         return;
@@ -571,14 +805,16 @@ function checkAnswer(){
 
     var userNum = Number(val);
 
-    // Flaggen-special-case: currentAnswer kann Objekt sein
-    if(currentMode === 'flags' && typeof currentAnswer === 'object'){
-        if(userNum === currentAnswer.val){
+    // Flaggen – object {val, hint}
+    if (currentMode === 'flags' && typeof currentAnswer === 'object') {
+        if (userNum === currentAnswer.val) {
             fb.innerText = "Richtig! 👏\n" + currentAnswer.hint;
             fb.style.color = "lightgreen";
             score++;
-            document.getElementById('scoreBox').innerText = "Punkte: " + score;
-            setTimeout(newQuestion, 1200);
+            p.score = score;
+            saveProfiles();
+            updateScoreUI();
+            setTimeout(newQuestion, 1300);
         } else {
             fb.innerText = "Falsch. Versuch es noch einmal.";
             fb.style.color = "red";
@@ -586,21 +822,41 @@ function checkAnswer(){
         return;
     }
 
-    if(userNum === currentAnswer){
+    if (userNum === currentAnswer) {
         fb.innerText = "Richtig! 👏";
         fb.style.color = "lightgreen";
         score++;
-        document.getElementById('scoreBox').innerText = "Punkte: " + score;
-        setTimeout(newQuestion, 800);
+        p.score = score;
+        saveProfiles();
+        updateScoreUI();
+        setTimeout(newQuestion, 900);
     } else {
         fb.innerText = "Falsch. Versuch es noch einmal.";
         fb.style.color = "red";
     }
 }
 
-function randomInt(min, max){
+/* ---------- HELPERS ---------- */
+
+function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+/* ---------- INIT ---------- */
+
+function updateName() {
+    // Optional: title by name – disabled for now, profiles already handle names
+    // Haddii aad rabto mar dambe, waan ku celin karnaa.
+}
+
+function updateGradeFromProfile() {
+    var p = getActiveProfile();
+    if (!p) return;
+    document.getElementById('gradeSelect').value = p.grade || "1";
+}
+
+loadProfiles();
+updateScoreUI();
 </script>
 
 </body>
