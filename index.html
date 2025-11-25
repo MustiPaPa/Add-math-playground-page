@@ -48,15 +48,6 @@
         box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
         background: rgba(0,0,0,0.15);
     }
-    .header-flags span.flag-label {
-        font-size: 12px;
-        width: auto;
-        height: auto;
-        box-shadow: none;
-        background: transparent;
-        font-weight: bold;
-        text-shadow: none;
-    }
 
     .top-wrap {
         max-width: 1100px;
@@ -288,7 +279,7 @@
 
 <header>
   Musti – Lern-Spielplatz für Kinder
-  <small>Mathe · Deutsch · Englisch · Französisch · Informatik · Somalia · Schweiz</small>
+  <small>Mathe · Deutsch · Englisch · Französisch · Informatik · Somalia · Schweiz · CCNA</small>
   <div class="header-flags">
       <span title="Schweiz">🇨🇭</span>
       <span title="Somalia">🇸🇴</span>
@@ -391,12 +382,17 @@
                 <div class="title">Somalia – Wissen</div>
                 <div class="sub">Gobollo, xeebaha, taariikh</div>
             </div>
+            <div class="card" onclick="chooseMode('ccna')">
+                <div class="emoji">🧠</div>
+                <div class="title">CCNA – STP Basics</div>
+                <div class="sub">Spanning Tree, Root Bridge, Ports</div>
+            </div>
         </div>
 
         <div class="game-area" id="gameArea" style="margin-top:10px;">
             <h2 id="gameTitle">Spiel wählen / Doorow Spiel</h2>
             <p class="hint" id="instructions">
-                Dooro ilmuhu kor, kadibna dooro modul (Mathe, Sprachen, Somalia, Schweiz...).
+                Dooro ilmuhu kor, kadibna dooro modul (Mathe, Sprachen, Somalia, Schweiz, CCNA...).
             </p>
             <div class="question" id="questionBox">Frage / Su’aal ayaa halkan iman doonta.</div>
             <div class="options" id="optionsBox"></div>
@@ -423,7 +419,7 @@
         <p style="font-size:11px;opacity:0.8;">
             Maalin walba hadaf: ~20 su’aal (15–20 min). App-ku wuxuu kaydiyaa:  
             – Imisa su’aal oo maanta la qabtay<br>
-            – Qeybaha uu ilmuhu ku fiican yahay / ku daciif yahay (Mathe, Lesen, Sprachen, Wissen).
+            – Qeybaha uu ilmuhu ku fiican yahay / ku daciif yahay (Mathe, Lesen, Sprachen, Wissen, CCNA).
         </p>
     </div>
 </div>
@@ -468,7 +464,8 @@ function ensureModules(profile) {
         "itbasics",
         "flags",
         "chgeo",
-        "soinfo"
+        "soinfo",
+        "ccna"
     ];
     modes.forEach(function(m){
         if (!profile.modules[m]) {
@@ -551,9 +548,12 @@ function setActiveProfile(id) {
     updateScoreUI();
     renderProfileButtons();
     renderHallOfFame();
-    // reset game info text
     var inst = document.getElementById("instructions");
-    inst.textContent = "Kind: " + p.name + " · Bitte Spiel wählen.";
+    if (p) {
+        inst.textContent = "Kind: " + p.name + " · Bitte Spiel wählen.";
+    } else {
+        inst.textContent = "Bitte zuerst ein Kind auswählen.";
+    }
 }
 
 function renderProfileButtons() {
@@ -580,7 +580,7 @@ function renderHallOfFame() {
     }
     var html = "<table><thead><tr>" +
         "<th>Kind</th><th>Kl.</th>" +
-        "<th>Mathe</th><th>Lesen</th><th>Sprachen</th><th>Wissen</th>" +
+        "<th>Mathe</th><th>Lesen</th><th>Sprachen</th><th>Wissen+CCNA</th>" +
         "<th>Heute</th>" +
         "</tr></thead><tbody>";
     profiles.forEach(function(p){
@@ -594,8 +594,8 @@ function renderHallOfFame() {
         var lesenTot  = m.de.total;
         var sprCorr   = m.en.correct + m.fr.correct + (m.delang ? m.delang.correct : 0);
         var sprTot    = m.en.total   + m.fr.total   + (m.delang ? m.delang.total   : 0);
-        var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
-        var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
+        var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct + (m.ccna ? m.ccna.correct : 0);
+        var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total   + (m.ccna ? m.ccna.total   : 0);
 
         var mathePct = percentage(matheCorr, matheTot);
         var lesenPct = percentage(lesenCorr, lesenTot);
@@ -690,8 +690,8 @@ function buildDailyMission(profile) {
     var lesenTot  = m.de.total;
     var sprCorr   = m.en.correct + m.fr.correct + (m.delang ? m.delang.correct : 0);
     var sprTot    = m.en.total   + m.fr.total   + (m.delang ? m.delang.total   : 0);
-    var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct;
-    var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total;
+    var wCorr     = m.itbasics.correct + m.flags.correct + m.chgeo.correct + m.soinfo.correct + (m.ccna ? m.ccna.correct : 0);
+    var wTot      = m.itbasics.total   + m.flags.total   + m.chgeo.total   + m.soinfo.total   + (m.ccna ? m.ccna.total   : 0);
 
     function pct(corr, tot) {
         return tot > 0 ? Math.round(corr / tot * 100) : 0;
@@ -706,7 +706,7 @@ function buildDailyMission(profile) {
         { key: "Mathe", pct: mathePct },
         { key: "Lesen", pct: lesenPct },
         { key: "Sprachen", pct: sprPct },
-        { key: "Wissen", pct: wPct }
+        { key: "Wissen+CCNA", pct: wPct }
     ];
     cats.sort(function(a,b){ return a.pct - b.pct; });
     var weakest = cats[0];
@@ -748,7 +748,8 @@ function getModeLabel(mode) {
         itbasics: "Informatik Basics",
         flags: "Flaggen Afrika",
         chgeo: "Schweiz – Kantone",
-        soinfo: "Somalia – Wissen"
+        soinfo: "Somalia – Wissen",
+        ccna: "CCNA – STP Basics"
     };
     return map[mode] || mode;
 }
@@ -1396,6 +1397,73 @@ var itBasicsQuestions = [
     }
 ];
 
+/* CCNA – Spanning Tree Protocol Basics */
+var ccnaQuestions = [
+    {
+        question: "What is the main purpose of Spanning Tree Protocol (STP)?",
+        options: [
+            "To prevent Layer 2 loops in a switched network",
+            "To route packets between different IP networks",
+            "To assign IP addresses automatically"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Which STP concept decides which switch becomes the Root Bridge?",
+        options: [
+            "Bridge ID (Priority + MAC address)",
+            "Port number only",
+            "IP address of the switch"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "In STP, which ports forward user traffic on the Root Bridge?",
+        options: [
+            "All ports are Designated and forward traffic",
+            "Only one port forwards, the rest are blocked",
+            "All ports are in blocking state"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Which STP port state forwards frames AND learns MAC addresses?",
+        options: [
+            "Forwarding",
+            "Blocking",
+            "Disabled"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Default STP bridge priority on Cisco switches (PVSTP+)?",
+        options: [
+            "32768",
+            "4096",
+            "100"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "Which protocol type does STP use to exchange information between switches?",
+        options: [
+            "BPDU (Bridge Protocol Data Unit)",
+            "ARP (Address Resolution Protocol)",
+            "DNS (Domain Name System)"
+        ],
+        correctIndex: 0
+    },
+    {
+        question: "A redundant link becomes active because the main link failed. STP will…",
+        options: [
+            "Move a previously blocked port to forwarding state",
+            "Shut down all ports",
+            "Change all ports to access mode"
+        ],
+        correctIndex: 0
+    }
+];
+
 /* ========= GAME LOGIC ========= */
 
 function chooseMode(mode){
@@ -1519,6 +1587,8 @@ function newQuestion(){
         qData = pickFromArray(chQuestions);
     } else if (currentMode === "soinfo") {
         qData = pickFromArray(soInfoQuestions);
+    } else if (currentMode === "ccna") {
+        qData = pickFromArray(ccnaQuestions);
     }
 
     if (!qData) {
