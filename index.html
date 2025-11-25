@@ -85,7 +85,6 @@
         align-items: center;
         font-size: 13px;
     }
-    .top-bar input,
     .top-bar select,
     .top-bar button {
         padding: 6px 10px;
@@ -207,35 +206,35 @@
     body:not(.dark-mode) .hint {
         color: #555555;
     }
-    .game-area input {
-        padding: 8px 10px;
-        border-radius: 8px;
-        border: 1px solid var(--input-border);
-        width: 200px;
-        text-align: center;
-        background: var(--card-bg);
-        color: var(--text);
-    }
-    .game-area button {
+
+    .answers {
         margin-top: 10px;
-        padding: 10px 18px;
-        background: var(--button-ok);
-        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .answers button {
+        padding: 8px 14px;
         border-radius: 10px;
-        color: white;
+        border: none;
+        background: var(--button-ok);
+        color: #fff;
         font-weight: bold;
         cursor: pointer;
+        min-width: 70px;
     }
-    .game-area button:hover {
+    .answers button:hover {
         background: var(--button-ok-hover);
     }
+
     .feedback {
         margin-top: 10px;
         font-weight: bold;
     }
 
     .side-info {
-        max-width: 650px;
+        max-width: 750px;
         margin: 0 auto 30px;
         background: var(--side-bg);
         border-radius: 12px;
@@ -250,6 +249,10 @@
     .side-info ul {
         padding-left: 20px;
         margin: 5px 0 10px;
+    }
+    .hall-item {
+        font-size: 13px;
+        margin-bottom: 4px;
     }
 </style>
 </head>
@@ -341,46 +344,37 @@
       Wähle oben ein Spiel und ein Kind aus.
     </p>
     <div class="question" id="questionBox">Frage</div>
-    <input type="text" id="answerInput" placeholder="Antwort (meist Zahl)" />
-    <br>
-    <button onclick="checkAnswer()">OK</button>
+    <div id="answersContainer" class="answers"></div>
     <div class="feedback" id="feedbackBox"></div>
 </div>
 
 <div class="side-info">
-    <h3>Profile & Klassen</h3>
+    <h3>Profile, Klassen & Fortschritt</h3>
     <ul>
-        <li>Maximal 10 Kinder können sich registrieren (Profile).</li>
-        <li>Jedes Kind hat:
+        <li>Bis zu 10 Kinder können registriert werden (Profile).</li>
+        <li>Jedes Kind:
             <ul>
-                <li>seinen eigenen Namen,</li>
-                <li>seine eigene Klasse (1–6 oder Spezial 6/7),</li>
-                <li>seine eigenen Punkte (Score) – werden im Browser gespeichert.</li>
+                <li>hat einen Namen,</li>
+                <li>eine Klasse (1–6 oder Spezial 6/7),</li>
+                <li>eigene Punkte (Score) und Modul-Fortschritt (Mathe / Lesen / Sprachen).</li>
             </ul>
         </li>
-        <li>Beim Wechsel des Kindes siehst du die Punkte von genau diesem Kind.</li>
+        <li>Beim Wechsel der Klasse bleibt das Profil gleich – du siehst langfristig, wie sich das Kind entwickelt.</li>
     </ul>
 
-    <h3>Module</h3>
-    <ul>
-        <li><b>Mathe:</b> Addition, Subtraktion, Multiplikation, Brüche – reine Zahlenaufgaben.</li>
-        <li><b>Deutsch:</b> Rechnen im ganzen Satz („Anna hat … Äpfel“).</li>
-        <li><b>Lesen / Leseverstehen:</b> kurzer Text + Frage mit 1, 2 oder 3.</li>
-        <li><b>Englisch & Französisch:</b> Wörter & Farben – Antwort 1, 2 oder 3.</li>
-        <li><b>Informatik Basics:</b> PC, Maus, Tastatur, Outlook, Passwort-Sicherheit.</li>
-        <li><b>Flaggen Afrika:</b> Calan + Waddan, mit Eselsbrücke (Darstellung zum Merken).</li>
-    </ul>
+    <h3>Hall of Fame – Übersicht pro Kind</h3>
+    <div id="hallOfFame"></div>
 </div>
 
 <script>
-/* ---------- GLOBAL STATE / PROFILES ---------- */
+/* ---------- GLOBAL STATE ---------- */
 var currentMode = null;
-var currentAnswer = null;
+var currentQuestion = null; // { correctValue, choices:[{value,text}], hint?, mode }
 var score = 0;
 var currentGrade = "1";
 var profiles = [];
 var activeProfileId = null;
-var STORAGE_KEY = "musti_playground_profiles_v1";
+var STORAGE_KEY = "musti_playground_profiles_v2";
 
 /* ---------- QUESTION POOLS ---------- */
 
@@ -395,7 +389,7 @@ var enQuestions = [
 
 // Französisch
 var frQuestions = [
-    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Hund“ auf Französich?\n1) chien   2) chat   3) oiseau", ans: 1 },
+    { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Hund“ auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
     { text: "🇫🇷 Französisch\nWähle das richtige Wort.\n\n„Katze“ auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
     { text: "🇫🇷 Französisch\nFarben.\n\n„rot“ auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
     { text: "🇫🇷 Französisch\nFarben.\n\n„blau“ auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
@@ -445,7 +439,7 @@ var flagQuestions = [
     }
 ];
 
-// Lesen / Leseverstehen – minGrade, maxGrade
+// Lesen / Leseverstehen
 var readQuestions = [
     {
         min: 1, max: 2,
@@ -479,20 +473,28 @@ var readQuestions = [
     }
 ];
 
-/* ---------- PROFILES + LOCALSTORAGE ---------- */
+/* ---------- PROFILES & STORAGE ---------- */
+
+function ensureModules(profile) {
+    if (!profile.modules) profile.modules = {};
+    var keys = ["add","sub","mul","frac","de","read","en","fr","itbasics","flags"];
+    keys.forEach(function(k){
+        if (!profile.modules[k]) {
+            profile.modules[k] = { correct: 0, total: 0 };
+        }
+    });
+}
 
 function loadProfiles() {
     try {
         var raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-            profiles = [];
-        } else {
-            profiles = JSON.parse(raw) || [];
-        }
+        profiles = raw ? JSON.parse(raw) : [];
     } catch (e) {
         profiles = [];
     }
+    profiles.forEach(ensureModules);
     renderProfileOptions();
+    renderHallOfFame();
 }
 
 function saveProfiles() {
@@ -513,7 +515,6 @@ function renderProfileOptions() {
         sel.appendChild(opt);
     });
 
-    // Mark active if still in list
     if (activeProfileId !== null) {
         var found = profiles.find(function(p){ return p.id === activeProfileId; });
         if (found) {
@@ -534,23 +535,27 @@ function addProfile() {
     var name = prompt("Name des Kindes eingeben:");
     if (!name) return;
     name = name.trim();
-    if (name === "") return;
+    if (!name) return;
 
     var grade = document.getElementById('gradeSelect').value || "1";
     var newProfile = {
-        id: Date.now(), // simple unique id
+        id: Date.now(),
         name: name,
         grade: grade,
-        score: 0
+        score: 0,
+        modules: {}
     };
+    ensureModules(newProfile);
     profiles.push(newProfile);
     activeProfileId = newProfile.id;
     score = 0;
     saveProfiles();
     renderProfileOptions();
     document.getElementById('profileSelect').value = String(newProfile.id);
-    updateGradeFromProfile();
+    currentGrade = grade;
+    document.getElementById('gradeSelect').value = grade;
     updateScoreUI();
+    renderHallOfFame();
 }
 
 function selectProfile() {
@@ -560,6 +565,7 @@ function selectProfile() {
         activeProfileId = null;
         score = 0;
         updateScoreUI();
+        renderHallOfFame();
         return;
     }
     var id = Number(val);
@@ -568,13 +574,16 @@ function selectProfile() {
         activeProfileId = null;
         score = 0;
         updateScoreUI();
+        renderHallOfFame();
         return;
     }
+    ensureModules(profile);
     activeProfileId = id;
     currentGrade = profile.grade || "1";
     document.getElementById('gradeSelect').value = currentGrade;
     score = profile.score || 0;
     updateScoreUI();
+    renderHallOfFame();
 }
 
 function getActiveProfile() {
@@ -586,18 +595,51 @@ function updateScoreUI() {
     document.getElementById('scoreBox').innerText = "Punkte: " + score;
 }
 
+/* ---------- HALL OF FAME ---------- */
+
+function renderHallOfFame() {
+    var container = document.getElementById('hallOfFame');
+    if (!container) return;
+    if (!profiles.length) {
+        container.innerHTML = "<p>Noch keine Kinder registriert.</p>";
+        return;
+    }
+
+    var sorted = profiles.slice().sort(function(a,b){
+        return (b.score || 0) - (a.score || 0);
+    });
+
+    var html = "";
+    sorted.forEach(function(p, idx){
+        ensureModules(p);
+        var matheCorrect = p.modules.add.correct + p.modules.sub.correct +
+                           p.modules.mul.correct + p.modules.frac.correct;
+        var lesenCorrect = p.modules.read.correct + p.modules.de.correct;
+        var sprachenCorrect = p.modules.en.correct + p.modules.fr.correct;
+        html += '<div class="hall-item">'
+            + (idx+1) + ". <b>" + escapeHtml(p.name) + "</b> (Klasse "
+            + (p.grade === "special" ? "6/7" : p.grade)
+            + ") – Punkte: " + (p.score || 0)
+            + " · Mathe: " + matheCorrect
+            + " · Lesen: " + lesenCorrect
+            + " · Sprachen: " + sprachenCorrect
+            + "</div>";
+    });
+    container.innerHTML = html;
+}
+
 /* ---------- GENERAL UI ---------- */
 
 function updateGrade() {
     var sel = document.getElementById('gradeSelect');
     currentGrade = sel.value;
 
-    // Update in active profile
     var p = getActiveProfile();
     if (p) {
         p.grade = currentGrade;
         saveProfiles();
-        renderProfileOptions(); // update text "(Klasse ...)"
+        renderProfileOptions();
+        renderHallOfFame();
     }
 
     if (currentMode !== null) {
@@ -607,11 +649,7 @@ function updateGrade() {
 
 function toggleMenu() {
     var menu = document.getElementById('menuList');
-    if (menu.style.display === "block") {
-        menu.style.display = "none";
-    } else {
-        menu.style.display = "block";
-    }
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
 
 function toggleDarkMode() {
@@ -639,13 +677,13 @@ function chooseMode(mode) {
         document.getElementById('instructions').innerText =
           "Kind: " + p.name + " · Klasse: " +
           (p.grade === "special" ? "6/7" : p.grade) +
-          ". Aufgabe lösen und nur die Zahl eingeben.";
+          ". Wähle die richtige Antwort.";
     }
 
     newQuestion();
 }
 
-/* ---------- QUESTION GENERATION ---------- */
+/* ---------- GRADE HELPERS ---------- */
 
 function gradeNumber() {
     if (currentGrade === "special") return 7;
@@ -672,55 +710,107 @@ function getReadingPoolForGrade() {
     var pool = readQuestions.filter(function(q){
         return g >= q.min && g <= q.max;
     });
-    if (pool.length === 0) return readQuestions;
-    return pool;
+    return pool.length ? pool : readQuestions;
+}
+
+/* ---------- QUESTION CREATION ---------- */
+
+function setChoices(choices) {
+    // choices: [{value,text}]
+    var container = document.getElementById('answersContainer');
+    container.innerHTML = "";
+    choices.forEach(function(c){
+        var btn = document.createElement('button');
+        btn.textContent = c.text;
+        btn.onclick = function(){ handleChoice(c.value); };
+        container.appendChild(btn);
+    });
+}
+
+function makeNumericChoices(correct) {
+    var vals = [correct];
+    while (vals.length < 3) {
+        var delta = randomInt(-5, 5);
+        if (delta === 0) continue;
+        var cand = correct + delta;
+        if (cand <= 0) continue;
+        if (vals.indexOf(cand) === -1) vals.push(cand);
+    }
+    // shuffle
+    for (var i = vals.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = vals[i]; vals[i] = vals[j]; vals[j] = tmp;
+    }
+    return vals.map(function(v){ return { value: v, text: String(v) }; });
 }
 
 function newQuestion() {
     var qBox = document.getElementById('questionBox');
     var title = document.getElementById('gameTitle');
     var inst = document.getElementById('instructions');
-    var input = document.getElementById('answerInput');
+    var answersDiv = document.getElementById('answersContainer');
+    answersDiv.innerHTML = "";
+    var fb = document.getElementById('feedbackBox');
+    fb.innerText = "";
+
     var settings = getSettingsForGrade();
     var p = getActiveProfile();
-
-    input.value = '';
-    input.focus();
-
-    var a, b, q;
 
     if (!p) {
         title.innerText = "Spiel";
         qBox.innerText = "Bitte zuerst ein Kind auswählen.";
         inst.innerText = "Wähle oben ein Kind, dann ein Spiel.";
-        currentAnswer = null;
+        currentQuestion = null;
         return;
     }
 
+    var a, b, q;
+
     if (currentMode === 'add') {
         title.innerText = "Addition – Zahlen-Training";
-        inst.innerText = "Rechne die Plus-Aufgabe. Antworte mit einer Zahl (z.B. 12).";
+        inst.innerText = "Rechne die Plus-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
+        var corr = a + b;
         qBox.innerText = a + " + " + b + " = ?";
-        currentAnswer = a + b;
+        currentQuestion = {
+            correctValue: corr,
+            hint: null,
+            choices: makeNumericChoices(corr),
+            mode: "add"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'sub') {
         title.innerText = "Subtraktion – Minus & Unterschiede";
-        inst.innerText = "Rechne die Minus-Aufgabe. Antworte mit einer Zahl.";
+        inst.innerText = "Rechne die Minus-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.subMax);
         b = randomInt(1, a);
+        corr = a - b;
         qBox.innerText = a + " − " + b + " = ?";
-        currentAnswer = a - b;
+        currentQuestion = {
+            correctValue: corr,
+            hint: null,
+            choices: makeNumericChoices(corr),
+            mode: "sub"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'mul') {
         title.innerText = "Multiplikation – Mal-Spiel";
-        inst.innerText = "Mal-Aufgabe lösen. Antworte mit einer Zahl.";
+        inst.innerText = "Löse die Mal-Aufgabe und klicke die richtige Zahl.";
         a = randomInt(1, settings.mulMax);
         b = randomInt(1, settings.mulMax);
+        corr = a * b;
         qBox.innerText = a + " × " + b + " = ?";
-        currentAnswer = a * b;
+        currentQuestion = {
+            correctValue: corr,
+            hint: null,
+            choices: makeNumericChoices(corr),
+            mode: "mul"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'frac') {
         title.innerText = "Brüche – Teil vom Ganzen";
-        inst.innerText = "Berechne den Anteil. Antworte mit einer Zahl.";
+        inst.innerText = "Berechne den Anteil und klicke die richtige Zahl.";
         var fracQuestions = [
             { text: "1/2 von 8 = ?", ans: 4 },
             { text: "1/3 von 9 = ?", ans: 3 },
@@ -728,44 +818,98 @@ function newQuestion() {
         ];
         q = fracQuestions[randomInt(0, fracQuestions.length - 1)];
         qBox.innerText = q.text;
-        currentAnswer = q.ans;
+        corr = q.ans;
+        currentQuestion = {
+            correctValue: corr,
+            hint: null,
+            choices: makeNumericChoices(corr),
+            mode: "frac"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'de') {
         title.innerText = "Deutschaufgabe – Rechnen im Satz";
-        inst.innerText = "Lies den Satz genau und schreibe nur die Zahl als Antwort.";
+        inst.innerText = "Lies den Satz und klicke die richtige Zahl.";
         a = randomInt(1, settings.addMax);
         b = randomInt(1, settings.addMax);
+        corr = a + b;
         qBox.innerText =
             "Anna hat " + a + " Äpfel und bekommt noch " + b +
             " dazu.\nWie viele Äpfel hat Anna jetzt insgesamt?";
-        currentAnswer = a + b;
+        currentQuestion = {
+            correctValue: corr,
+            hint: null,
+            choices: makeNumericChoices(corr),
+            mode: "de"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'read') {
         title.innerText = "Lesen / Leseverstehen";
-        inst.innerText = "Lies den Text und wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        inst.innerText = "Lies den Text und klicke 1, 2 oder 3.";
         var pool = getReadingPoolForGrade();
         q = pool[randomInt(0, pool.length - 1)];
         qBox.innerText = q.text;
-        currentAnswer = q.ans;
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: null,
+            choices: [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            mode: "read"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'en') {
         title.innerText = "Englisch – Wörter & Farben";
-        inst.innerText = "Wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        inst.innerText = "Lies die Optionen und klicke 1, 2 oder 3.";
         q = enQuestions[randomInt(0, enQuestions.length - 1)];
         qBox.innerText = q.text;
-        currentAnswer = q.ans;
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: null,
+            choices: [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            mode: "en"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'fr') {
         title.innerText = "Französisch – Wörter & Farben";
-        inst.innerText = "Wähle 1, 2 oder 3. Schreibe nur die Zahl.";
+        inst.innerText = "Lies die Optionen und klicke 1, 2 oder 3.";
         q = frQuestions[randomInt(0, frQuestions.length - 1)];
         qBox.innerText = q.text;
-        currentAnswer = q.ans;
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: null,
+            choices: [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            mode: "fr"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'itbasics') {
         title.innerText = "Informatik Basics – PC-Wissen";
-        inst.innerText = "Lies die Beschreibung und wähle 1, 2 oder 3 (nur Zahl).";
+        inst.innerText = "Lies die Frage und klicke 1, 2 oder 3.";
         q = itBasicsQuestions[randomInt(0, itBasicsQuestions.length - 1)];
         qBox.innerText = q.text;
-        currentAnswer = q.ans;
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: null,
+            choices: [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            mode: "itbasics"
+        };
+        setChoices(currentQuestion.choices);
     } else if (currentMode === 'flags') {
         title.innerText = "Flaggen Afrika – Calan & Waddan";
-        inst.innerText = "Eeg calanka, akhri su’aasha Af-Soomaali, kadib dooro 1, 2 ama 3.";
+        inst.innerText = "Eeg calanka, akhri su’aasha, kadib klicke 1, 2 ama 3.";
         q = flagQuestions[randomInt(0, flagQuestions.length - 1)];
         var text =
             q.flag + "\n\nCalankani waxa iska leh kee?\n" +
@@ -773,66 +917,74 @@ function newQuestion() {
             "2) " + q.options[1] + "\n" +
             "3) " + q.options[2];
         qBox.innerText = text;
-        currentAnswer = { val: q.ans, hint: q.hint };
+        currentQuestion = {
+            correctValue: q.ans,
+            hint: q.hint,
+            choices: [
+                { value: 1, text: "1" },
+                { value: 2, text: "2" },
+                { value: 3, text: "3" }
+            ],
+            mode: "flags"
+        };
+        setChoices(currentQuestion.choices);
     } else {
         title.innerText = "Spiel";
         qBox.innerText = "Wähle oben ein Spiel aus.";
         inst.innerText = "";
-        currentAnswer = null;
+        currentQuestion = null;
     }
 }
 
-/* ---------- ANSWER CHECK ---------- */
+/* ---------- ANSWER HANDLING ---------- */
 
-function checkAnswer() {
-    if (currentAnswer === null) {
-        return;
+function updateModuleStats(mode, isCorrect) {
+    var p = getActiveProfile();
+    if (!p) return;
+    ensureModules(p);
+    var m = p.modules[mode];
+    if (!m) {
+        m = { correct: 0, total: 0 };
+        p.modules[mode] = m;
     }
+    m.total++;
+    if (isCorrect) m.correct++;
+}
+
+function handleChoice(selectedValue) {
     var fb = document.getElementById('feedbackBox');
     var p = getActiveProfile();
-    if (!p) {
-        fb.innerText = "Bitte zuerst ein Kind auswählen.";
+    if (!p || !currentQuestion) {
+        fb.innerText = "Bitte zuerst ein Kind und ein Spiel auswählen.";
         fb.style.color = "orange";
         return;
     }
 
-    var val = document.getElementById('answerInput').value.trim();
-    if (val === "") {
-        fb.innerText = "Bitte gib zuerst eine Antwort ein.";
-        fb.style.color = "orange";
-        return;
-    }
+    var correct = currentQuestion.correctValue;
+    var mode = currentQuestion.mode;
+    var isCorrect = (selectedValue === correct);
 
-    var userNum = Number(val);
-
-    // Flaggen – object {val, hint}
-    if (currentMode === 'flags' && typeof currentAnswer === 'object') {
-        if (userNum === currentAnswer.val) {
-            fb.innerText = "Richtig! 👏\n" + currentAnswer.hint;
-            fb.style.color = "lightgreen";
-            score++;
-            p.score = score;
-            saveProfiles();
-            updateScoreUI();
-            setTimeout(newQuestion, 1300);
-        } else {
-            fb.innerText = "Falsch. Versuch es noch einmal.";
-            fb.style.color = "red";
-        }
-        return;
-    }
-
-    if (userNum === currentAnswer) {
+    if (mode === "flags" && currentQuestion.hint && isCorrect) {
+        fb.innerText = "Richtig! 👏\n" + currentQuestion.hint;
+    } else if (isCorrect) {
         fb.innerText = "Richtig! 👏";
-        fb.style.color = "lightgreen";
+    } else {
+        fb.innerText = "Falsch. Versuch es noch einmal.";
+    }
+    fb.style.color = isCorrect ? "lightgreen" : "red";
+
+    updateModuleStats(mode, isCorrect);
+
+    if (isCorrect) {
         score++;
         p.score = score;
         saveProfiles();
         updateScoreUI();
-        setTimeout(newQuestion, 900);
+        renderHallOfFame();
+        setTimeout(newQuestion, mode === "flags" ? 1300 : 900);
     } else {
-        fb.innerText = "Falsch. Versuch es noch einmal.";
-        fb.style.color = "red";
+        saveProfiles();
+        renderHallOfFame();
     }
 }
 
@@ -842,18 +994,16 @@ function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
 /* ---------- INIT ---------- */
-
-function updateName() {
-    // Optional: title by name – disabled for now, profiles already handle names
-    // Haddii aad rabto mar dambe, waan ku celin karnaa.
-}
-
-function updateGradeFromProfile() {
-    var p = getActiveProfile();
-    if (!p) return;
-    document.getElementById('gradeSelect').value = p.grade || "1";
-}
 
 loadProfiles();
 updateScoreUI();
