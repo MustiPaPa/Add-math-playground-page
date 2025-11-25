@@ -6,14 +6,47 @@
 <title>Mathe & Deutsch – Spielplatz (Musti)</title>
 
 <style>
+    :root {
+        --bg: #84c0f0;
+        --header-bg: #1b75d0;
+        --text: #000000;
+        --card-bg: #ffffff;
+        --card-shadow: rgba(0,0,0,0.3);
+        --accent: #0056a6;
+        --score-bg: #1b75d0;
+        --side-bg: #fffbcc;
+        --button-ok: #28a745;
+        --button-ok-hover: #218838;
+        --menu-bg: #ffffff;
+        --menu-hover: #e3f2ff;
+        --input-border: #ccc;
+    }
+
+    body.dark-mode {
+        --bg: #021626;
+        --header-bg: #001133;
+        --text: #f5f5f5;
+        --card-bg: #0f2233;
+        --card-shadow: rgba(0,0,0,0.8);
+        --accent: #2296ff;
+        --score-bg: #004080;
+        --side-bg: #2d2a0f;
+        --button-ok: #1c8c3a;
+        --button-ok-hover: #0f6b2a;
+        --menu-bg: #071521;
+        --menu-hover: #123047;
+        --input-border: #555;
+    }
+
     body {
         margin: 0;
         font-family: Arial, sans-serif;
-        background: #84c0f0;
+        background: var(--bg);
+        color: var(--text);
         text-align: center;
     }
     header {
-        background: #1b75d0;
+        background: var(--header-bg);
         padding: 8px 12px;
         color: white;
         font-size: 20px;
@@ -51,23 +84,27 @@
         justify-content: center;
         align-items: center;
     }
-    .top-bar input {
-        padding: 6px 10px;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        width: 160px;
-    }
+    .top-bar input,
     .top-bar select {
         padding: 6px 10px;
         border-radius: 10px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--input-border);
+        background: var(--card-bg);
+        color: var(--text);
     }
     .top-bar .score {
         font-weight: bold;
         color: #fff;
-        background: #1b75d0;
+        background: var(--score-bg);
         padding: 4px 10px;
         border-radius: 10px;
+    }
+    .dark-toggle label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        cursor: pointer;
     }
 
     /* Hamburger / Spiel-Menü */
@@ -80,7 +117,7 @@
         padding: 10px 14px;
         border-radius: 12px;
         border: none;
-        background: #0056a6;
+        background: var(--accent);
         color: white;
         font-size: 16px;
         font-weight: bold;
@@ -89,7 +126,7 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 3px 6px var(--card-shadow);
     }
     .hamburger-icon {
         font-size: 20px;
@@ -97,38 +134,43 @@
     .menu-list {
         margin-top: 6px;
         display: none;
-        background: #ffffff;
+        background: var(--menu-bg);
         border-radius: 12px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        box-shadow: 0 3px 8px var(--card-shadow);
         overflow: hidden;
     }
     .menu-item {
         width: 100%;
         padding: 10px 14px;
         border: none;
-        background: white;
+        background: transparent;
         cursor: pointer;
         text-align: left;
         font-size: 15px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        color: var(--text);
     }
     .menu-item span {
         font-size: 18px;
         margin-right: 8px;
     }
+    .menu-item small {
+        font-size: 12px;
+        opacity: 0.8;
+    }
     .menu-item:hover {
-        background: #e3f2ff;
+        background: var(--menu-hover);
     }
 
     .game-area {
         max-width: 500px;
         margin: 15px auto 20px;
-        background: #ffffff;
+        background: var(--card-bg);
         border-radius: 15px;
         padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px var(--card-shadow);
         text-align: center;
     }
     .game-area h2 {
@@ -140,20 +182,25 @@
     }
     .hint {
         font-size: 13px;
-        color: #555;
+        color: #ccc;
         margin-bottom: 8px;
+    }
+    body:not(.dark-mode) .hint {
+        color: #555;
     }
     .game-area input {
         padding: 8px 10px;
         border-radius: 8px;
-        border: 1px solid #ccc;
-        width: 100px;
+        border: 1px solid var(--input-border);
+        width: 150px;
         text-align: center;
+        background: var(--card-bg);
+        color: var(--text);
     }
     .game-area button {
         margin-top: 10px;
         padding: 10px 18px;
-        background: #28a745;
+        background: var(--button-ok);
         border: none;
         border-radius: 10px;
         color: white;
@@ -161,7 +208,7 @@
         cursor: pointer;
     }
     .game-area button:hover {
-        background: #218838;
+        background: var(--button-ok-hover);
     }
     .feedback {
         margin-top: 10px;
@@ -171,11 +218,12 @@
     .side-info {
         max-width: 650px;
         margin: 0 auto 30px;
-        background: #fffbcc;
+        background: var(--side-bg);
         border-radius: 12px;
         padding: 10px 15px 15px;
         font-size: 14px;
         text-align: left;
+        color: var(--text);
     }
     .side-info h3 {
         margin-top: 5px;
@@ -194,7 +242,7 @@
   </div>
   <div class="header-center">
     Mathe & Deutsch – Spielplatz (Musti Edition)
-    <small>Grundschule · Rechnen & Sprachen lernen</small>
+    <small>Grundschule · Rechnen, Sprachen & Wissen lernen</small>
   </div>
   <div class="flag">
     <img src="https://flagcdn.com/w40/ch.png" alt="Schweiz">
@@ -213,41 +261,47 @@
         <option value="special">Spezial 6/7</option>
     </select>
     <span class="score" id="scoreBox">Punkte: 0</span>
+    <div class="dark-toggle">
+        <label>
+            <input type="checkbox" id="darkToggle" onchange="toggleDarkMode()">
+            🌙 Dark Mode
+        </label>
+    </div>
 </div>
 
 <div class="menu-bar">
     <button class="hamburger-btn" onclick="toggleMenu()">
         <span class="hamburger-icon">☰</span>
-        Spiele wählen (Mathe / Deutsch)
+        Spiele wählen (Mathe / Sprachen / Wissen)
     </button>
     <div class="menu-list" id="menuList">
         <button class="menu-item" onclick="chooseMode('add')">
-            <span>➕</span> Addition
+            <span>➕</span> Addition <small>Plus-Aufgaben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('sub')">
-            <span>➖</span> Subtraktion
+            <span>➖</span> Subtraktion <small>Minus-Aufgaben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('mul')">
-            <span>✖️</span> Multiplikation
+            <span>✖️</span> Multiplikation <small>Mal-Aufgaben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('frac')">
-            <span>🧩</span> Brüche
+            <span>🧩</span> Brüche <small>Einfache Bruchaufgaben</small>
         </button>
         <button class="menu-item" onclick="chooseMode('de')">
-            <span>🇩🇪</span> Deutschaufgaben (Text)
+            <span>🇩🇪</span> Deutschaufgaben <small>Rechnen in Deutsch</small>
         </button>
-        <!-- Platzhalter für Zukunft: Englisch, Französisch, Informatik -->
-        <!--
         <button class="menu-item" onclick="chooseMode('en')">
-            <span>🇬🇧</span> Englisch (coming soon)
+            <span>🇬🇧</span> Englisch <small>Wörter & Zahlen (1–3)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('fr')">
-            <span>🇫🇷</span> Französisch (coming soon)
+            <span>🇫🇷</span> Französisch <small>Wörter & Zahlen (1–3)</small>
         </button>
         <button class="menu-item" onclick="chooseMode('itbasics')">
-            <span>💻</span> Informatik Basics (coming soon)
+            <span>💻</span> Informatik Basics <small>PC, Maus, Tastatur, Outlook</small>
         </button>
-        -->
+        <button class="menu-item" onclick="chooseMode('flags')">
+            <span>🌍</span> Flaggen Afrika <small>Flagge & Land lernen</small>
+        </button>
     </div>
 </div>
 
@@ -264,6 +318,20 @@
 </div>
 
 <div class="side-info">
+    <h3>Wie funktioniert der Spielplatz?</h3>
+    <ul>
+        <li>Klasse wählen (1.–6. Klasse oder Spezial 6/7) – bestimmt die Schwierigkeit in Mathe.</li>
+        <li>Auf „Spiele wählen“ klicken und ein Modul aussuchen:
+            <ul>
+                <li><b>Mathe:</b> Addition, Subtraktion, Multiplikation, Brüche</li>
+                <li><b>Deutsch:</b> Aufgaben mit Text („Wie viel ist…“)</li>
+                <li><b>Englisch & Französisch:</b> Zahl eingeben (1, 2 oder 3) für die richtige Antwort</li>
+                <li><b>Informatik Basics:</b> PC-Komponenten & Outlook spielerisch kennenlernen</li>
+                <li><b>Flaggen Afrika:</b> Flagge-Wissensspiel mit Antwort 1, 2 oder 3</li>
+            </ul>
+        </li>
+        <li>Antwort eintippen (meist Zahl wie 1, 2, 3 oder ein Ergebnis z.B. 12) und auf OK klicken.</li>
+    </ul>
     <h3>Grundwortschatz Mathe (Deutsch)</h3>
     <ul>
         <li><b>plus</b> = + (z.&nbsp;B. 3 plus 4)</li>
@@ -272,13 +340,6 @@
         <li><b>geteilt durch</b> = ÷ (z.&nbsp;B. 8 geteilt durch 2)</li>
         <li><b>Ergebnis</b> = Resultat / Lösung</li>
     </ul>
-    <p>
-      Anleitung auf Deutsch:<br>
-      – Oben Klasse auswählen (1.–6. Klasse oder Spezial 6/7).<br>
-      – Auf „Spiele wählen“ klicken und ein Spiel aussuchen.<br>
-      – Frage lesen, Antwort eintippen.<br>
-      – Auf OK klicken und Punkte sammeln.<br>
-    </p>
 </div>
 
 <script>
@@ -286,6 +347,39 @@ let currentMode = null;
 let currentAnswer = null;
 let score = 0;
 let currentGrade = "1";
+
+// Sprach-/Flaggenfragen (immer mit Antwort 1, 2 oder 3)
+const enQuestions = [
+    { text: "Was heißt \"Hund\" auf Englisch?\n1) dog   2) cat   3) bird", ans: 1 },
+    { text: "Was heißt \"Katze\" auf Englisch?\n1) dog   2) cat   3) mouse", ans: 2 },
+    { text: "Was heißt \"Haus\" auf Englisch?\n1) house   2) car   3) tree", ans: 1 },
+    { text: "Was heißt \"rot\" auf Englisch?\n1) red   2) blue   3) green", ans: 1 },
+    { text: "Was heißt \"blau\" auf Englisch?\n1) yellow   2) blue   3) black", ans: 2 }
+];
+
+const frQuestions = [
+    { text: "Was heißt \"Hund\" auf Französisch?\n1) chien   2) chat   3) oiseau", ans: 1 },
+    { text: "Was heißt \"Katze\" auf Französisch?\n1) chien   2) chat   3) souris", ans: 2 },
+    { text: "Was heißt \"rot\" auf Französisch?\n1) rouge   2) bleu   3) vert", ans: 1 },
+    { text: "Was heißt \"blau\" auf Französisch?\n1) rouge   2) bleu   3) noir", ans: 2 },
+    { text: "Was heißt \"Haus\" auf Französisch?\n1) maison   2) voiture   3) arbre", ans: 1 }
+];
+
+const itBasicsQuestions = [
+    { text: "Welche Komponente ist das? 💻\n1) Computer / Laptop   2) Maus   3) Tastatur", ans: 1 },
+    { text: "Welche Komponente ist das? 🖱️\n1) Bildschirm   2) Maus   3) Drucker", ans: 2 },
+    { text: "Welche Komponente ist das? ⌨️\n1) Lautsprecher   2) Tastatur   3) Kabel", ans: 2 },
+    { text: "Wofür benutzt man Outlook meistens?\n1) E-Mails   2) Spiele   3) Musik", ans: 1 },
+    { text: "Was ist wichtig bei einem sicheren Passwort?\n1) nur Name   2) lang & gemischt   3) nur 1234", ans: 2 }
+];
+
+const flagQuestions = [
+    { text: "Welche Flagge gehört zu SOMALIA?\n1) 🇸🇴   2) 🇰🇪   3) 🇪🇹", ans: 1 },
+    { text: "Welche Flagge gehört zu KENIA?\n1) 🇬🇭   2) 🇰🇪   3) 🇳🇬", ans: 2 },
+    { text: "Welche Flagge gehört zu ÄTHIOPIEN?\n1) 🇪🇹   2) 🇿🇦   3) 🇸🇴", ans: 1 },
+    { text: "Welche Flagge gehört zu NIGERIA?\n1) 🇳🇬   2) 🇬🇭   3) 🇿🇦", ans: 1 },
+    { text: "Welche Flagge gehört zu SÜDAFRIKA?\n1) 🇰🇪   2) 🇿🇦   3) 🇳🇬", ans: 2 }
+];
 
 function updateName(){
     const name = document.getElementById('username').value.trim();
@@ -299,7 +393,6 @@ function updateName(){
 function updateGrade(){
     const sel = document.getElementById('gradeSelect');
     currentGrade = sel.value;
-    // Optional: neue Frage passend zur Klasse
     if(currentMode !== null){
         newQuestion();
     }
@@ -314,6 +407,16 @@ function toggleMenu(){
     }
 }
 
+function toggleDarkMode(){
+    const body = document.body;
+    const toggle = document.getElementById('darkToggle');
+    if(toggle.checked){
+        body.classList.add('dark-mode');
+    } else {
+        body.classList.remove('dark-mode');
+    }
+}
+
 function chooseMode(mode){
     currentMode = mode;
     document.getElementById('gameArea').style.display = 'block';
@@ -322,9 +425,6 @@ function chooseMode(mode){
 }
 
 function getSettingsForGrade(){
-    // Adkaanta dadkan:
-    // 1. Klasse: tirooyin yar
-    // 6. Klasse / Spezial: tirooyin waaweyn
     switch(currentGrade){
         case "1":
             return { addMax: 10, subMax: 10, mulMax: 5 };
@@ -396,44 +496,14 @@ function newQuestion(){
         b = randomInt(1, settings.addMax);
         qBox.innerText = "Wie viel ist " + a + " plus " + b + " ?";
         currentAnswer = a + b;
-    } else {
-        title.innerText = "Spiel";
-        qBox.innerText = "Wähle oben ein Spiel aus.";
-        inst.innerText = "";
-        currentAnswer = null;
-    }
-}
-
-function checkAnswer(){
-    if(currentAnswer === null){
-        return;
-    }
-    const val = document.getElementById('answerInput').value.trim();
-    const fb = document.getElementById('feedbackBox');
-
-    if(val === ""){
-        fb.innerText = "Bitte gib zuerst eine Antwort ein.";
-        fb.style.color = "orange";
-        return;
-    }
-
-    const userNum = Number(val);
-    if(userNum === currentAnswer){
-        fb.innerText = "Richtig! 👏";
-        fb.style.color = "green";
-        score++;
-        document.getElementById('scoreBox').innerText = "Punkte: " + score;
-        setTimeout(newQuestion, 800);
-    } else {
-        fb.innerText = "Falsch. Versuch es noch einmal.";
-        fb.style.color = "red";
-    }
-}
-
-function randomInt(min, max){
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-</script>
-
-</body>
-</html>
+    } else if(currentMode === 'en'){
+        title.innerText = "Englisch";
+        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
+        const q = enQuestions[randomInt(0, enQuestions.length-1)];
+        qBox.innerText = q.text;
+        currentAnswer = q.ans;
+    } else if(currentMode === 'fr'){
+        title.innerText = "Französisch";
+        inst.innerText = "Lies die Frage und gib 1, 2 oder 3 als Antwort ein.";
+        const q = frQuestions[randomInt(0, frQuestions.length-1)];
+        qBox.innerText = q.t
